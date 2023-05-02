@@ -1,0 +1,43 @@
+version: "3.8"
+services:
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    environment: 
+      MYSQL_ROOT_PASSWORD: default
+      MYSQL_DATABASE: user
+
+  orm-user-service:
+    restart: always
+    build:
+      context: ./ORM-user-service
+      dockerfile: Dockerfile
+    container_name: orm-user-service
+    volumes:
+      - ./ORM-user-service:/app
+    ports:
+      - "8001:8001"
+    links:
+      - mysql
+    depends_on:
+      - mysql
+      
+  user-service:
+    restart: always
+    build: ./user-service
+    container_name: user-service
+    volumes:
+      - ./user-service:/app
+    env_file:
+      - .env
+    environment:
+      - ORM-USER-SERVICE=${ORM_USER_SERVICE}
+      - TEST=$TEST
+    ports:
+      - "8000:8000"
+    links:
+      - orm-user-service
+    depends_on:
+      - orm-user-service
+      
