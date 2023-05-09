@@ -1,4 +1,8 @@
 import sqlalchemy
+import urllib
+import os
+import bcrypt
+
 from datetime import datetime
 
 from typing import List
@@ -7,22 +11,34 @@ from typing import List
 # from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
+from .util.password import Password
 
+#DATABASE_URL = 'mysql+mysqldb://root:default@mysql/user'
+DATABASE_HOST = os.getenv("DATABASE_HOST")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
+DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 
 # SQLAlchemy specific code, as with any other app
-DATABASE_URL = 'mysql+mysqldb://root:default@mysql/user'
-engine = sqlalchemy.create_engine(DATABASE_URL)
+DATABASE_PASSWORD_UPDATED = urllib.parse.quote_plus(DATABASE_PASSWORD)
+
+#engine = sqlalchemy.create_engine(DATABASE_URL)
+engine = sqlalchemy.create_engine(
+        url="mysql+mysqldb://{0}:{1}@{2}/{3}".format(
+            DATABASE_USERNAME, DATABASE_PASSWORD_UPDATED, DATABASE_HOST, DATABASE_NAME
+            )
+        )
 
 metadata = sqlalchemy.MetaData()
 
 users = sqlalchemy.Table(
-    "user",
+    DATABASE_NAME,
     metadata,
     sqlalchemy.Column("id", sqlalchemy.String(45), primary_key=True),
     sqlalchemy.Column("email", sqlalchemy.String(45), primary_key=True),
-    sqlalchemy.Column("password", sqlalchemy.String(11)),
+    sqlalchemy.Column("password", sqlalchemy.String(255)),
     sqlalchemy.Column("create_date", sqlalchemy.Date),
-    sqlalchemy.Column("community", sqlalchemy.String(8)),
+    sqlalchemy.Column("community", sqlalchemy.Text),
     sqlalchemy.Column("phone", sqlalchemy.String(15)),
     sqlalchemy.Column("email_acceptance", sqlalchemy.DECIMAL(5)),
     sqlalchemy.Column("message_acceptance", sqlalchemy.DECIMAL(5)),
@@ -33,9 +49,11 @@ users = sqlalchemy.Table(
 metadata.create_all(engine)
 
 class User(BaseModel):
+    __tablename__ = DATABASE_NAME
     id: str
     email: str
-    password: str
+    # password: str
+    password = str
     create_date: datetime
     community: str
     phone: str
@@ -43,6 +61,16 @@ class User(BaseModel):
     message_acceptance: float
     status: str
 
+    def verify_password(self, password):
+        pwhash = bcrypt.hashpw(password, self.password)
+        return self.password == pwhash
+
+class SocialEmail(BaseModel):
+    email: str
+
+class Email(BaseModel):
+    email: str
+    password: str
 
 # helpers
 
@@ -60,9 +88,27 @@ async def retrieve_users() -> list:
 
 
 # Retrieve a user with a matching station id
-async def retrieve_users_by_station(user_id: str): # -> dict:
+async def retrieve_user_by_id(user_id: str): # -> dict:
     with engine.connect() as conn:
         query = users.select().where(users.c.id==user_id)
+        result_list = list()
+        for row in conn.execute(query):
+            result_list.append(list(row))
+        return result_list
+     
+# Retrieve a user with a matching social_email
+async def retrieve_user_by_social_email(socialEmail: SocialEmail): # -> dict:
+    with engine.connect() as conn:
+        query = users.select().where(users.c.email==socialEmail['email'])
+        result_list = list()
+        for row in conn.execute(query):
+            result_list.append(list(row))
+        return result_list
+
+# Retrieve a user with a matching social_email
+async def retrieve_user_by_email_password(email: Email): # -> dict:
+    with engine.connect() as conn:
+        query = users.select().where(users.c.email==email['email']).where(users.c.password==email['password'])
         result_list = list()
         for row in conn.execute(query):
             result_list.append(list(row))
@@ -118,3 +164,4 @@ async def delete_user(user_id: str):
         conn.commit()
         return True
     return False
+

@@ -18,6 +18,13 @@ services:
       - ./ORM-user-service:/app
     ports:
       - "8001:8001"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
     links:
       - mysql
     depends_on:

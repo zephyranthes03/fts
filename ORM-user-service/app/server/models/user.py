@@ -18,15 +18,37 @@ class UserSchema(BaseModel):
             "example": {
                 "id": "1981904",
                 "email": "john_doe@gmail.com",
-                "password": "",
+                "password": "test",
                 "create_date": "19850109",
                 "community": "USC00332098",
-                "phone": "USC00332098",
+                "phone": "72065122567",
                 "email_acceptance": -11,
                 "message_acceptance": -140,
                 "status": "user",
             }
         }
+
+class SocialEmailSchema(BaseModel):
+    email: str = Field(...)
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "john_doe@gmail.com",
+            }
+        }        
+
+class EmailSchema(BaseModel):
+    email: str = Field(...)
+    password: str = Field(...)
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "john_doe@gmail.com",
+                "password": "test",
+            }
+        }        
 
 
 class UpdateUserModel(BaseModel):
@@ -46,7 +68,7 @@ class UpdateUserModel(BaseModel):
             "example": {
                 "id": "1981904",
                 "email": "john_doe@gmail.com",
-                "password": "",
+                "password": "test",
                 "create_date": "19850109",
                 "community": "USC00332098",
                 "phone": "USC00332098",

@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Request
 from fastapi.encoders import jsonable_encoder
 from typing import List
 
 from app.server.database import (
     add_user,
-    add_users,
-    retrieve_users_by_station,
+    retrieve_user_by_id,
+    retrieve_user_by_social_email,
+    retrieve_user_by_email_password,
     retrieve_users,
     delete_user,
     update_user,
@@ -15,23 +16,17 @@ from app.server.models.user import (
     ResponseModel,
     UserSchema,
     UpdateUserModel,
+    SocialEmailSchema,
+    EmailSchema,
 )
 
 router = APIRouter()
-
-
-@router.post("/all", response_description="User data added into the database")
-async def add_user_data(user: List[UserSchema] = Body(...)):
-    user = jsonable_encoder(user)
-    new_user = await add_users(user)
-    return ResponseModel(new_user, "User added successfully.")
 
 @router.post("/", response_description="User data added into the database")
 async def add_user_data(user: UserSchema = Body(...)):
     user = jsonable_encoder(user)
     new_user = await add_user(user)
     return ResponseModel(new_user, "User added successfully.")
-
 
 @router.get("/", response_description="Users retrieved")
 async def get_users():
@@ -40,14 +35,28 @@ async def get_users():
         return ResponseModel(users, "Users data retrieved successfully")
     return ResponseModel(users, "Empty list returned")
 
+@router.get("/id/{id}", response_description="User data retrieved by user_id")
+async def get_user_data(id: str):
+    user = await retrieve_user_by_id(id)
+    if user:
+        return ResponseModel(user, "User data retrieved successfully")
+    return ResponseModel(user, "Empty list returned")
 
-@router.get("/{id}", response_description="User data retrieved by station")
-async def get_user_data(id):
-    users = await retrieve_users_by_station(id)
-    if users:
-        return ResponseModel(users, "User data retrieved successfully")
-    return ResponseModel(users, "Empty list returned")
+@router.post("/social_email", response_description="User data retrieved by social email")
+async def get_user_data(socialEmail: SocialEmailSchema = Body(...)):
+    socialEmail = jsonable_encoder(socialEmail)
+    user = await retrieve_user_by_social_email(socialEmail)
+    if user:
+        return ResponseModel(user, "User data retrieved successfully")
+    return ResponseModel(user, "Empty list returned")
 
+@router.post("/email", response_description="User data retrieved by email and password")
+async def get_user_data(email: EmailSchema = Body(...)):
+    email = jsonable_encoder(email)
+    user = await retrieve_user_by_email_password(email)
+    if user:
+        return ResponseModel(user, "User data retrieved successfully")
+    return ResponseModel(user, "Empty list returned")
 
 @router.put("/{id}")
 async def update_user_data(id: str, req: UpdateUserModel = Body(...)):
