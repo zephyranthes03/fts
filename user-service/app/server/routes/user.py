@@ -31,13 +31,6 @@ async def add_user_data(user: UserSchema = Body(...)):
     new_user = await add_user(user)
     return ResponseModel(new_user, "User added successfully.")
 
-@router.put("/", response_description="User data folder Updated into the database")
-async def update_user_data(id: str, user: UserSchema = Body(...)):
-    user = jsonable_encoder(user)
-    print(user['email'],flush=True)
-    update_user = await update_user(id, user)
-    return ResponseModel(update_user, "User updated successfully.")
-
 @router.get("/", response_description="Users retrieved")
 async def get_users():
     users = await read_users()
@@ -68,11 +61,13 @@ async def get_user_data(email: EmailSchema = Body(...)):
         return ResponseModel(user, "User data retrieved successfully")
     return ResponseModel(user, "Empty list returned")
 
-@router.put("/{id}")
+@router.put("/id/{id}")
 async def update_user_data(id: str, req: UpdateUserModel = Body(...)):
     req = {k: v for k, v in req.dict().items() if v is not None}
-    updated_user = await update_user(id, req)
-    if updated_user:
+    print(req,flush=True)
+    user = jsonable_encoder(req)
+    updated_user = await update_user(id, user)
+    if 'data' in updated_user:
         return ResponseModel(
             "User with ID: {} name update is successful".format(id),
             "User name updated successfully",
@@ -83,7 +78,7 @@ async def update_user_data(id: str, req: UpdateUserModel = Body(...)):
         "There was an error updating the user data.",
     )
 
-@router.delete("/{id}", response_description="User data deleted from the database")
+@router.delete("/id/{id}", response_description="User data deleted from the database")
 async def delete_user_data(id:str):
     deleted_user = await delete_user(id)
     if deleted_user == True:
