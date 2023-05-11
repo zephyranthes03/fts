@@ -17,7 +17,7 @@ services:
     volumes:
       - ./ORM-user-service:/app
     ports:
-      - "8001:8001"
+      - "8002:8002"
     env_file:
       - .env
     environment:
@@ -42,7 +42,7 @@ services:
       - ORM-USER-SERVICE=${ORM_USER_SERVICE}
       - TEST=$TEST
     ports:
-      - "8000:8000"
+      - "8001:8001"
     links:
       - orm-user-service
     depends_on:

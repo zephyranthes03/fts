@@ -19,6 +19,8 @@ DATABASE_NAME = os.getenv("DATABASE_NAME")
 DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 
+HASH_SALT = os.getenv("HASH_SALT")
+
 # SQLAlchemy specific code, as with any other app
 DATABASE_PASSWORD_UPDATED = urllib.parse.quote_plus(DATABASE_PASSWORD)
 
@@ -53,7 +55,7 @@ class User(BaseModel):
     id: str
     email: str
     # password: str
-    password = str
+    password_hash = str
     create_date: datetime
     community: str
     phone: str
@@ -61,9 +63,38 @@ class User(BaseModel):
     message_acceptance: float
     status: str
 
-    def verify_password(self, password):
-        pwhash = bcrypt.hashpw(password, self.password)
-        return self.password == pwhash
+
+    async def generate_password_hash(self, password:str) -> str:
+        # converting password to array of bytes
+        bytes = password.encode('utf-8')
+        salt = HASH_SALT.encode('utf-8')
+        # generating the salt
+        salt = bcrypt.gensalt()
+        
+        # Hashing the password
+        hash = bcrypt.hashpw(bytes, salt)
+        return hash
+
+    async def check_password_hash(self, input_password:str, hashed_Password:bytes) -> bool:
+
+        # converting password to array of bytes
+        salt = HASH_SALT.encode('utf-8')
+        password_encode = input_password.encode('utf-8')
+
+        # password_hash = bcrypt.hashpw(password_encode, salt)
+        # userPassword_encode = hash_Password.encode('utf-8')
+        
+        result = bcrypt.checkpw(password_encode, hashed_Password)
+        # generating the salt
+
+        return result
+
+
+    async def set_password(self, password):
+        self.password_hash = self.generate_password_hash(password)
+
+    async def check_password(self, password):
+        return self.check_password_hash(self.password_hash, password)
 
 class SocialEmail(BaseModel):
     email: str
@@ -75,6 +106,7 @@ class Email(BaseModel):
 # helpers
 
 # crud operations
+
 
 
 # Retrieve all users present in the database
@@ -91,28 +123,26 @@ async def retrieve_users() -> list:
 async def retrieve_user_by_id(user_id: str): # -> dict:
     with engine.connect() as conn:
         query = users.select().where(users.c.id==user_id)
-        result_list = list()
         for row in conn.execute(query):
-            result_list.append(list(row))
-        return result_list
+            result = list(row)
+        return result
      
 # Retrieve a user with a matching social_email
 async def retrieve_user_by_social_email(socialEmail: SocialEmail): # -> dict:
     with engine.connect() as conn:
         query = users.select().where(users.c.email==socialEmail['email'])
-        result_list = list()
         for row in conn.execute(query):
-            result_list.append(list(row))
-        return result_list
+            result = list(row)
+        return result
 
 # Retrieve a user with a matching social_email
 async def retrieve_user_by_email_password(email: Email): # -> dict:
     with engine.connect() as conn:
+        ## TODO: password comparing debugging!!
         query = users.select().where(users.c.email==email['email']).where(users.c.password==email['password'])
-        result_list = list()
         for row in conn.execute(query):
-            result_list.append(list(row))
-        return result_list
+            result = list(row)
+        return result
 
 
 # Add a new user into to the database

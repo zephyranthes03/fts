@@ -44,8 +44,11 @@ async def get_user_data(id: str):
 
 @router.post("/social_email", response_description="User data retrieved by social email")
 async def get_user_data(socialEmail: SocialEmailSchema = Body(...)):
+    print(socialEmail,flush=True)
     socialEmail = jsonable_encoder(socialEmail)
+    print(socialEmail,flush=True)
     user = await retrieve_user_by_social_email(socialEmail)
+    print(user,flush=True)
     if user:
         return ResponseModel(user, "User data retrieved successfully")
     return ResponseModel(user, "Empty list returned")
@@ -53,12 +56,13 @@ async def get_user_data(socialEmail: SocialEmailSchema = Body(...)):
 @router.post("/email", response_description="User data retrieved by email and password")
 async def get_user_data(email: EmailSchema = Body(...)):
     email = jsonable_encoder(email)
+    print(email,flush=True)
     user = await retrieve_user_by_email_password(email)
     if user:
         return ResponseModel(user, "User data retrieved successfully")
     return ResponseModel(user, "Empty list returned")
 
-@router.put("/{id}")
+@router.put("/id/{id}")
 async def update_user_data(id: str, req: UpdateUserModel = Body(...)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     updated_user = await update_user(id, req)

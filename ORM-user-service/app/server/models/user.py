@@ -9,8 +9,8 @@ class UserSchema(BaseModel):
     create_date: str = Field(...)
     community: str = Field(...)
     phone: str = Field(...)
-    email_acceptance: int = Field(...)
-    message_acceptance: int = Field(...)
+    email_acceptance: str = Field(...)
+    message_acceptance: str = Field(...)
     status: str = Field(...)
 
     class Config:
@@ -36,7 +36,7 @@ class SocialEmailSchema(BaseModel):
             "example": {
                 "email": "john_doe@gmail.com",
             }
-        }        
+        }   
 
 class EmailSchema(BaseModel):
     email: str = Field(...)
@@ -58,8 +58,8 @@ class UpdateUserModel(BaseModel):
     create_date: Optional[str]
     community: Optional[str]
     phone: Optional[str]
-    email_acceptance: Optional[int]
-    message_acceptance: Optional[int]
+    email_acceptance: Optional[str]
+    message_acceptance: Optional[str]
     community: Optional[str]
 
 
@@ -81,7 +81,7 @@ class UpdateUserModel(BaseModel):
 
 def ResponseModel(data, message):
     return {
-        "data": [data],
+        "data": data,
         "code": 200,
         "message": message,
     }
