@@ -57,7 +57,6 @@ async def get_user_data_email_password(email: EmailSchema = Body(...)):
     email = jsonable_encoder(email)
     email['password'] = str(await set_password(email['password']))
 
-    print(email,flush=True)
     user = await retrieve_user_by_email_password(email)
     if user:
         return ResponseModel(user, "User data retrieved successfully")

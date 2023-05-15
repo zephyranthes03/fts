@@ -41,7 +41,6 @@ async def update_user(id:str, user:dict) -> dict:
 async def read_users(): # -> dict:
     t1_start = process_time()
     async with httpx.AsyncClient() as client:
-        print(os.getenv("ORM-USER-SERVICE"),flush=True)
         r = await client.get(f'{os.getenv("ORM-USER-SERVICE")}/user/', timeout=300)
         data = r.json()['data'][0]
         print(r.json(),flush=True)
