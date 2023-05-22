@@ -47,4 +47,44 @@ services:
       - orm-user-service
     depends_on:
       - orm-user-service
+
+  diag-service:
+    restart: always
+    build: ./diag-service
+    container_name: diag-service
+    volumes:
+      - ./diag-service:/app
+    env_file:
+      - .env
+    environment:
+      - ORM-DIAG-SERVICE=${ORM_DIAG_SERVICE}
+      - TEST=$TEST
+    ports:
+      - "8003:8003"
+    links:
+      - orm-user-service
+    depends_on:
+      - orm-user-service
+      
+  orm-diag-service:
+    restart: always
+    build:
+      context: ./ORM-diag-service
+      dockerfile: Dockerfile
+    container_name: orm-diag-service
+    volumes:
+      - ./ORM-diag-service:/app
+    ports:
+      - "8004:8004"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+    links:
+      - mysql
+    depends_on:
+      - mysql
       
