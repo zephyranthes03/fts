@@ -50,10 +50,10 @@ services:
 
   diag-service:
     restart: always
-    build: ./diag-service
-    container_name: diag-service
+    build: ./diagonostic-service
+    container_name: diagonostic-service
     volumes:
-      - ./diag-service:/app
+      - ./diagonostic-service:/app
     env_file:
       - .env
     environment:
@@ -62,18 +62,18 @@ services:
     ports:
       - "8003:8003"
     links:
-      - orm-user-service
+      - orm-diag-service
     depends_on:
-      - orm-user-service
+      - orm-diag-service
       
   orm-diag-service:
     restart: always
     build:
-      context: ./ORM-diag-service
+      context: ./ORM-diagonostic-service
       dockerfile: Dockerfile
-    container_name: orm-diag-service
+    container_name: orm-diagonostic-service
     volumes:
-      - ./ORM-diag-service:/app
+      - ./ORM-diagonostic-service:/app
     ports:
       - "8004:8004"
     env_file:
