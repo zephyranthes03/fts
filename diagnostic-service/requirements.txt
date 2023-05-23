@@ -1,0 +1,10 @@
+fastapi==0.92.0
+uvicorn==0.20.0
+isodate==0.6.0
+mysqlclient==2.1.1
+sqlalchemy==2.0.3
+pydantic[email]
+python-decouple==3.7
+httpx==0.23.3
+pandas==1.5.3
+DeepImageSearch==2.5
