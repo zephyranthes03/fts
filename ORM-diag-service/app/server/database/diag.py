@@ -1,7 +1,6 @@
 import sqlalchemy
 import urllib
 import os
-import bcrypt
 
 from datetime import datetime
 
@@ -14,8 +13,8 @@ from typing import List
 
 #DATABASE_URL = 'mysql+mysqldb://root:default@mysql/diag'
 DATABASE_HOST = os.getenv("DATABASE_HOST")
-DATABASE_NAME = os.getenv("DATABASE_NAME")
-DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
+DIAG_DATABASE_NAME = os.getenv("DIAG_DATABASE_NAME")
+DIAG_DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 
 # SQLAlchemy specific code, as with any other app
@@ -24,16 +23,17 @@ DATABASE_PASSWORD_UPDATED = urllib.parse.quote_plus(DATABASE_PASSWORD)
 #engine = sqlalchemy.create_engine(DATABASE_URL)
 engine = sqlalchemy.create_engine(
         url="mysql+mysqldb://{0}:{1}@{2}/{3}".format(
-            DATABASE_USERNAME, DATABASE_PASSWORD_UPDATED, DATABASE_HOST, DATABASE_NAME
+            DIAG_DATABASE_USERNAME, DATABASE_PASSWORD_UPDATED, DATABASE_HOST, DIAG_DATABASE_NAME
             )
         )
 
 metadata = sqlalchemy.MetaData()
 
 diags = sqlalchemy.Table(
-    DATABASE_NAME,
+    DIAG_DATABASE_NAME,
     metadata,
     sqlalchemy.Column("id", sqlalchemy.String(45), primary_key=True),
+    sqlalchemy.Column("user_id", sqlalchemy.String(45)),
     sqlalchemy.Column("image_file", sqlalchemy.Text),
     sqlalchemy.Column("disease", sqlalchemy.String(255), primary_key=True),
     # sqlalchemy.Column("create_date", sqlalchemy.Date),
@@ -42,8 +42,9 @@ diags = sqlalchemy.Table(
 metadata.create_all(engine)
 
 class Diag(BaseModel):
-    __tablename__ = DATABASE_NAME
+    __tablename__ = DIAG_DATABASE_NAME
     id: str
+    user_id: str
     image_file: str
     detaidiseasel: str
     # create_date: datetime
@@ -76,7 +77,7 @@ async def retrieve_diag_by_id(id: str): # -> dict:
 # Add a new diag into to the database
 async def add_diag(diag_data: Diag) -> dict:
     with engine.connect() as conn:        
-        query = diags.insert().values(id=f"{diag_data['id']}",image_file=f"{diag_data['image_file']}",disease=f"{diag_data['disease']}")
+        query = diags.insert().values(id=f"{diag_data['id']}",user_id=f"{diag_data['user_id']}",image_file=f"{diag_data['image_file']}",disease=f"{diag_data['disease']}")
         last_record_id = conn.execute(query)
         conn.commit()
         return {**diag_data, "id": last_record_id}
@@ -88,7 +89,7 @@ async def update_diag(id: str, diag_data: Diag) -> dict:
     if len(diag_data) < 1:
         return False
     with engine.connect() as conn:
-        query = diags.update().where(diags.c.id==id).values(image_file=f"{diag_data['image_file']}",disease=f"{diag_data['disease']}")   
+        query = diags.update().where(diags.c.id==id).values(user_id=f"{diag_data['user_id']}",image_file=f"{diag_data['image_file']}",disease=f"{diag_data['disease']}")   
         last_record_id = conn.execute(query)
         conn.commit()
         return {**diag_data, "id": last_record_id}

@@ -32,7 +32,7 @@ class UpdateDiseaseModel(BaseModel):
             }
         }
 
-class ImageSchema(BaseModel):
+class SampleImageSchema(BaseModel):
     id: str = Field(...)
     image_file: str = Field(...)
     detail: str = Field(...)
@@ -44,11 +44,11 @@ class ImageSchema(BaseModel):
                 "id": "19850109",
                 "image_file": "19850109.jpg",
                 "detail": "detail",
-                "inspection": "queationaire",
+                "inspection": "inspection",
             }
         }
 
-class UpdateImageModel(BaseModel):
+class UpdateSampleImageModel(BaseModel):
     image_file: str = Field(...)
     detail: str = Field(...)
     inspection: str = Field(...)
@@ -58,7 +58,7 @@ class UpdateImageModel(BaseModel):
             "example": {
                 "image_file": "19850109.jpg",
                 "detail": "detail",
-                "inspection": "queationaire",
+                "inspection": "inspection",
             }
         }
 

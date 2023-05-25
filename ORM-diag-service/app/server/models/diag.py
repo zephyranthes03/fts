@@ -59,10 +59,45 @@ class UpdateSampleImageModel(BaseModel):
             "example": {
                 "image_file": "19850109.jpg",
                 "detail": "detail",
-                "inspection": "queationaire",
+                "inspection": "inspection",
             }
         }
 
+class DiagSchema(BaseModel):
+    id: str = Field(...)
+    disease: str = Field(...)
+    image_file: str = Field(...)
+    detail: str = Field(...)
+    queationaire: str = Field(...)
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": "19850109",
+                "user_id": "19850109",
+                "disease": "disease_1",
+                "image_file": "19850109.jpg",
+                "detail": "detail",
+                "queationaire": "queationaire",
+            }
+        }
+
+class UpdateDiagModel(BaseModel):
+    disease: str = Field(...)
+    image_file: str = Field(...)
+    detail: str = Field(...)
+    queationaire: str = Field(...)
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "user_id": "19850109",
+                "disease": "disease_1",
+                "image_file": "19850109.jpg",
+                "detail": "detail",
+                "queationaire": "queationaire",
+            }
+        }
 
 def ResponseModel(data, message):
     return {

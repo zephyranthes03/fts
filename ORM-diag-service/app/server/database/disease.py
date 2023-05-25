@@ -1,7 +1,6 @@
 import sqlalchemy
 import urllib
 import os
-import bcrypt
 
 from datetime import datetime
 
@@ -14,7 +13,7 @@ from typing import List
 
 #DATABASE_URL = 'mysql+mysqldb://root:default@mysql/disease'
 DATABASE_HOST = os.getenv("DATABASE_HOST")
-DATABASE_NAME = os.getenv("DATABASE_NAME")
+DIAG_DATABASE_NAME = os.getenv("DIAG_DATABASE_NAME")
 DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 
@@ -24,14 +23,14 @@ DATABASE_PASSWORD_UPDATED = urllib.parse.quote_plus(DATABASE_PASSWORD)
 #engine = sqlalchemy.create_engine(DATABASE_URL)
 engine = sqlalchemy.create_engine(
         url="mysql+mysqldb://{0}:{1}@{2}/{3}".format(
-            DATABASE_USERNAME, DATABASE_PASSWORD_UPDATED, DATABASE_HOST, DATABASE_NAME
+            DATABASE_USERNAME, DATABASE_PASSWORD_UPDATED, DATABASE_HOST, DIAG_DATABASE_NAME
             )
         )
 
 metadata = sqlalchemy.MetaData()
 
 diseases = sqlalchemy.Table(
-    DATABASE_NAME,
+    DIAG_DATABASE_NAME,
     metadata,
     sqlalchemy.Column("id", sqlalchemy.String(45), primary_key=True),
     sqlalchemy.Column("disease", sqlalchemy.String(255), primary_key=True),
@@ -43,7 +42,7 @@ diseases = sqlalchemy.Table(
 metadata.create_all(engine)
 
 class Disease(BaseModel):
-    __tablename__ = DATABASE_NAME
+    __tablename__ = DIAG_DATABASE_NAME
     id: str
     disease: str
     detail: str
@@ -78,7 +77,7 @@ async def retrieve_disease_by_id(id: str): # -> dict:
 # Add a new disease into to the database
 async def add_disease(disease_data: Disease) -> dict:
     with engine.connect() as conn:        
-        query = diseases.insert().values(id=f"{disease_data['id']}",disease=f"{disease_data['disease']}",detail=f"{disease_data['password']}",
+        query = diseases.insert().values(id=f"{disease_data['id']}",disease=f"{disease_data['disease']}",detail=f"{disease_data['detail']}",
             queationaire=disease_data['queationaire'])
         last_record_id = conn.execute(query)
         conn.commit()
@@ -91,7 +90,7 @@ async def update_disease(id: str, disease_data: Disease) -> dict:
     if len(disease_data) < 1:
         return False
     with engine.connect() as conn:
-        query = diseases.update().where(diseases.c.id==id).values(disease=f"{disease_data['disease']}",detail=f"{disease_data['password']}",
+        query = diseases.update().where(diseases.c.id==id).values(disease=f"{disease_data['disease']}",detail=f"{disease_data['detail']}",
             queationaire=disease_data['queationaire'])   
         last_record_id = conn.execute(query)
         conn.commit()

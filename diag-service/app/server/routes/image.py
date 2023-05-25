@@ -33,7 +33,7 @@ from app.server.models.diag import (
     ErrorResponseModel,
     ResponseModel,
     SampleImageSchema,
-    UpdateSampleImageModel,    
+    UpdateSampleImageModel
 )
 
 

@@ -14,7 +14,7 @@ from typing import List
 
 #DATABASE_URL = 'mysql+mysqldb://root:default@mysql/user'
 DATABASE_HOST = os.getenv("DATABASE_HOST")
-DATABASE_NAME = os.getenv("DATABASE_NAME")
+USER_DATABASE_NAME = os.getenv("USER_DATABASE_NAME")
 DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 
@@ -26,14 +26,14 @@ DATABASE_PASSWORD_UPDATED = urllib.parse.quote_plus(DATABASE_PASSWORD)
 #engine = sqlalchemy.create_engine(DATABASE_URL)
 engine = sqlalchemy.create_engine(
         url="mysql+mysqldb://{0}:{1}@{2}/{3}".format(
-            DATABASE_USERNAME, DATABASE_PASSWORD_UPDATED, DATABASE_HOST, DATABASE_NAME
+            DATABASE_USERNAME, DATABASE_PASSWORD_UPDATED, DATABASE_HOST, USER_DATABASE_NAME
             )
         )
 
 metadata = sqlalchemy.MetaData()
 
 users = sqlalchemy.Table(
-    DATABASE_NAME,
+    USER_DATABASE_NAME,
     metadata,
     sqlalchemy.Column("id", sqlalchemy.String(45), primary_key=True),
     sqlalchemy.Column("email", sqlalchemy.String(45), primary_key=True),
@@ -50,7 +50,7 @@ users = sqlalchemy.Table(
 metadata.create_all(engine)
 
 class User(BaseModel):
-    __tablename__ = DATABASE_NAME
+    __tablename__ = USER_DATABASE_NAME
     id: str
     email: str
     password: str

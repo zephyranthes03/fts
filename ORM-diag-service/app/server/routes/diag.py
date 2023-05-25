@@ -20,13 +20,13 @@ from app.server.models.diag import (
 router = APIRouter()
 
 @router.post("/", response_description="Diag data added into the database")
-async def add_diag(diag: DiagSchema = Body(...)):
+async def add_diag_data(diag: DiagSchema = Body(...)):
     diag = jsonable_encoder(diag)
     new_diag = await add_diag(diag)
     return ResponseModel(new_diag, "Diag added successfully.")
 
 @router.get("/", response_description="Diags retrieved")
-async def get_diags():
+async def get_diags_data():
     diags = await retrieve_diags()
     if diags:
         return ResponseModel(diags, "Diags data retrieved successfully")

@@ -19,13 +19,13 @@ from app.server.models.diag import (
 router = APIRouter()
 
 @router.post("/", response_description="Diag data added into the database")
-async def add_sampleimage(image: SampleImageSchema = Body(...)):
+async def add_sampleimage_data(image: SampleImageSchema = Body(...)):
     image = jsonable_encoder(image)
     new_image = await add_sampleimage(image)
     return ResponseModel(new_image, "Image added successfully.")
 
 @router.get("/", response_description="Images retrieved")
-async def get_sampleimages():
+async def get_sampleimages_data():
     images = await retrieve_sampleimages()
     if images:
         return ResponseModel(images, "Images data retrieved successfully")

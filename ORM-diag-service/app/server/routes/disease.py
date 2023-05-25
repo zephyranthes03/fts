@@ -20,13 +20,13 @@ from app.server.models.diag import (
 router = APIRouter()
 
 @router.post("/", response_description="Diag data added into the database")
-async def add_disease(disease: DiseaseSchema = Body(...)):
+async def add_disease_data(disease: DiseaseSchema = Body(...)):
     disease = jsonable_encoder(disease)
     new_disease = await add_disease(disease)
     return ResponseModel(new_disease, "Disease added successfully.")
 
 @router.get("/", response_description="Diseases retrieved")
-async def get_diseases():
+async def get_diseases_data():
     diseases = await retrieve_diseases()
     if diseases:
         return ResponseModel(diseases, "Diseases data retrieved successfully")

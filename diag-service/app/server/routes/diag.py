@@ -41,8 +41,8 @@ from app.server.process.diag import (
 from app.server.models.diag import (
     ErrorResponseModel,
     ResponseModel,
-    ImageSchema,
-    UpdateImageModel,
+    SampleImageSchema,
+    UpdateSampleImageModel,
 )
 
 router = APIRouter()
@@ -63,7 +63,7 @@ async def load_images():
 # Request : 서버로 사용자가 증상 발현부를 촬영한 이미지를 서버로 업로드 
 # Response : 사용자가 올린 이미지와 비슷한 비교 이미지를 클라이언트로 업로드
 @router.post("/request", response_class=HTMLResponse, response_description="Upload diagnostic image")
-# async def upload_diag_image(diag: ImageSchema = Body(...), file: UploadFile):
+# async def upload_diag_image(diag: SampleImageSchema = Body(...), file: UploadFile):
 async def upload_diag_image(request: Request, diag_id: str, image_file: bytes = File(...)):
 
     ## Collecting image
@@ -95,7 +95,7 @@ async def upload_diag_image(request: Request, diag_id: str, image_file: bytes = 
 # Response : 1. 고객이 한가지 발현증상만 선택한 경우, 바로 증상의 문진 설문조사를 수행
 #            2. 고객이 한가지 이상의 발현증상을 선택한 경우, 본인의 증상을 확정할수 있는 추가 프로세스를 수행
 @router.post("/request-inspection", response_class=HTMLResponse, response_description="Upload diagnostic image")
-# async def upload_diag_image(diag: ImageSchema = Body(...), file: UploadFile):
+# async def upload_diag_image(diag: SampleImageSchema = Body(...), file: UploadFile):
 async def request_inspection(request: Request, diag_id: str, image_file_name_list:list):
     inspection_dict = {"test1.jpg":{'disease':'desease_1', 'detail':'detail_1', 'queationaire':'queationaire_1'}}
 
@@ -147,7 +147,7 @@ async def get_diag(id:str):
     return ResponseModel(diags, "Empty list returned")
 
 @router.put("/{id}")
-async def update_diag_data(id: str, req: UpdateImageModel = Body(...)):
+async def update_diag_data(id: str, req: UpdateSampleImageModel = Body(...)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     print(req,flush=True)
     diag = jsonable_encoder(req)

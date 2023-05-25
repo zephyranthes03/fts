@@ -1,7 +1,6 @@
 import sqlalchemy
 import urllib
 import os
-import bcrypt
 
 from datetime import datetime
 
@@ -14,7 +13,7 @@ from typing import List
 
 #DATABASE_URL = 'mysql+mysqldb://root:default@mysql/sampleimage'
 DATABASE_HOST = os.getenv("DATABASE_HOST")
-DATABASE_NAME = os.getenv("DATABASE_NAME")
+DIAG_DATABASE_NAME = os.getenv("DIAG_DATABASE_NAME")
 DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 
@@ -24,14 +23,14 @@ DATABASE_PASSWORD_UPDATED = urllib.parse.quote_plus(DATABASE_PASSWORD)
 #engine = sqlalchemy.create_engine(DATABASE_URL)
 engine = sqlalchemy.create_engine(
         url="mysql+mysqldb://{0}:{1}@{2}/{3}".format(
-            DATABASE_USERNAME, DATABASE_PASSWORD_UPDATED, DATABASE_HOST, DATABASE_NAME
+            DATABASE_USERNAME, DATABASE_PASSWORD_UPDATED, DATABASE_HOST, DIAG_DATABASE_NAME
             )
         )
 
 metadata = sqlalchemy.MetaData()
 
 sampleimages = sqlalchemy.Table(
-    DATABASE_NAME,
+    DIAG_DATABASE_NAME,
     metadata,
     sqlalchemy.Column("id", sqlalchemy.String(45), primary_key=True),
     sqlalchemy.Column("image_file", sqlalchemy.String(255), primary_key=True),

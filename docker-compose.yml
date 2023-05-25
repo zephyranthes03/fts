@@ -22,7 +22,7 @@ services:
       - .env
     environment:
       - DATABASE_HOST=${DATABASE_HOST}
-      - DATABASE_NAME=${DATABASE_NAME}
+      - USER_DATABASE_NAME=${USER_DATABASE_NAME}
       - DATABASE_USERNAME=${DATABASE_USERNAME}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
     links:
@@ -50,10 +50,10 @@ services:
 
   diag-service:
     restart: always
-    build: ./diagnostic-service
-    container_name: diagnostic-service
+    build: ./diag-service
+    container_name: diag-service
     volumes:
-      - ./diagnostic-service:/app
+      - ./diag-service:/app
     env_file:
       - .env
     environment:
@@ -69,18 +69,18 @@ services:
   orm-diag-service:
     restart: always
     build:
-      context: ./ORM-diagnostic-service
+      context: ./ORM-diag-service
       dockerfile: Dockerfile
-    container_name: orm-diagnostic-service
+    container_name: orm-diag-service
     volumes:
-      - ./ORM-diagnostic-service:/app
+      - ./ORM-diag-service:/app
     ports:
       - "8004:8004"
     env_file:
       - .env
     environment:
       - DATABASE_HOST=${DATABASE_HOST}
-      - DATABASE_NAME=${DATABASE_NAME}
+      - DIAG_DATABASE_NAME=${DIAG_DATABASE_NAME}
       - DATABASE_USERNAME=${DATABASE_USERNAME}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
     links:
