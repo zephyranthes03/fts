@@ -16,6 +16,7 @@ DATABASE_HOST = os.getenv("DATABASE_HOST")
 DIAG_DATABASE_NAME = os.getenv("DIAG_DATABASE_NAME")
 DIAG_DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+DIAG_TABLENAME = "SAMPLEIMAGE"
 
 # SQLAlchemy specific code, as with any other app
 DATABASE_PASSWORD_UPDATED = urllib.parse.quote_plus(DATABASE_PASSWORD)
@@ -30,7 +31,7 @@ engine = sqlalchemy.create_engine(
 metadata = sqlalchemy.MetaData()
 
 diags = sqlalchemy.Table(
-    DIAG_DATABASE_NAME,
+    DIAG_TABLENAME,
     metadata,
     sqlalchemy.Column("id", sqlalchemy.String(45), primary_key=True),
     sqlalchemy.Column("user_id", sqlalchemy.String(45)),
@@ -42,11 +43,11 @@ diags = sqlalchemy.Table(
 metadata.create_all(engine)
 
 class Diag(BaseModel):
-    __tablename__ = DIAG_DATABASE_NAME
+    __tablename__ = DIAG_TABLENAME
     id: str
     user_id: str
     image_file: str
-    detaidiseasel: str
+    disease: str
     # create_date: datetime
 
 # helpers

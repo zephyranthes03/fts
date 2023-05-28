@@ -16,6 +16,7 @@ DATABASE_HOST = os.getenv("DATABASE_HOST")
 DIAG_DATABASE_NAME = os.getenv("DIAG_DATABASE_NAME")
 DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+DISEASE_TABLENAME = "disease"
 
 # SQLAlchemy specific code, as with any other app
 DATABASE_PASSWORD_UPDATED = urllib.parse.quote_plus(DATABASE_PASSWORD)
@@ -30,7 +31,7 @@ engine = sqlalchemy.create_engine(
 metadata = sqlalchemy.MetaData()
 
 diseases = sqlalchemy.Table(
-    DIAG_DATABASE_NAME,
+    DISEASE_TABLENAME,
     metadata,
     sqlalchemy.Column("id", sqlalchemy.String(45), primary_key=True),
     sqlalchemy.Column("disease", sqlalchemy.String(255), primary_key=True),
@@ -42,7 +43,7 @@ diseases = sqlalchemy.Table(
 metadata.create_all(engine)
 
 class Disease(BaseModel):
-    __tablename__ = DIAG_DATABASE_NAME
+    __tablename__ = DISEASE_TABLENAME
     id: str
     disease: str
     detail: str

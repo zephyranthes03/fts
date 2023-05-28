@@ -16,6 +16,8 @@ DATABASE_HOST = os.getenv("DATABASE_HOST")
 DIAG_DATABASE_NAME = os.getenv("DIAG_DATABASE_NAME")
 DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+IMAGE_TABLENAME = "SAMPLEIMAGE"
+
 
 # SQLAlchemy specific code, as with any other app
 DATABASE_PASSWORD_UPDATED = urllib.parse.quote_plus(DATABASE_PASSWORD)
@@ -30,7 +32,7 @@ engine = sqlalchemy.create_engine(
 metadata = sqlalchemy.MetaData()
 
 sampleimages = sqlalchemy.Table(
-    DIAG_DATABASE_NAME,
+    IMAGE_TABLENAME,
     metadata,
     sqlalchemy.Column("id", sqlalchemy.String(45), primary_key=True),
     sqlalchemy.Column("image_file", sqlalchemy.String(255), primary_key=True),

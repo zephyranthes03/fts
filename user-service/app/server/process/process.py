@@ -40,15 +40,17 @@ async def update_user(id:str, user:dict) -> dict:
 # Retrieve all user
 async def read_users(): # -> dict:
     t1_start = process_time()
+    data = None
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM-USER-SERVICE")}/user/', timeout=300)
-        data = r.json()['data'][0]
-        print(r.json(),flush=True)
+        if len(r.json()['data']) > 0:
+            print(r.json(),flush=True)
+            data = r.json()['data'][0]
 
-        t1_stop = process_time()
-        print("Elapsed time:", t1_stop, t1_start) 
-        print("Elapsed time during the whole program in seconds:",
-                                            t1_stop-t1_start) 
+            t1_stop = process_time()
+            print("Elapsed time:", t1_stop, t1_start) 
+            print("Elapsed time during the whole program in seconds:",
+                                                t1_stop-t1_start) 
     
     return data
 
