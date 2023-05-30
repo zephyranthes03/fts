@@ -44,14 +44,12 @@ async def read_users(): # -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM-USER-SERVICE")}/user/', timeout=300)
         if len(r.json()['data']) > 0:
-            print(r.json(),flush=True)
             data = r.json()['data'][0]
-
+	        
             t1_stop = process_time()
             print("Elapsed time:", t1_stop, t1_start) 
             print("Elapsed time during the whole program in seconds:",
-                                                t1_stop-t1_start) 
-    
+                                                t1_stop-t1_start)     
     return data
 
 # Retrieve all user by matched station ID
@@ -74,8 +72,8 @@ async def read_user_by_id(id: str) -> dict:
 # Retrieve all user by matched station ID
 async def read_user_by_social_email(data: dict) -> dict:
     t1_start = process_time()
-    print(data,flush=True)
-    print(type(data),flush=True)
+    # print(data,flush=True)
+    # print(type(data),flush=True)
 
     async with httpx.AsyncClient() as client:
         r = await client.post(f'{os.getenv("ORM-USER-SERVICE")}/user/social_email/',

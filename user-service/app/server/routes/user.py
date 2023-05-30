@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Body
+from typing import Any
+import httpx
+from fastapi import APIRouter, Body, Depends, Request, Response, Header, HTTPException
 from fastapi.encoders import jsonable_encoder
 
 from app.server.process.process import (
@@ -21,24 +23,30 @@ from app.server.models.user import (
     EmailSchema,    
 )
 
+
 router = APIRouter()
 
+async def verify_token(x_token: str = Header(None)):
+    if x_token != "my-secret-token":
+        raise HTTPException(status_code=400, detail="Invalid X-Token header")
+    return x_token
 
-@router.post("/", response_description="User data folder added into the database")
+
+@router.post("/", response_description="User data folder added into the database", dependencies=[Depends(verify_token)])
 async def add_user_data(user: UserSchema = Body(...)):
     user = jsonable_encoder(user)
     print(user['email'],flush=True)
     new_user = await add_user(user)
     return ResponseModel(new_user, "User added successfully.")
 
-@router.get("/", response_description="Users retrieved")
+@router.get("/", response_description="Users retrieved", dependencies=[Depends(verify_token)])
 async def get_users():
     users = await read_users()
     if users:
         return ResponseModel(users, "Users data statistic retrieved successfully")
     return ResponseModel(users, "Empty list returned")
 
-@router.get("/id/{id}", response_description="Users retrieved")
+@router.get("/id/{id}", response_description="Users retrieved", dependencies=[Depends(verify_token)])
 async def get_user(id:str):
     users = await read_user_by_id(id)
     if users:
@@ -61,7 +69,7 @@ async def get_user_data(email: EmailSchema = Body(...)):
         return ResponseModel(user, "User data retrieved successfully")
     return ResponseModel(user, "Empty list returned")
 
-@router.put("/id/{id}")
+@router.put("/id/{id}", dependencies=[Depends(verify_token)])
 async def update_user_data(id: str, req: UpdateUserModel = Body(...)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     print(req,flush=True)
@@ -78,7 +86,7 @@ async def update_user_data(id: str, req: UpdateUserModel = Body(...)):
         "There was an error updating the user data.",
     )
 
-@router.delete("/id/{id}", response_description="User data deleted from the database")
+@router.delete("/id/{id}", response_description="User data deleted from the database", dependencies=[Depends(verify_token)])
 async def delete_user_data(id:str):
     deleted_user = await delete_user(id)
     if deleted_user == True:

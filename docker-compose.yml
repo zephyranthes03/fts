@@ -47,6 +47,7 @@ services:
       - orm-user-service
     depends_on:
       - orm-user-service
+      - redis
 
   diag-service:
     restart: always
@@ -65,6 +66,7 @@ services:
       - orm-diag-service
     depends_on:
       - orm-diag-service
+      - redis
       
   orm-diag-service:
     restart: always
@@ -87,4 +89,14 @@ services:
       - mysql
     depends_on:
       - mysql
-      
+    
+  redis:
+    image: redis:alpine
+    command: redis-server --port 6379
+    container_name: redis
+    hostname: redis
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - 6379:6379
