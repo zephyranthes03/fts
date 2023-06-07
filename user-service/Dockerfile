@@ -6,7 +6,7 @@ ADD . /app
 WORKDIR /app
 
 RUN pip3 install -r requirements.txt
-RUN pip3 install uvicorn
+RUN pip3 install uvicorn[standard]
 RUN pip3 install python-dotenv
 
 EXPOSE 8001

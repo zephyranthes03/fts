@@ -14,8 +14,8 @@ class DiseaseSchema(BaseModel):
             "example": {
                 "id": "19850109",
                 "disease": "disease_1",
-                "detail": "detail",
-                "queationaire": "queationaire",
+                "detail": "detail_1",
+                "queationaire": "queationaire_1",
             }
         }
 
@@ -28,8 +28,8 @@ class UpdateDiseaseModel(BaseModel):
         schema_extra = {
             "example": {
                 "disease": "disease_1",
-                "detail": "detail",
-                "queationaire": "queationaire",
+                "detail": "detail_1",
+                "queationaire": "queationaire_1",
             }
         }
 
@@ -44,8 +44,8 @@ class SampleImageSchema(BaseModel):
             "example": {
                 "id": "19850109",
                 "image_file": "19850109.jpg",
-                "detail": "detail",
-                "inspection": "queationaire",
+                "detail": "detail_1",
+                "inspection": "inspection_1",
             }
         }
 
@@ -58,8 +58,8 @@ class UpdateSampleImageModel(BaseModel):
         schema_extra = {
             "example": {
                 "image_file": "19850109.jpg",
-                "detail": "detail",
-                "inspection": "inspection",
+                "detail": "detail_1",
+                "inspection": "inspection_1",
             }
         }
 
@@ -74,11 +74,10 @@ class DiagSchema(BaseModel):
         schema_extra = {
             "example": {
                 "id": "19850109",
-                "user_id": "19850109",
                 "disease": "disease_1",
                 "image_file": "19850109.jpg",
-                "detail": "detail",
-                "queationaire": "queationaire",
+                "detail": "detail_1",
+                "queationaire": "queationaire_1",
             }
         }
 
@@ -91,11 +90,10 @@ class UpdateDiagModel(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "user_id": "19850109",
                 "disease": "disease_1",
                 "image_file": "19850109.jpg",
-                "detail": "detail",
-                "queationaire": "queationaire",
+                "detail": "detail_1",
+                "queationaire": "queationaire_1",
             }
         }
 

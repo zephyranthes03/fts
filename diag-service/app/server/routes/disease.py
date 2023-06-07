@@ -2,7 +2,7 @@ import os
 
 from typing import Annotated
 from datetime import datetime
-from fastapi import APIRouter, Body, File, UploadFile, Request
+from fastapi import APIRouter, Body, File, UploadFile, Request, Depends
 
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse
@@ -11,6 +11,8 @@ from fastapi.templating import Jinja2Templates
 from io import BytesIO
 # from PIL import Image
 from DeepImageSearch import Load_Data, Search_Setup
+
+from app.server.util.preload import verify_token
 
 UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER")
@@ -39,27 +41,27 @@ router = APIRouter()
 
 
 @router.post("/", response_description="Disease data folder added into the database")
-async def add_disease_data(disease: DiseaseSchema = Body(...)):
+async def add_disease_data(disease: DiseaseSchema = Body(...), dependencies:dict=Depends(verify_token)):
     disease = jsonable_encoder(disease)
     new_disease = await add_disease(disease)
     return ResponseModel(new_disease, "Disease added successfully.")
 
 @router.get("/", response_description="Diseases retrieved")
-async def get_diseases():
+async def get_diseases(dependencies:dict=Depends(verify_token)):
     diseases = await read_diseases()
     if diseases:
         return ResponseModel(diseases, "Diseases data statistic retrieved successfully")
     return ResponseModel(diseases, "Empty list returned")
 
 @router.get("/{id}", response_description="Diseases retrieved")
-async def get_disease(id:str):
+async def get_disease(id:str, dependencies:dict=Depends(verify_token)):
     diseases = await read_disease_by_id(id)
     if diseases:
         return ResponseModel(diseases, "Diseases data statistic retrieved successfully")
     return ResponseModel(diseases, "Empty list returned")
 
 @router.put("/{id}")
-async def update_disease_data(id: str, req: UpdateDiseaseModel = Body(...)):
+async def update_disease_data(id: str, req: UpdateDiseaseModel = Body(...), dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     print(req,flush=True)
     disease = jsonable_encoder(req)
@@ -76,7 +78,7 @@ async def update_disease_data(id: str, req: UpdateDiseaseModel = Body(...)):
     )
 
 @router.delete("/{id}", response_description="Disease data deleted from the database")
-async def delete_disease_data(id:str):
+async def delete_disease_data(id:str, dependencies:dict=Depends(verify_token)):
     deleted_disease = await delete_disease(id)
     if deleted_disease == True:
         return ResponseModel([], "Database is Deleted")

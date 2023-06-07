@@ -43,8 +43,9 @@ async def read_users(): # -> dict:
     data = None
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM-USER-SERVICE")}/user/', timeout=300)
-        if len(r.json()['data']) > 0:
-            data = r.json()['data'][0]
+        print(r.json(),flush=True)
+        if len(r.json()) > 0:
+            data = r.json()
 	        
             t1_stop = process_time()
             print("Elapsed time:", t1_stop, t1_start) 
@@ -93,10 +94,10 @@ async def read_user_by_social_email(data: dict) -> dict:
 async def read_user_by_email_password(email: dict)-> dict:
     t1_start = process_time()
     print(email,flush=True)
-    print(type(email),flush=True)
     async with httpx.AsyncClient() as client:
         r = await client.post(f'{os.getenv("ORM-USER-SERVICE")}/user/email/', json=email) 
         data = r.json() #['data']
+        print("read_user_by_email",flush=True)
         print(data,flush=True)
 
         t1_stop = process_time()

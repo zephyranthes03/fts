@@ -17,6 +17,9 @@ from app.server.models.diag import (
     UpdateDiagModel,
 )
 
+from app.server.util.convert import diag_list_to_dict
+
+
 router = APIRouter()
 
 @router.post("/", response_description="Diag data added into the database")
@@ -28,16 +31,23 @@ async def add_diag_data(diag: DiagSchema = Body(...)):
 @router.get("/", response_description="Diags retrieved")
 async def get_diags_data():
     diags = await retrieve_diags()
+    diags_list = list()
     if diags:
-        return ResponseModel(diags, "Diags data retrieved successfully")
-    return ResponseModel(diags, "Empty list returned")
+        for diag in diags:
+            diag_dict = await diag_list_to_dict(diag)
+            diags_list.append(diag_dict) 
+        return diags_list
+
+    return diags
 
 @router.get("/{id}", response_description="Diag data retrieved by diag_id")
 async def get_diag_data(id: str):
     diag = await retrieve_diag_by_id(id)
-    if 'data' in diag:
-        return ResponseModel(diag, "Diag data retrieved successfully")
-    return ResponseModel(diag, "Empty list returned")
+    diag_dict = dict()
+    if diag:
+        diag_dict = await diag_list_to_dict(diag)
+        return diag_dict
+    return diag
 
 @router.put("/{id}")
 async def update_diag_data(id: str, req: UpdateDiagModel = Body(...)):

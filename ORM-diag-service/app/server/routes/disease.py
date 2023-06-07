@@ -17,6 +17,9 @@ from app.server.models.diag import (
     UpdateDiseaseModel,
 )
 
+from app.server.util.convert import disease_list_to_dict
+
+
 router = APIRouter()
 
 @router.post("/", response_description="Diag data added into the database")
@@ -28,16 +31,23 @@ async def add_disease_data(disease: DiseaseSchema = Body(...)):
 @router.get("/", response_description="Diseases retrieved")
 async def get_diseases_data():
     diseases = await retrieve_diseases()
+    diseases_list = list()
     if diseases:
-        return ResponseModel(diseases, "Diseases data retrieved successfully")
-    return ResponseModel(diseases, "Empty list returned")
+        for disease in diseases:
+            disease_dict = await disease_list_to_dict(disease)
+            diseases_list.append(disease_dict)
+        return diseases_list
+
+    return diseases
 
 @router.get("/{id}", response_description="Disease data retrieved by disease_id")
 async def get_disease_data(id: str):
     disease = await retrieve_disease_by_id(id)
-    if 'data' in disease:
-        return ResponseModel(disease, "Disease data retrieved successfully")
-    return ResponseModel(disease, "Empty list returned")
+    disease_dict = dict()
+    if disease:
+        disease_dict = await disease_list_to_dict(disease)
+        return disease_dict
+    return disease
 
 @router.put("/{id}")
 async def update_disease_data(id: str, req: UpdateDiseaseModel = Body(...)):

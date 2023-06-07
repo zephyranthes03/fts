@@ -10,7 +10,6 @@ app = FastAPI()
 
 app.include_router(DiseaseRouter, tags=["Disease"], prefix="/disease")
 app.include_router(ImageRouter, tags=["Image"], prefix="/image")
-
 app.include_router(DiagRouter, tags=["Diag"], prefix="/diag")
 
 @app.get("/", tags=["health_check"])

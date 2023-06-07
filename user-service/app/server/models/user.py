@@ -18,13 +18,14 @@ class UserSchema(BaseModel):
             "example": {
                 "id": "19850109",
                 "email": "john_doe@gmail.com",
-                "password": "",
+                "password": "test",
                 "create_date": "19850109",
-                "community": "USC00332098",
+                "community": "{'acne':{'grade':'user','status':'early'}}",
                 "phone": "USC00332098",
                 "email_acceptance": "all",
                 "message_acceptance": "community|system",
                 "user_type": "user",
+                "expire_time": 30
             }
         }
 
@@ -45,11 +46,12 @@ class UpdateUserModel(BaseModel):
                 "email": "john_doe@gmail.com",
                 "password": "test",
                 "create_date": "19850109",
-                "community": "USC00332098",
+                "community": "{'acne':{'grade':'user','status':'early'}}",
                 "phone": "USC00332098",
                 "email_acceptance": "all",
                 "message_acceptance": "community|system",
                 "user_type": "user",
+                "expire_time": 30
             }
         }
         

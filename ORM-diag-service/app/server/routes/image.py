@@ -16,6 +16,8 @@ from app.server.models.diag import (
     UpdateSampleImageModel,
 )
 
+from app.server.util.convert import sampleimage_list_to_dict
+
 router = APIRouter()
 
 @router.post("/", response_description="Diag data added into the database")
@@ -27,16 +29,22 @@ async def add_sampleimage_data(image: SampleImageSchema = Body(...)):
 @router.get("/", response_description="Images retrieved")
 async def get_sampleimages_data():
     images = await retrieve_sampleimages()
+    images_list = list()
     if images:
-        return ResponseModel(images, "Images data retrieved successfully")
-    return ResponseModel(images, "Empty list returned")
+        for image in images:
+            image_dict = await sampleimage_list_to_dict(image)
+            images_list.append(image_dict) 
+        return images_list
+    return images
 
 @router.get("/{id}", response_description="Image data retrieved by image_id")
 async def get_sampleimage_data(id: str):
     image = await retrieve_sampleimage_by_id(id)
-    if 'data' in image:
-        return ResponseModel(image, "Image data retrieved successfully")
-    return ResponseModel(image, "Empty list returned")
+    image_dict = dict()
+    if image:
+        image_dict = await sampleimage_list_to_dict(image)
+        return image_dict
+    return image
 
 @router.put("/{id}")
 async def update_sampleimage_data(id: str, req: UpdateSampleImageModel = Body(...)):

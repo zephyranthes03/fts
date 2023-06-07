@@ -25,6 +25,9 @@ services:
       - USER_DATABASE_NAME=${USER_DATABASE_NAME}
       - DATABASE_USERNAME=${DATABASE_USERNAME}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DATABASE=${REDIS_DATABASE}
     links:
       - mysql
     depends_on:
@@ -60,6 +63,9 @@ services:
     environment:
       - ORM-DIAG-SERVICE=${ORM_DIAG_SERVICE}
       - TEST=$TEST
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DATABASE=${REDIS_DATABASE}
     ports:
       - "8003:8003"
     links:

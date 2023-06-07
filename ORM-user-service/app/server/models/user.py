@@ -12,6 +12,7 @@ class UserSchema(BaseModel):
     email_acceptance: str = Field(...)
     message_acceptance: str = Field(...)
     user_type: str = Field(...)
+    expire_time: int = Field(...)
 
     class Config:
         schema_extra = {
@@ -20,11 +21,12 @@ class UserSchema(BaseModel):
                 "email": "john_doe@gmail.com",
                 "password": "test",
                 "create_date": "19850109",
-                "community": "USC00332098",
+                "community": "{'acne':{'grade':'user','status':'early'}}",
                 "phone": "72065122567",
                 "email_acceptance": "all",
                 "message_acceptance": "community|system",
                 "user_type": "user",
+                "expire_time": 30
             }
         }
 
@@ -60,6 +62,7 @@ class UpdateUserModel(BaseModel):
     email_acceptance: Optional[str]
     message_acceptance: Optional[str]
     user_type: Optional[str]
+    expire_time: Optional[int]
 
     class Config:
         schema_extra = {
@@ -67,11 +70,12 @@ class UpdateUserModel(BaseModel):
                 "email": "john_doe@gmail.com",
                 "password": "test",
                 "create_date": "19850109",
-                "community": "USC00332098",
+                "community": "{'acne':{'grade':'user','status':'early'}}",
                 "phone": "USC00332098",
                 "email_acceptance": "all",
                 "message_acceptance": "community|system",
                 "user_type": "user",
+                "expire_time": 30
             }
         }
 

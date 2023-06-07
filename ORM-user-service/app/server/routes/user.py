@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Request
 from fastapi.encoders import jsonable_encoder
 from typing import List
 
-from app.server.database import (
+from app.server.database.database import (
     add_user,
     retrieve_user_by_id,
     retrieve_user_by_social_email,
@@ -10,7 +10,6 @@ from app.server.database import (
     retrieve_users,
     delete_user,
     update_user,
-    set_password,
 )
 from app.server.models.user import (
     ErrorResponseModel,
@@ -20,6 +19,12 @@ from app.server.models.user import (
     SocialEmailSchema,
     EmailSchema,
 )
+from app.server.util.encrypt import (
+    set_password,
+    check_password_hash
+)
+
+from app.server.util.convert import user_list_to_dict
 
 router = APIRouter()
 
@@ -33,34 +38,48 @@ async def add_user_data(user: UserSchema = Body(...)):
 @router.get("/", response_description="Users retrieved")
 async def get_users():
     users = await retrieve_users()
+    users_list = list()
     if users:
-        return ResponseModel(users, "Users data retrieved successfully")
+        for user in users:
+            user.pop(2)
+            user_dict = await user_list_to_dict(user)
+            users_list.append(user_dict)
+
+        return users_list
     return ResponseModel(users, "Empty list returned")
 
 @router.get("/id/{id}", response_description="User data retrieved by user_id")
 async def get_user_data(id: str):
     user = await retrieve_user_by_id(id)
-    if 'data' in user:
-        return ResponseModel(user, "User data retrieved successfully")
+    user_dict = dict()
+    if user:
+        user.pop(2)
+        user_dict = await user_list_to_dict(user)
+        return user_dict
     return ResponseModel(user, "Empty list returned")
 
 @router.post("/social_email/", response_description="User data retrieved by social email")
 async def get_user_data_social_email(socialEmail: SocialEmailSchema = Body(...)):
     socialEmail = jsonable_encoder(socialEmail)
     user = await retrieve_user_by_social_email(socialEmail)
+    user_dict = dict()
     if user:
-        return ResponseModel(user, "User data retrieved successfully")
-    return ResponseModel(user, "Empty list returned")
+        user.pop(2) # remove password
+        user_dict = await user_list_to_dict(user)
+        return user_dict
+    return ResponseModel({}, "Empty list returned")
 
 @router.post("/email/", response_description="User data retrieved by email and password")
 async def get_user_data_email_password(email: EmailSchema = Body(...)):
     email = jsonable_encoder(email)
     email['password'] = str(await set_password(email['password']))
-
     user = await retrieve_user_by_email_password(email)
+    user_dict = dict()
     if user:
-        return ResponseModel(user, "User data retrieved successfully")
-    return ResponseModel(user, "Empty list returned")
+        user.pop(2) # remove password
+        user_dict = await user_list_to_dict(user)
+        return user_dict
+    return ResponseModel({}, "Empty list returned")
 
 @router.put("/id/{id}")
 async def update_user_data(id: str, req: UpdateUserModel = Body(...)):

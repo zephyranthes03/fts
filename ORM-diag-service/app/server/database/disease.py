@@ -11,9 +11,12 @@ from typing import List
 from pydantic import BaseModel
 from typing import List
 
+from app.server.database.common import Disease, database
+
+
 #DATABASE_URL = 'mysql+mysqldb://root:default@mysql/disease'
 DATABASE_HOST = os.getenv("DATABASE_HOST")
-DIAG_DATABASE_NAME = os.getenv("DIAG_DATABASE_NAME")
+DIAG_DATABASE_NAME = os.getenv("DIAG_DATABASE_NAME")+ "_disease"
 DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 DISEASE_TABLENAME = "disease"
@@ -21,45 +24,11 @@ DISEASE_TABLENAME = "disease"
 # SQLAlchemy specific code, as with any other app
 DATABASE_PASSWORD_UPDATED = urllib.parse.quote_plus(DATABASE_PASSWORD)
 
-#engine = sqlalchemy.create_engine(DATABASE_URL)
-engine = sqlalchemy.create_engine(
-        url="mysql+mysqldb://{0}:{1}@{2}/{3}".format(
-            DATABASE_USERNAME, DATABASE_PASSWORD_UPDATED, DATABASE_HOST, DIAG_DATABASE_NAME
-            )
-        )
-
-metadata = sqlalchemy.MetaData()
-
-diseases = sqlalchemy.Table(
-    DISEASE_TABLENAME,
-    metadata,
-    sqlalchemy.Column("id", sqlalchemy.String(45), primary_key=True),
-    sqlalchemy.Column("disease", sqlalchemy.String(255), primary_key=True),
-    sqlalchemy.Column("detail", sqlalchemy.Text),
-    sqlalchemy.Column("queationaire", sqlalchemy.Text),
-    # sqlalchemy.Column("create_date", sqlalchemy.Date),
-)
-
-metadata.create_all(engine)
-
-class Disease(BaseModel):
-    __tablename__ = DISEASE_TABLENAME
-    id: str
-    disease: str
-    detail: str
-    queationaire: str
-    # create_date: datetime
-
-# helpers
-
-# crud operations
-
-
 
 # Retrieve all diseases present in the database
 async def retrieve_diseases() -> list:
-    with engine.connect() as conn:        
-        query = diseases.select()
+    with database.engine.connect() as conn:        
+        query = database.diseases.select()
         result_list = list()
         for row in conn.execute(query):
             result_list.append(list(row))
@@ -68,8 +37,8 @@ async def retrieve_diseases() -> list:
 
 # Retrieve a disease with a matching station id
 async def retrieve_disease_by_id(id: str): # -> dict:
-    with engine.connect() as conn:
-        query = diseases.select().where(diseases.c.id==id)
+    with database.engine.connect() as conn:
+        query = database.diseases.select().where(database.diseases.c.id==id)
         result = list()
         for row in conn.execute(query):
             result = list(row)
@@ -77,8 +46,8 @@ async def retrieve_disease_by_id(id: str): # -> dict:
 
 # Add a new disease into to the database
 async def add_disease(disease_data: Disease) -> dict:
-    with engine.connect() as conn:        
-        query = diseases.insert().values(id=f"{disease_data['id']}",disease=f"{disease_data['disease']}",detail=f"{disease_data['detail']}",
+    with database.engine.connect() as conn:        
+        query = database.diseases.insert().values(id=f"{disease_data['id']}",disease=f"{disease_data['disease']}",detail=f"{disease_data['detail']}",
             queationaire=disease_data['queationaire'])
         last_record_id = conn.execute(query)
         conn.commit()
@@ -90,8 +59,8 @@ async def update_disease(id: str, disease_data: Disease) -> dict:
     # Return false if an empty request body is sent.
     if len(disease_data) < 1:
         return False
-    with engine.connect() as conn:
-        query = diseases.update().where(diseases.c.id==id).values(disease=f"{disease_data['disease']}",detail=f"{disease_data['detail']}",
+    with database.engine.connect() as conn:
+        query = database.diseases.update().where(database.diseases.c.id==id).values(disease=f"{disease_data['disease']}",detail=f"{disease_data['detail']}",
             queationaire=disease_data['queationaire'])   
         last_record_id = conn.execute(query)
         conn.commit()
@@ -100,8 +69,8 @@ async def update_disease(id: str, disease_data: Disease) -> dict:
 
 # Delete a disease from the database
 async def delete_disease(id: str):
-    with engine.connect() as conn:        
-        query = diseases.delete().where(diseases.c.id==id)
+    with database.engine.connect() as conn:        
+        query = database.diseases.delete().where(database.diseases.c.id==id)
         conn.execute(query)
         conn.commit()
         return True

@@ -42,8 +42,8 @@ async def read_diseases(): # -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM-DIAG-SERVICE")}/disease/', timeout=300)
         print(r.json(),flush=True)
-        if len(r.json()['data']) > 0:
-            data = r.json()['data'][0]
+        if len(r.json()) > 0:
+            data = r.json()[0]
 
             t1_stop = process_time()
             print("Elapsed time:", t1_stop, t1_start) 
@@ -57,9 +57,9 @@ async def read_disease_by_id(id: str) -> dict:
     t1_start = process_time()
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM-DIAG-SERVICE")}/disease/{id}', timeout=300) 
-        print(r.json()['data'],flush=True)
+        print(r.json(),flush=True)
 
-        data = r.json()['data']
+        data = r.json()
 
         t1_stop = process_time()
         print("Elapsed time:", t1_stop, t1_start) 

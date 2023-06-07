@@ -23,31 +23,41 @@ from app.server.models.user import (
     EmailSchema,    
 )
 
+from app.server.util.session import (
+    session_load,
+    session_update,
+    session_create,
+    session_delete
+)
+
 
 router = APIRouter()
 
-async def verify_token(x_token: str = Header(None)):
-    if x_token != "my-secret-token":
-        raise HTTPException(status_code=400, detail="Invalid X-Token header")
-    return x_token
+async def verify_token(session_key: str = Header(None)):
+    if session_key is None:
+        raise HTTPException(status_code=400, detail="Invalid session")
+    else:
+        session = await session_load(session_key)
+
+    return session
 
 
-@router.post("/", response_description="User data folder added into the database", dependencies=[Depends(verify_token)])
-async def add_user_data(user: UserSchema = Body(...)):
+@router.post("/", response_description="User data folder added into the database")
+async def add_user_data(user: UserSchema = Body(...), dependencies:dict=Depends(verify_token)):
     user = jsonable_encoder(user)
     print(user['email'],flush=True)
     new_user = await add_user(user)
     return ResponseModel(new_user, "User added successfully.")
 
-@router.get("/", response_description="Users retrieved", dependencies=[Depends(verify_token)])
-async def get_users():
+@router.get("/", response_description="Users retrieved")
+async def get_users(dependencies:dict=Depends(verify_token)):
     users = await read_users()
     if users:
         return ResponseModel(users, "Users data statistic retrieved successfully")
     return ResponseModel(users, "Empty list returned")
 
-@router.get("/id/{id}", response_description="Users retrieved", dependencies=[Depends(verify_token)])
-async def get_user(id:str):
+@router.get("/id/{id}", response_description="Users retrieved")
+async def get_user(id:str, dependencies:dict=Depends(verify_token)):
     users = await read_user_by_id(id)
     if users:
         return ResponseModel(users, "Users data statistic retrieved successfully")
@@ -58,6 +68,7 @@ async def post_user_social_email(socialEmail: SocialEmailSchema = Body(...)):
     socialEmail = jsonable_encoder(socialEmail)
     user = await read_user_by_social_email(socialEmail)
     if user:
+        await session_create(user)
         return ResponseModel(user, "User data retrieved successfully")
     return ResponseModel(user, "Empty list returned")
 
@@ -66,11 +77,20 @@ async def get_user_data(email: EmailSchema = Body(...)):
     email = jsonable_encoder(email)
     user = await read_user_by_email_password(email)
     if user:
+        print("print_from email",flush=True)
+        print(user,flush=True)
+        await session_create(user)
         return ResponseModel(user, "User data retrieved successfully")
     return ResponseModel(user, "Empty list returned")
 
-@router.put("/id/{id}", dependencies=[Depends(verify_token)])
-async def update_user_data(id: str, req: UpdateUserModel = Body(...)):
+@router.post("/disconnect", response_description="Disconnect session(Remove session data from Redis)")
+async def redis_delete_session(dependencies:dict=Depends(verify_token)):
+    if id in dependencies:
+        return ResponseModel(session_delete(dependencies["id"]), "User session disconnected successfully")
+    return ResponseModel("User session is empty", "Empty session returned")
+
+@router.put("/id/{id}")
+async def update_user_data(id: str, req: UpdateUserModel = Body(...), dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     print(req,flush=True)
     user = jsonable_encoder(req)
@@ -86,8 +106,8 @@ async def update_user_data(id: str, req: UpdateUserModel = Body(...)):
         "There was an error updating the user data.",
     )
 
-@router.delete("/id/{id}", response_description="User data deleted from the database", dependencies=[Depends(verify_token)])
-async def delete_user_data(id:str):
+@router.delete("/id/{id}", response_description="User data deleted from the database")
+async def delete_user_data(id:str, dependencies:dict=Depends(verify_token)):
     deleted_user = await delete_user(id)
     if deleted_user == True:
         return ResponseModel([], "Database is Deleted")

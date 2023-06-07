@@ -1,11 +1,13 @@
 from pydantic import BaseModel
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket
+from fastapi.responses import HTMLResponse
 
 # from starlette.middleware.sessions import SessionMiddleware
 from app.server.routes.user import router as UserRouter
-import redis
+from app.server.util.session import session_load
 
+import redis
 
 app = FastAPI()
 
@@ -26,24 +28,50 @@ app.include_router(UserRouter, tags=["User"], prefix="/user")
 async def read_root():
     return {"message": "Welcome to health check link"}
 
-@app.post("/save")
-async def save_session_data(request: Request, key: str, value: str):
-    # Save data to the session
-    request.session[key] = value
-    return {"detail": "Data saved to session"}
+html = """
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+    </head>
+    <body>
+        <h1>WebSocket Chat</h1>
+        <form action='' onsubmit='sendMessage(event)'>
+            <input type='text' id='messageText' autocomplete='off'/>
+            <button>Send</button>
+        </form>
+        <ul id='messages'>
+        </ul>
+        <script>
+            var ws = new WebSocket("ws://localhost:8001/ws");
+            ws.onmessage = function(event) {
+                var messages = document.getElementById('messages')
+                var message = document.createElement('li')
+                var content = document.createTextNode(event.data)
+                message.appendChild(content)
+                messages.appendChild(message)
+            };
+            function sendMessage(event) {
+                var input = document.getElementById("messageText")
+                ws.send(input.value)
+                input.value = ''
+                event.preventDefault()
+            }
+        </script>
+    </body>
+</html>
+"""
 
-@app.get("/read/{key}")
-async def read_session_data(request: Request, key: str):
-    # Read data from the session
-    value = request.session.get(key)
-    return {"key": key, "value": value}
 
-@app.delete("/delete/{key}")
-async def delete_session_data(request: Request, key: str):
-    # Delete data from the session
-    if key in request.session:
-        del request.session[key]
-        return {"detail": f"{key} deleted from session"}
-    else:
-        return {"detail": f"No {key} found in session"}
+@app.get("/ws/debug")
+async def get():
+    return HTMLResponse(html)
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        await websocket.send_text(f"WS Message text was: {data}")
 
