@@ -20,6 +20,7 @@ sqlalchemy.Table(
     sqlalchemy.Column("email_acceptance", sqlalchemy.String(255)),
     sqlalchemy.Column("message_acceptance", sqlalchemy.String(255)),
     sqlalchemy.Column("user_type", sqlalchemy.String(255)),
+    sqlalchemy.Column("expire_time", sqlalchemy.Integer),
 )
 ```
 

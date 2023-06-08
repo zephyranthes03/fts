@@ -12,6 +12,7 @@ class UserSchema(BaseModel):
     email_acceptance: str = Field(...)
     message_acceptance: str = Field(...)
     user_type: str = Field(...)
+    expire_time: int = Field(...)
 
     class Config:
         schema_extra = {
@@ -38,6 +39,7 @@ class UpdateUserModel(BaseModel):
     email_acceptance: Optional[str]
     message_acceptance: Optional[str]
     user_type: Optional[str]
+    expire_time: Optional[int]
 
 
     class Config:
