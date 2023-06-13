@@ -13,17 +13,6 @@ from typing import List
 
 from app.server.database.common import Symptom, database
 
-#DATABASE_URL = 'mysql+mysqldb://root:default@mysql/symptom'
-DATABASE_HOST = os.getenv("DATABASE_HOST")
-SYMPTOM_DATABASE_NAME = os.getenv("SYMPTOM_DATABASE_NAME")
-SYMPTOM_DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
-DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
-SYMPTOM_TABLENAME = "symptom"
-
-# SQLAlchemy specific code, as with any other app
-DATABASE_PASSWORD_UPDATED = urllib.parse.quote_plus(DATABASE_PASSWORD)
-
-
 
 # Retrieve all symptoms present in the database
 async def retrieve_symptoms() -> list:

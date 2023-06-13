@@ -25,7 +25,6 @@ IMAGE_TABLENAME = "SAMPLEIMAGE"
 # SQLAlchemy specific code, as with any other app
 DATABASE_PASSWORD_UPDATED = urllib.parse.quote_plus(DATABASE_PASSWORD)
 
-
 class SingletonClass(object):
   def __new__(cls):
     if not hasattr(cls, 'instance'):
