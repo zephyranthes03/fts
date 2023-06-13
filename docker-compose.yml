@@ -52,16 +52,16 @@ services:
       - orm-user-service
       - redis
 
-  diag-service:
+  symptom-service:
     restart: always
-    build: ./diag-service
-    container_name: diag-service
+    build: ./symptom-service
+    container_name: symptom-service
     volumes:
-      - ./diag-service:/app
+      - ./symptom-service:/app
     env_file:
       - .env
     environment:
-      - ORM-DIAG-SERVICE=${ORM_DIAG_SERVICE}
+      - ORM-SYMPTOM-SERVICE=${ORM_SYMPTOM_SERVICE}
       - TEST=$TEST
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
@@ -69,26 +69,26 @@ services:
     ports:
       - "8003:8003"
     links:
-      - orm-diag-service
+      - orm-symptom-service
     depends_on:
-      - orm-diag-service
+      - orm-symptom-service
       - redis
       
-  orm-diag-service:
+  orm-symptom-service:
     restart: always
     build:
-      context: ./ORM-diag-service
+      context: ./ORM-symptom-service
       dockerfile: Dockerfile
-    container_name: orm-diag-service
+    container_name: orm-symptom-service
     volumes:
-      - ./ORM-diag-service:/app
+      - ./ORM-symptom-service:/app
     ports:
       - "8004:8004"
     env_file:
       - .env
     environment:
       - DATABASE_HOST=${DATABASE_HOST}
-      - DIAG_DATABASE_NAME=${DIAG_DATABASE_NAME}
+      - SYMPTOM_DATABASE_NAME=${SYMPTOM_DATABASE_NAME}
       - DATABASE_USERNAME=${DATABASE_USERNAME}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
     links:
