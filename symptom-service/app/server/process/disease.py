@@ -11,7 +11,7 @@ async def add_disease(disease:dict) -> dict:
     t1_start = process_time()
     
     async with httpx.AsyncClient() as client:
-        r = await client.post(f'{os.getenv("ORM-DIAG-SERVICE")}/disease/',
+        r = await client.post(f'{os.getenv("ORM-SYMPTOM-SERVICE")}/disease/',
                             json=disease)
         data = r.json() 
     t1_stop = process_time()
@@ -24,7 +24,7 @@ async def update_disease(id:str, disease:dict) -> dict:
     t1_start = process_time()
     
     async with httpx.AsyncClient() as client:
-        r = await client.put(f'{os.getenv("ORM-DIAG-SERVICE")}/disease/{id}',
+        r = await client.put(f'{os.getenv("ORM-SYMPTOM-SERVICE")}/disease/{id}',
                             json=disease)
         data = r.json()
         print(data,flush=True)
@@ -40,7 +40,7 @@ async def read_diseases(): # -> dict:
     t1_start = process_time()
     data = None
     async with httpx.AsyncClient() as client:
-        r = await client.get(f'{os.getenv("ORM-DIAG-SERVICE")}/disease/', timeout=300)
+        r = await client.get(f'{os.getenv("ORM-SYMPTOM-SERVICE")}/disease/', timeout=300)
         print(r.json(),flush=True)
         if len(r.json()) > 0:
             data = r.json()[0]
@@ -56,7 +56,7 @@ async def read_diseases(): # -> dict:
 async def read_disease_by_id(id: str) -> dict:
     t1_start = process_time()
     async with httpx.AsyncClient() as client:
-        r = await client.get(f'{os.getenv("ORM-DIAG-SERVICE")}/disease/{id}', timeout=300) 
+        r = await client.get(f'{os.getenv("ORM-SYMPTOM-SERVICE")}/disease/{id}', timeout=300) 
         print(r.json(),flush=True)
 
         data = r.json()
@@ -71,7 +71,7 @@ async def read_disease_by_id(id: str) -> dict:
 
 # Delete a disease from the database
 async def delete_disease(id:str):
-    r = httpx.delete(f'{os.getenv("ORM-DIAG-SERVICE")}/disease/{id}') 
+    r = httpx.delete(f'{os.getenv("ORM-SYMPTOM-SERVICE")}/disease/{id}') 
     if r.status_code == 200:
         return True
     return False

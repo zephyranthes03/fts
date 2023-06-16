@@ -11,7 +11,7 @@ async def add_image(image:dict) -> dict:
     t1_start = process_time()
     
     async with httpx.AsyncClient() as client:
-        r = await client.post(f'{os.getenv("ORM-DIAG-SERVICE")}/image/',
+        r = await client.post(f'{os.getenv("ORM-SYMPTOM-SERVICE")}/image/',
                             json=image)
         data = r.json() 
     t1_stop = process_time()
@@ -24,7 +24,7 @@ async def update_image(id:str, image:dict) -> dict:
     t1_start = process_time()
     
     async with httpx.AsyncClient() as client:
-        r = await client.put(f'{os.getenv("ORM-DIAG-SERVICE")}/image/{id}',
+        r = await client.put(f'{os.getenv("ORM-SYMPTOM-SERVICE")}/image/{id}',
                             json=image)
         data = r.json()
         print(data,flush=True)
@@ -40,7 +40,7 @@ async def read_images(): # -> dict:
     t1_start = process_time()
     data = None
     async with httpx.AsyncClient() as client:
-        r = await client.get(f'{os.getenv("ORM-DIAG-SERVICE")}/image/', timeout=300)
+        r = await client.get(f'{os.getenv("ORM-SYMPTOM-SERVICE")}/image/', timeout=300)
         if len(r.json()) > 0:
             print(r.json(),flush=True)
             data = r.json()[0]
@@ -56,7 +56,7 @@ async def read_images(): # -> dict:
 async def read_image_by_id(id: str) -> dict:
     t1_start = process_time()
     async with httpx.AsyncClient() as client:
-        r = await client.get(f'{os.getenv("ORM-DIAG-SERVICE")}/image/{id}', timeout=300) 
+        r = await client.get(f'{os.getenv("ORM-SYMPTOM-SERVICE")}/image/{id}', timeout=300) 
         print(r.json(),flush=True)
 
         data = r.json()
@@ -71,7 +71,7 @@ async def read_image_by_id(id: str) -> dict:
 
 # Delete a image from the database
 async def delete_image(id:str):
-    r = httpx.delete(f'{os.getenv("ORM-DIAG-SERVICE")}/image/{id}') 
+    r = httpx.delete(f'{os.getenv("ORM-SYMPTOM-SERVICE")}/image/{id}') 
     if r.status_code == 200:
         return True
     return False

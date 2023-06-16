@@ -42,7 +42,7 @@ services:
     env_file:
       - .env
     environment:
-      - ORM-USER-SERVICE=${ORM_USER_SERVICE}
+      - ORM-USER-SERVICE=${ORM-USER-SERVICE}
       - TEST=$TEST
     ports:
       - "8001:8001"
@@ -61,7 +61,7 @@ services:
     env_file:
       - .env
     environment:
-      - ORM-SYMPTOM-SERVICE=${ORM_SYMPTOM_SERVICE}
+      - ORM-SYMPTOM-SERVICE=${ORM-SYMPTOM-SERVICE}
       - TEST=$TEST
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
