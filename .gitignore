@@ -3,3 +3,4 @@ __pycache__/
 *.py[cod]
 mysql-data/
 .DS_Store
+mongodb/

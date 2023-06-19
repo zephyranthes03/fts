@@ -21,8 +21,6 @@ from app.server.schemas.disease import (
 
 # from app.server.databases.session import get_db
 
-from app.server.util.convert import disease_list_to_dict
-
 
 router = APIRouter()
 

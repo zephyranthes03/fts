@@ -1,4 +1,3 @@
-from app.server.databases.base import Base
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel

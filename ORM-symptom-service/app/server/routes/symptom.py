@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body, Request, Response, HTTPException, status
 from fastapi.encoders import jsonable_encoder
-from typing import List, Optional
+from typing import List
 
 from app.server.databases.symptom import (
     add_symptom,
@@ -16,9 +16,6 @@ from app.server.schemas.symptom import (
     SymptomSchema,
     UpdateSymptomModel,
 )
-
-from app.server.util.convert import symptom_list_to_dict
-
 
 router = APIRouter()
 
