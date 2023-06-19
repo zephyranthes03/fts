@@ -8,6 +8,21 @@ services:
       MYSQL_ROOT_PASSWORD: default
       MYSQL_DATABASE: user
 
+  mongodb:
+    restart: always
+    ports:
+      - '27017:27017'
+    container_name: mongodb
+    logging:
+      options:
+        max-size: 1g
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    image: mongo  
+    volumes:
+      - ./mongodb:/data/db
+
   orm-user-service:
     restart: always
     build:
@@ -87,14 +102,14 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_HOST=${DATABASE_HOST}
+      - MONGODB_URL=${MONGODB_URL}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
       - SYMPTOM_DATABASE_NAME=${SYMPTOM_DATABASE_NAME}
-      - DATABASE_USERNAME=${DATABASE_USERNAME}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
     links:
-      - mysql
+      - mongodb
     depends_on:
-      - mysql
+      - mongodb
     
   redis:
     image: redis:alpine
