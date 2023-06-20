@@ -1,20 +1,14 @@
-import sqlalchemy
-import urllib
-import os
 
 from datetime import datetime
-from sqlalchemy.orm import Session
 
 from typing import List, Optional
 
 # import databases
 # from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import List
 
 from app.server.schemas.disease import (
-    DiseaseSchema,
-    UpdateDiseaseModel,
+    Disease_schema,
+    Update_disease_schema,
 )
 
 # Retrieve all diseases present in the database
@@ -31,7 +25,7 @@ async def retrieve_disease_by_id(database: Optional[any], id: str): # -> dict:
     return disease
     
 # Add a new disease into to the database
-async def add_disease(database: Optional[any], disease_data: DiseaseSchema ) -> dict:
+async def add_disease(database: Optional[any], disease_data: Disease_schema ) -> dict:
     new_disease = database.insert_one(disease_data)
     created_disease = database.find_one(
         {"_id": new_disease.inserted_id}
@@ -40,7 +34,7 @@ async def add_disease(database: Optional[any], disease_data: DiseaseSchema ) -> 
 
 
 # Update a disease with a matching ID
-async def update_disease(database: Optional[any], id: str, disease_data: UpdateDiseaseModel) -> dict:
+async def update_disease(database: Optional[any], id: str, disease_data: Update_disease_schema) -> dict:
     update_result = database.update_one(
         {"_id": id}, {"$set": disease_data}
     )

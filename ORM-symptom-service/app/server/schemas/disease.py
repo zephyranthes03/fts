@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from app.server.schemas.common import ErrorResponseModel, ResponseModel
 from app.config.config import settings
 
-class DiseaseSchema(BaseModel):
+class Disease_schema(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     symptom: str = Field(...)
     area: str = Field(...)
@@ -30,7 +30,7 @@ class DiseaseSchema(BaseModel):
             }
         }
 
-class UpdateDiseaseModel(BaseModel):
+class Update_disease_schema(BaseModel):
     symptom: str = Field(...)
     area: str = Field(...)
     occur_pattern: str = Field(...)

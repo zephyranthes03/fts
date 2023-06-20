@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer, String, Boolean, Text, Date, ForeignKey
 from sqlalchemy.orm import relationship
 
-from app.server.databases.base_class import Base
+from pydantic import BaseModel
 
-class Disease(Base):
+
+class Disease(BaseModel):
     id = Column(String(45), primary_key=True)
     symptom = Column(String(1024))
     area = Column(String(1024))

@@ -5,7 +5,7 @@ class Settings:
 
     SYMPTOM_TABLENAME = "symptom"
     DISEASE_TABLENAME = "disease"
-    IMAGE_TABLENAME = "sampleimage"
+    IMAGE_TABLENAME = "diagnosis"
 
     SYMPTOM_DATABASE_NAME: str = os.getenv("SYMPTOM_DATABASE_NAME", "symptom")
     MONGO_INITDB_ROOT_USERNAME: str = os.getenv("MONGO_INITDB_ROOT_USERNAME")

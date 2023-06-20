@@ -15,8 +15,8 @@ from app.server.databases.disease import (
 from app.server.schemas.disease import (
     ErrorResponseModel,
     ResponseModel,
-    DiseaseSchema,
-    UpdateDiseaseModel,
+    Disease_schema,
+    Update_disease_schema,
 )
 
 # from app.server.databases.session import get_db
@@ -25,7 +25,7 @@ from app.server.schemas.disease import (
 router = APIRouter()
 
 @router.post("/", response_description="Disease data added into the database")
-async def add_disease_data(request: Request, disease: DiseaseSchema = Body(...)):
+async def add_disease_data(request: Request, disease: Disease_schema = Body(...)):
     disease = jsonable_encoder(disease)
     new_disease = await add_disease(request.app.database['diseases'], disease)
     return ResponseModel(new_disease, "Disease added successfully.")
@@ -48,7 +48,7 @@ async def get_disease_data(request: Request, id: str):
     return disease
 
 @router.put("/{id}")
-async def update_disease_data(request: Request, id: str, req: UpdateDiseaseModel = Body(...)):
+async def update_disease_data(request: Request, id: str, req: Update_disease_schema = Body(...)):
     disease = {k: v for k, v in req.dict().items() if v is not None}
 
     if len(disease) >= 1:

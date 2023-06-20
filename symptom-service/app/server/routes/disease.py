@@ -29,11 +29,11 @@ from app.server.process.disease import (
     update_disease
 )
 
-from app.server.models.symptom import (
+from app.server.models.symptom_index import (
     ErrorResponseModel,
     ResponseModel,
-    DiseaseSchema,
-    UpdateDiseaseModel,
+    Disease_schema,
+    Update_disease_schema,
 )
 
 
@@ -41,7 +41,7 @@ router = APIRouter()
 
 
 @router.post("/", response_description="Disease data folder added into the database")
-async def add_disease_data(disease: DiseaseSchema = Body(...), dependencies:dict=Depends(verify_token)):
+async def add_disease_data(disease: Disease_schema = Body(...), dependencies:dict=Depends(verify_token)):
     disease = jsonable_encoder(disease)
     new_disease = await add_disease(disease)
     return ResponseModel(new_disease, "Disease added successfully.")
@@ -61,7 +61,7 @@ async def get_disease(id:str, dependencies:dict=Depends(verify_token)):
     return ResponseModel(diseases, "Empty list returned")
 
 @router.put("/{id}")
-async def update_disease_data(id: str, req: UpdateDiseaseModel = Body(...), dependencies:dict=Depends(verify_token)):
+async def update_disease_data(id: str, req: Update_disease_schema = Body(...), dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     print(req,flush=True)
     disease = jsonable_encoder(req)
