@@ -11,9 +11,11 @@ async def add_user(user:dict) -> dict:
     t1_start = process_time()
     
     async with httpx.AsyncClient() as client:
-        r = await client.post(f'{os.getenv("ORM-USER-SERVICE")}/user/',
-                            json=user)
+        print("++++++++++++++++",flush=True)
+        print(f'{os.getenv("ORM_USER_SERVICE")}/user/',flush=True)
+        r = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/', json=user)
         data = r.json() 
+        
     t1_stop = process_time()
     print("Elapsed time:", t1_stop, t1_start) 
     print("Elapsed time during the whole program in seconds:",
@@ -26,7 +28,7 @@ async def update_user(id:str, user:dict) -> dict:
     t1_start = process_time()
     
     async with httpx.AsyncClient() as client:
-        r = await client.put(f'{os.getenv("ORM-USER-SERVICE")}/user/id/{id}',
+        r = await client.put(f'{os.getenv("ORM_USER_SERVICE")}/user/id/{id}',
                             json=user)
         data = r.json()
         print(data,flush=True)
@@ -42,7 +44,7 @@ async def read_users(): # -> dict:
     t1_start = process_time()
     data = None
     async with httpx.AsyncClient() as client:
-        r = await client.get(f'{os.getenv("ORM-USER-SERVICE")}/user/', timeout=300)
+        r = await client.get(f'{os.getenv("ORM_USER_SERVICE")}/user/', timeout=300)
         print(r.json(),flush=True)
         if len(r.json()) > 0:
             data = r.json()
@@ -57,7 +59,7 @@ async def read_users(): # -> dict:
 async def read_user_by_id(id: str) -> dict:
     t1_start = process_time()
     async with httpx.AsyncClient() as client:
-        r = await client.get(f'{os.getenv("ORM-USER-SERVICE")}/user/id/{id}', timeout=300) 
+        r = await client.get(f'{os.getenv("ORM_USER_SERVICE")}/user/id/{id}', timeout=300) 
         print(r.json()['data'],flush=True)
 
         data = r.json()['data']
@@ -77,7 +79,7 @@ async def read_user_by_social_email(data: dict) -> dict:
     # print(type(data),flush=True)
 
     async with httpx.AsyncClient() as client:
-        r = await client.post(f'{os.getenv("ORM-USER-SERVICE")}/user/social_email/',
+        r = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email/',
                             json=data)
 
         data = r.json()
@@ -95,7 +97,7 @@ async def read_user_by_email_password(email: dict)-> dict:
     t1_start = process_time()
     print(email,flush=True)
     async with httpx.AsyncClient() as client:
-        r = await client.post(f'{os.getenv("ORM-USER-SERVICE")}/user/email/', json=email) 
+        r = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/email/', json=email) 
         data = r.json() #['data']
         print("read_user_by_email",flush=True)
         print(data,flush=True)
@@ -110,7 +112,7 @@ async def read_user_by_email_password(email: dict)-> dict:
 
 # Delete a user from the database
 async def delete_user(id:str):
-    r = httpx.delete(f'{os.getenv("ORM-USER-SERVICE")}/user/id/{id}') 
+    r = httpx.delete(f'{os.getenv("ORM_USER_SERVICE")}/user/id/{id}') 
     if r.status_code == 200:
         return True
     return False

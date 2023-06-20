@@ -1,7 +1,7 @@
 fastapi==0.92.0
 uvicorn==0.20.0
 isodate==0.6.0
-mysqlclient==2.1.1
+mysqlclient
 sqlalchemy==2.0.3
 sqlalchemy-utils
 pydantic[email]
