@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 
 class Diagnosis(BaseModel):
-    id = Column(String(45), primary_key=True)
+    id = Column(String(64), primary_key=True)
     symptom = Column(String(1024))
     area = Column(String(1024))
     occur_pattern = Column(String(1024))

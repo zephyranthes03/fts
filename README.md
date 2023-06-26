@@ -33,7 +33,7 @@ sqlalchemy.Table(
 ## Deployment
 
 ```
-docker-compose up -d mysql
+docker-compose up -d mysql mongodb
 ```
 
 Execute one of belows a minute later. - because It should be execute after mysql server running.
@@ -44,6 +44,16 @@ docker-compose up
 or 
 ```
 docker-compose up -d
+```
+
+If you want to execute user-services only then You can run this way.
+
+```
+docker-compose up user-service orm-user-service
+```
+or 
+```
+docker-compose up -d user-service orm-user-service
 ```
 
 

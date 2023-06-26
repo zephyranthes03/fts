@@ -111,7 +111,96 @@ services:
       - mongodb
     depends_on:
       - mongodb
-    
+
+  orm-metacommunity-service:
+    restart: always
+    build:
+      context: ./ORM-metacommunity-service
+      dockerfile: Dockerfile
+    container_name: orm-metacommunity-service
+    volumes:
+      - ./ORM-metacommunity-service:/app
+    ports:
+      - "8005:8005"
+    env_file:
+      - .env
+    environment:
+      - MONGODB_URL=${MONGODB_URL}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - COMMUNITY_DATABASE_METACOMMUNITY=${COMMUNITY_DATABASE_METACOMMUNITY}
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+
+  orm-member-service:
+    restart: always
+    build:
+      context: ./ORM-member-service
+      dockerfile: Dockerfile
+    container_name: orm-member-service
+    volumes:
+      - ./ORM-member-service:/app
+    ports:
+      - "8006:8006"
+    env_file:
+      - .env
+    environment:
+      - MONGODB_URL=${MONGODB_URL}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - COMMUNITY_DATABASE_MEMBER=${COMMUNITY_DATABASE_MEMBER}
+    links:
+      - mongodb
+    depends_on:
+      - mongodb            
+
+  orm-board-service:
+    restart: always
+    build:
+      context: ./ORM-board-service
+      dockerfile: Dockerfile
+    container_name: orm-board-service
+    volumes:
+      - ./ORM-board-service:/app
+    ports:
+      - "8007:8007"
+    env_file:
+      - .env
+    environment:
+      - MONGODB_URL=${MONGODB_URL}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - COMMUNITY_DATABASE_BOARD=${COMMUNITY_DATABASE_BOARD}
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+
+
+  orm-comment-service:
+    restart: always
+    build:
+      context: ./ORM-comment-service
+      dockerfile: Dockerfile
+    container_name: orm-comment-service
+    volumes:
+      - ./ORM-comment-service:/app
+    ports:
+      - "8008:8008"
+    env_file:
+      - .env
+    environment:
+      - MONGODB_URL=${MONGODB_URL}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - COMMUNITY_DATABASE_COMMENT=${COMMUNITY_DATABASE_COMMENT}
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+
   redis:
     image: redis:alpine
     command: redis-server --port 6379

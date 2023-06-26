@@ -11,10 +11,10 @@ from app.server.schemas.diagnosis import (
     Update_diagnosis_schema,
 )
 
-# Retrieve all diagnosiss present in the database
-async def retrieve_diagnosiss(database: Optional[any]) -> list:
-    diagnosiss = list(database.find())
-    return diagnosiss
+# Retrieve all diagnosises present in the database
+async def retrieve_diagnosises(database: Optional[any]) -> list:
+    diagnosises = list(database.find())
+    return diagnosises
 
 
 # Retrieve a diagnosis with a matching station id

@@ -1,0 +1,7 @@
+fastapi==0.92.0
+uvicorn==0.20.0
+isodate==0.6.0
+python-decouple==3.7
+databases
+pydantic
+pymongo[srv]==3.11.0
