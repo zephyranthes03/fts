@@ -9,4 +9,6 @@ class Community(BaseModel):
     date = Column(Date)
     boards = Column(Text)
     manager = Column(String(255))
+    image_file = Column(String(255))
+    content = Column(Text)
 
