@@ -1,28 +1,24 @@
 version: "3.8"
 services:
-  mysql:
-    container_name: mysql
-    image: mysql:8.0.33
-    volumes:
-      - ./mysql-data:/var/lib/mysql
-    environment: 
-      MYSQL_ROOT_PASSWORD: default
-      MYSQL_DATABASE: user
-
-  mongodb:
+      
+  user-service:
     restart: always
-    ports:
-      - '27017:27017'
-    container_name: mongodb
-    logging:
-      options:
-        max-size: 1g
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-    image: mongo  
+    build: ./user-service
+    container_name: user-service
     volumes:
-      - ./mongodb:/data/db
+      - ./user-service:/app
+    env_file:
+      - .env
+    environment:
+      - ORM_USER_SERVICE=${ORM_USER_SERVICE}
+      - TEST=$TEST
+    ports:
+      - "8001:8001"
+    links:
+      - orm-user-service
+    depends_on:
+      - orm-user-service
+      - redis
 
   orm-user-service:
     restart: always
@@ -48,25 +44,6 @@ services:
       - mysql
     depends_on:
       - mysql
-      
-  user-service:
-    restart: always
-    build: ./user-service
-    container_name: user-service
-    volumes:
-      - ./user-service:/app
-    env_file:
-      - .env
-    environment:
-      - ORM_USER_SERVICE=${ORM_USER_SERVICE}
-      - TEST=$TEST
-    ports:
-      - "8001:8001"
-    links:
-      - orm-user-service
-    depends_on:
-      - orm-user-service
-      - redis
 
   symptom-service:
     restart: always
@@ -121,7 +98,7 @@ services:
     volumes:
       - ./ORM-metacommunity-service:/app
     ports:
-      - "8005:8005"
+      - "${ORM_METACOMMUNITY_SERVICE_PORT}:${ORM_METACOMMUNITY_SERVICE_PORT}"
     env_file:
       - .env
     environment:
@@ -143,7 +120,7 @@ services:
     volumes:
       - ./ORM-member-service:/app
     ports:
-      - "8006:8006"
+      - "${ORM_MEMBER_SERVICE_PORT}:${ORM_MEMBER_SERVICE_PORT}"
     env_file:
       - .env
     environment:
@@ -165,7 +142,7 @@ services:
     volumes:
       - ./ORM-board-service:/app
     ports:
-      - "8007:8007"
+      - "${ORM_BOARD_SERVICE_PORT}:${ORM_BOARD_SERVICE_PORT}"
     env_file:
       - .env
     environment:
@@ -188,7 +165,7 @@ services:
     volumes:
       - ./ORM-comment-service:/app
     ports:
-      - "8008:8008"
+      - "${ORM_COMMENT_SERVICE_PORT}:${ORM_COMMENT_SERVICE_PORT}"
     env_file:
       - .env
     environment:
@@ -211,3 +188,27 @@ services:
       - "mode=standalone"
     ports:
       - 6379:6379
+
+  mysql:
+    container_name: mysql
+    image: mysql:8.0.33
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    environment: 
+      MYSQL_ROOT_PASSWORD: default
+      MYSQL_DATABASE: user
+
+  mongodb:
+    restart: always
+    ports:
+      - '27017:27017'
+    container_name: mongodb
+    logging:
+      options:
+        max-size: 1g
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    image: mongo  
+    volumes:
+      - ./mongodb:/data/db
