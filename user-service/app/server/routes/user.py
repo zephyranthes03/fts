@@ -6,6 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from app.server.process.process import (
     read_users,
     read_user_by_id,
+    read_user_by_email,
     read_user_by_social_email,
     read_user_by_email_password,
     delete_user,
@@ -45,8 +46,13 @@ async def verify_token(session_key: str = Header(None)):
 @router.post("/", response_description="User data folder added into the database")
 async def add_user_data(user: UserSchema = Body(...), dependencies:dict=Depends(verify_token)):
     user = jsonable_encoder(user)
-    print(user['email'],flush=True)
     new_user = await add_user(user)
+    if new_user.get('error', None):
+        return ErrorResponseModel(
+            new_user.get('error', None),
+            500,
+            new_user.get('message', None)
+        )
     return ResponseModel(new_user, "User added successfully.")
 
 @router.get("/", response_description="Users retrieved")
@@ -56,9 +62,16 @@ async def get_users(dependencies:dict=Depends(verify_token)):
         return ResponseModel(users, "Users data statistic retrieved successfully")
     return ResponseModel(users, "Empty list returned")
 
-@router.get("/id/{id}", response_description="Users retrieved")
-async def get_user(id:str, dependencies:dict=Depends(verify_token)):
+@router.get("/id/{id}", response_description="Users retrieved by id")
+async def get_user_by_id(id:str, dependencies:dict=Depends(verify_token)):
     users = await read_user_by_id(id)
+    if users:
+        return ResponseModel(users, "Users data statistic retrieved successfully")
+    return ResponseModel(users, "Empty list returned")
+
+@router.get("/email/{email}", response_description="Users retrieved by email")
+async def get_user_by_email(email:str, dependencies:dict=Depends(verify_token)):
+    users = await read_user_by_email(email)
     if users:
         return ResponseModel(users, "Users data statistic retrieved successfully")
     return ResponseModel(users, "Empty list returned")

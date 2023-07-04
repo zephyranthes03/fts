@@ -2,6 +2,7 @@ import httpx
 import os
 from time import process_time
 from typing import List
+from fastapi.responses import JSONResponse
 
 # crud operations
 
@@ -11,16 +12,26 @@ async def add_user(user:dict) -> dict:
     t1_start = process_time()
     
     async with httpx.AsyncClient() as client:
-        print("++++++++++++++++",flush=True)
-        print(f'{os.getenv("ORM_USER_SERVICE")}/user/',flush=True)
-        r = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/', json=user)
-        data = r.json() 
-        
-    t1_stop = process_time()
-    print("Elapsed time:", t1_stop, t1_start) 
-    print("Elapsed time during the whole program in seconds:",
-                                         t1_stop-t1_start)
-    return {'id': user['id'] }
+
+        email = user.get('email', None)
+        if email:
+            r = await client.get(f'{os.getenv("ORM_USER_SERVICE")}/user/email/{email}')
+            data = r.json() 
+            print(data,flush=True)
+            if data.get('detail', 'Failure') == 'Not Found':
+
+                print(f'{os.getenv("ORM_USER_SERVICE")}/user/',flush=True)
+                r = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/', json=user)
+                data = r.json() 
+                t1_stop = process_time()
+                print("Elapsed time:", t1_stop, t1_start) 
+                print("Elapsed time during the whole program in seconds:",
+                                                    t1_stop-t1_start)
+            else:
+                return {"error": "Email already exist!"}
+
+        else:
+            return {"error": "Email couldn't be Empty."}
 
     
 
@@ -53,6 +64,22 @@ async def read_users(): # -> dict:
             print("Elapsed time:", t1_stop, t1_start) 
             print("Elapsed time during the whole program in seconds:",
                                                 t1_stop-t1_start)     
+    return data
+
+# Retrieve all user by matched station ID
+async def read_user_by_email(email: str) -> dict:
+    t1_start = process_time()
+    async with httpx.AsyncClient() as client:
+        r = await client.get(f'{os.getenv("ORM_USER_SERVICE")}/user/email/{email}', timeout=300) 
+        print(r.json()['data'],flush=True)
+
+        data = r.json()['data']
+
+        t1_stop = process_time()
+        print("Elapsed time:", t1_stop, t1_start) 
+        print("Elapsed time during the whole program in seconds:",
+                                            t1_stop-t1_start) 
+    
     return data
 
 # Retrieve all user by matched station ID

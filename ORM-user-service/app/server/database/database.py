@@ -102,7 +102,16 @@ async def retrieve_user_by_id(user_id: str): # -> dict:
         for row in conn.execute(query):
             result = list(row)
         return result
-     
+    
+# Retrieve a user with a matching station id
+async def retrieve_user_by_email(email: str): # -> dict:
+    with engine.connect() as conn:
+        query = users.select().where(users.c.id==email)
+        result = list()
+        for row in conn.execute(query):
+            result = list(row)
+        return result
+
 # Retrieve a user with a matching social_email
 async def retrieve_user_by_social_email(socialEmail: SocialEmail): # -> dict:    
     with engine.connect() as conn:

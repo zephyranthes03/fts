@@ -5,6 +5,7 @@ from typing import List
 from app.server.database.database import (
     add_user,
     retrieve_user_by_id,
+    retrieve_user_by_email,
     retrieve_user_by_social_email,
     retrieve_user_by_email_password,
     retrieve_users,
@@ -49,8 +50,18 @@ async def get_users():
     return ResponseModel(users, "Empty list returned")
 
 @router.get("/id/{id}", response_description="User data retrieved by user_id")
-async def get_user_data(id: str):
+async def get_user_data_by_id(id: str):
     user = await retrieve_user_by_id(id)
+    user_dict = dict()
+    if user:
+        user.pop(2)
+        user_dict = await user_list_to_dict(user)
+        return user_dict
+    return ResponseModel(user, "Empty list returned")
+
+@router.get("/email/{email}", response_description="User data retrieved by email")
+async def get_user_data_by_email(email: str):
+    user = await retrieve_user_by_email(email)
     user_dict = dict()
     if user:
         user.pop(2)
