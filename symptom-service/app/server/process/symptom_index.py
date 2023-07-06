@@ -11,14 +11,28 @@ async def add_symptom_index(symptom_index:dict) -> dict:
     t1_start = process_time()
     
     async with httpx.AsyncClient() as client:
-        r = await client.post(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/symptom_index/',
-                            json=symptom_index)
-        data = r.json() 
-    t1_stop = process_time()
-    print("Elapsed time:", t1_stop, t1_start) 
-    print("Elapsed time during the whole program in seconds:",
-                                         t1_stop-t1_start)
-    return {'id': symptom_index['id'] }
+        name = symptom_index.get('symptom_index', None)
+        if name:
+            r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/symptom_index/name/{name}')
+            data = r.json() 
+            if data.get('detail', 'Failure') == 'Not Found':
+
+                print(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/symptom_index/',flush=True)
+                r = await client.post(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/symptom_index/', json=symptom_index)
+                data = r.json() 
+                t1_stop = process_time()
+                print("Elapsed time:", t1_stop, t1_start) 
+                print("Elapsed time during the whole program in seconds:",
+                                                    t1_stop-t1_start)
+                return {'symptom_index': symptom_index['symptom_index'] }
+                
+            else:
+                return {"error": "Symptom_index already exist!"}
+
+        else:
+            return {"error": "Symptom_index couldn't be Empty."}
+
+
 
 async def update_symptom_index(id:str, symptom_index:dict) -> dict:
     t1_start = process_time()
@@ -52,11 +66,11 @@ async def read_symptom_indexes(): # -> dict:
     
     return data
 
-# Retrieve all symptom_index by matched station ID
+# Retrieve all symptom_index by matched ID
 async def read_symptom_index_by_id(id: str) -> dict:
     t1_start = process_time()
     async with httpx.AsyncClient() as client:
-        r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/symptom_index/{id}', timeout=300) 
+        r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/symptom_index/id/{id}', timeout=300) 
         print(r.json(),flush=True)
 
         data = r.json()
@@ -67,6 +81,24 @@ async def read_symptom_index_by_id(id: str) -> dict:
                                             t1_stop-t1_start) 
     
     return data
+
+# Retrieve all symptom_index by matched symptom
+async def read_symptom_index_by_name(name: str) -> dict:
+    t1_start = process_time()
+    async with httpx.AsyncClient() as client:
+        r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/symptom_index/name/{name}', timeout=300) 
+        print(r.json(),flush=True)
+
+        data = r.json()
+
+        t1_stop = process_time()
+        print("Elapsed time:", t1_stop, t1_start) 
+        print("Elapsed time during the whole program in seconds:",
+                                            t1_stop-t1_start) 
+    
+    return data
+
+
 
 
 # Delete a symptom from the database

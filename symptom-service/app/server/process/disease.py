@@ -11,14 +11,30 @@ async def add_disease(disease:dict) -> dict:
     t1_start = process_time()
     
     async with httpx.AsyncClient() as client:
-        r = await client.post(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/',
-                            json=disease)
-        data = r.json() 
-    t1_stop = process_time()
-    print("Elapsed time:", t1_stop, t1_start) 
-    print("Elapsed time during the whole program in seconds:",
-                                         t1_stop-t1_start)
-    return {'id': disease['id'] }
+        name = disease.get('disease', None)
+        if name:
+            r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/name/{name}')
+            print(r,flush=True)
+            data = r.json()
+            print(data,flush=True)
+            if data is None:
+
+                print(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/',flush=True)
+                r = await client.post(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/', json=disease)
+                data = r.json() 
+                t1_stop = process_time()
+                print("Elapsed time:", t1_stop, t1_start) 
+                print("Elapsed time during the whole program in seconds:",
+                                                    t1_stop-t1_start)
+                return {'disease': disease['disease'] }
+                
+            else:
+                return {"error": "Disease already exist!"}
+
+        else:
+            return {"error": "Disease couldn't be Empty."}
+
+
 
 async def update_disease(id:str, disease:dict) -> dict:
     t1_start = process_time()
@@ -56,8 +72,8 @@ async def read_diseases(): # -> dict:
 async def read_disease_by_id(id: str) -> dict:
     t1_start = process_time()
     async with httpx.AsyncClient() as client:
-        r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/{id}', timeout=300) 
-        print(r.json(),flush=True)
+        r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/id/{id}', timeout=300) 
+        # print(r.json(),flush=True)
 
         data = r.json()
 
@@ -68,6 +84,21 @@ async def read_disease_by_id(id: str) -> dict:
     
     return data
 
+# Retrieve all disease by matched station ID
+async def read_disease_by_name(name: str) -> dict:
+    t1_start = process_time()
+    async with httpx.AsyncClient() as client:
+        r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/name/{name}', timeout=300) 
+        # print(r.json(),flush=True)
+
+        data = r.json()
+
+        t1_stop = process_time()
+        print("Elapsed time:", t1_stop, t1_start) 
+        print("Elapsed time during the whole program in seconds:",
+                                            t1_stop-t1_start) 
+    
+    return data
 
 # Delete a disease from the database
 async def delete_disease(id:str):

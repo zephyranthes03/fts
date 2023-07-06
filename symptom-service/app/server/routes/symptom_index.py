@@ -35,15 +35,16 @@ from app.server.process.symptom_index import (
     delete_symptom_index,
     update_symptom_index,
     read_symptom_index_by_id,
+    read_symptom_index_by_name,
     read_symptom_indexes
 )
 
 
 
-from app.server.models.symptom_index import (
+from app.server.schemas.symptom_index import (
     ErrorResponseModel,
     ResponseModel,
-    Symptom_index_Schema,
+    Symptom_index_schema,
     Update_symptom_index_schema,
 )
 
@@ -138,9 +139,16 @@ async def request_inspection(request: Request, symptom_id: str, symptom_file_nam
 
 
 @router.post("/", response_description="Symptom_index data folder added into the database")
-async def add_Symptom_index_data(symptom_index: Symptom_index_Schema = Body(...), dependencies:dict=Depends(verify_token)):
+async def add_Symptom_index_data(symptom_index: Symptom_index_schema = Body(...), dependencies:dict=Depends(verify_token)):
     symptom_index = jsonable_encoder(symptom_index)
     new_symptom_index = await add_symptom_index(symptom_index)
+    if new_symptom_index.get('error', None):
+        return ErrorResponseModel(
+            new_symptom_index.get('error', None),
+            500,
+            new_symptom_index.get('message', None)
+        )
+    
     return ResponseModel(new_symptom_index, "Symptom_index added successfully.")
 
 
@@ -151,14 +159,21 @@ async def get_symptom_indexes(dependencies:dict=Depends(verify_token)):
         return ResponseModel(symptom_indexes, "Symptoms data statistic retrieved successfully")
     return ResponseModel(symptom_indexes, "Empty list returned")
 
-@router.get("/{id}", response_description="Symptoms retrieved")
-async def get_symptom(id:str, dependencies:dict=Depends(verify_token)):
+@router.get("/id/{id}", response_description="Symptoms retrieved")
+async def get_symptom_by_id(id:str, dependencies:dict=Depends(verify_token)):
     symptom_indexes = await read_symptom_index_by_id(id)
     if symptom_indexes:
         return ResponseModel(symptom_indexes, "Symptoms data statistic retrieved successfully")
     return ResponseModel(symptom_indexes, "Empty list returned")
 
-@router.put("/{id}")
+@router.get("/name/{name}", response_description="Symptoms retrieved")
+async def get_symptom_by_name(name:str, dependencies:dict=Depends(verify_token)):
+    symptom_indexes = await read_symptom_index_by_name(name)
+    if symptom_indexes:
+        return ResponseModel(symptom_indexes, "Symptoms data statistic retrieved successfully")
+    return ResponseModel(symptom_indexes, "Empty list returned")
+
+@router.put("/id/{id}")
 async def update_symptom_index_data(id: str, req: Update_symptom_index_schema = Body(...), dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     print(req,flush=True)
@@ -175,7 +190,7 @@ async def update_symptom_index_data(id: str, req: Update_symptom_index_schema = 
         "There was an error updating the symptom_index data.",
     )
 
-@router.delete("/{id}", response_description="Symptom_index data deleted from the database")
+@router.delete("/id/{id}", response_description="Symptom_index data deleted from the database")
 async def delete_symptom_index_data(id:str, dependencies:dict=Depends(verify_token)):
     deleted_symptom_index = await delete_symptom_index(id)
     if deleted_symptom_index == True:

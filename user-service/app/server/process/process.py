@@ -27,6 +27,8 @@ async def add_user(user:dict) -> dict:
                 print("Elapsed time:", t1_stop, t1_start) 
                 print("Elapsed time during the whole program in seconds:",
                                                     t1_stop-t1_start)
+                return {'email':user.get('email')}
+
             else:
                 return {"error": "Email already exist!"}
 

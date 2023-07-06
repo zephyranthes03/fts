@@ -7,7 +7,8 @@ from app.server.databases.diagnosis import (
     delete_diagnosis,
     update_diagnosis,
     retrieve_diagnosises,
-    retrieve_diagnosis_by_id
+    retrieve_diagnosis_by_id,
+    retrieve_diagnosis_by_name
 )
 from app.server.schemas.diagnosis import (
     ErrorResponseModel,
@@ -37,9 +38,14 @@ async def get_diagnosises_data(request: Request):
 
     return diagnosises
 
-@router.get("/{id}", response_description="Diagnosis data retrieved by diagnosis_id")
-async def get_diagnosis_data(request: Request, id: str):
+@router.get("/id/{id}", response_description="Diagnosis data retrieved by diagnosis_id")
+async def get_diagnosis_data_by_id(request: Request, id: str):
     diagnosis = await retrieve_diagnosis_by_id(request.app.database['diagnosises'], id)
+    return diagnosis
+
+@router.get("/name/{name}", response_description="Diagnosis data retrieved by diagnosis name")
+async def get_diagnosis_data_by_name(request: Request, name: str):
+    diagnosis = await retrieve_diagnosis_by_name(request.app.database['diagnosises'], name)
     return diagnosis
 
 @router.put("/{id}")

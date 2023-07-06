@@ -17,12 +17,20 @@ async def retrieve_diseases(database: Optional[any]) -> list:
     return diseases
 
 
-# Retrieve a disease with a matching station id
+# Retrieve a disease with a matching id
 async def retrieve_disease_by_id(database: Optional[any], id: str): # -> dict:
     disease = database.find_one(
         {"_id": id}
     )
     return disease
+
+# Retrieve a diagnosis with a matching name
+async def retrieve_disease_by_name(database: Optional[any], name: str): # -> dict:
+    disease = database.find_one(
+        {"disease": name}
+    )
+    return disease
+
     
 # Add a new disease into to the database
 async def add_disease(database: Optional[any], disease_data: Disease_schema ) -> dict:

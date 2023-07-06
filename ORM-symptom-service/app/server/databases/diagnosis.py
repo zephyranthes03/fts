@@ -23,6 +23,13 @@ async def retrieve_diagnosis_by_id(database: Optional[any], id: str): # -> dict:
         {"_id": id}
     )
     return diagnosis
+
+# Retrieve a diagnosis with a matching station id
+async def retrieve_diagnosis_by_name(database: Optional[any], name: str): # -> dict:
+    diagnosis = database.find_one(
+        {"diagnosis": name}
+    )
+    return diagnosis
     
 # Add a new diagnosis into to the database
 async def add_diagnosis(database: Optional[any], diagnosis_data: Diagnosis_schema ) -> dict:

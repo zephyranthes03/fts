@@ -8,6 +8,7 @@ from app.server.databases.symptom_index import (
     update_symptom_index,
     retrieve_symptom_indexes,
     retrieve_symptom_index_by_id,
+    retrieve_symptom_index_by_name
 )
 
 from app.server.schemas.symptom_index import (
@@ -38,9 +39,14 @@ async def get_symptom_indexes_data(request: Request):
 
     return symptom_indexes
 
-@router.get("/{id}", response_description="Symptom data retrieved by symptom_id")
-async def get_symptom_index_data(request: Request, id: str):
+@router.get("/id/{id}", response_description="Symptom data retrieved by symptom_id")
+async def get_symptom_index_data_by_id(request: Request, id: str):
     symptom = await retrieve_symptom_index_by_id(request.app.database['symptom_indexes'], id)
+    return symptom
+
+@router.get("/name/{name}", response_description="Symptom data retrieved by symptom name")
+async def get_symptom_index_data_by_name(request: Request, name: str):
+    symptom = await retrieve_symptom_index_by_name(request.app.database['symptom_indexes'], name)
     return symptom
 
 @router.put("/{id}")

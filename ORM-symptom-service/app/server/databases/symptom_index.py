@@ -21,6 +21,13 @@ async def retrieve_symptom_index_by_id(database: Optional[any], id: str): # -> d
         {"_id": id}
     )
     return symptom
+
+# Retrieve a diagnosis with a matching name
+async def retrieve_symptom_index_by_name(database: Optional[any], name: str): # -> dict:
+    symptom = database.find_one(
+        {"symptom": name}
+    )
+    return symptom
     
 # Add a new symptom into to the database
 async def add_symptom_index(database: Optional[any], symptom_index_data: Symptom_index_schema ) -> dict:

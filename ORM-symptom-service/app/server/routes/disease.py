@@ -10,6 +10,7 @@ from app.server.databases.disease import (
     update_disease,
     retrieve_diseases,
     retrieve_disease_by_id,
+    retrieve_disease_by_name,
 )
 
 from app.server.schemas.disease import (
@@ -42,10 +43,17 @@ async def get_diseases_data(request: Request):
 
     return diseases
 
-@router.get("/{id}", response_description="Disease data retrieved by disease_id")
-async def get_disease_data(request: Request, id: str):
+@router.get("/id/{id}", response_description="Disease data retrieved by disease_id")
+async def get_disease_data_by_id(request: Request, id: str):
     disease = await retrieve_disease_by_id(request.app.database['diseases'], id)
     return disease
+
+
+@router.get("/name/{name}", response_description="Disease data retrieved by disease name")
+async def get_disease_data_by_name(request: Request, name: str):
+    disease = await retrieve_disease_by_name(request.app.database['diseases'], name)
+    return disease
+
 
 @router.put("/{id}")
 async def update_disease_data(request: Request, id: str, req: Update_disease_schema = Body(...)):
