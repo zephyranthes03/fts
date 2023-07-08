@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 
 class Board(BaseModel):
-    id = Column(String(64), primary_key=True)
     kind = Column(String(64))
     name = Column(String(256))
     comment = Column(Text)

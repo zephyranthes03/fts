@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 
 class Member(BaseModel):
-    id = Column(String(64), primary_key=True)
     join_date = Column(Date)
     post_count = Column(Integer)
     comment_count = Column(Integer)

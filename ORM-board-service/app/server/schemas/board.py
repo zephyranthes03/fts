@@ -7,6 +7,7 @@ from app.config.config import settings
 
 class Board_schema(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    re_id: str = Field(...)
     title: str = Field(...)
     content: str = Field(...)
     create_date: str = Field(...)
@@ -23,7 +24,7 @@ class Board_schema(BaseModel):
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
-                "_id": "066de609-b04a-4b30-b46c-32537c7f1f6e",
+                "re_id": None,
                 "title": "title",
                 "content": "content",
                 "create_date": "2017-10-13T10:53:53Z",
@@ -38,6 +39,7 @@ class Board_schema(BaseModel):
         }
 
 class Update_board_schema(BaseModel):
+    re_id: str = Field(...)
     title: str = Field(...)
     content: str = Field(...)
     create_date: str = Field(...)
@@ -53,6 +55,7 @@ class Update_board_schema(BaseModel):
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
+                "re_id": None,
                 "title": "title",
                 "content": "content",
                 "create_date": "2017-10-13T10:53:53Z",

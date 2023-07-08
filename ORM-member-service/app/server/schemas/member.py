@@ -20,7 +20,6 @@ class Member_schema(BaseModel):
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
-                "_id": "066de609-b04a-4b30-b46c-32537c7f1f6e",
                 "join_date": "2017-10-13T10:53:53Z",
                 "post_count": 0,
                 "comment_count": 0,

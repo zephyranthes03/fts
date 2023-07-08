@@ -5,8 +5,8 @@ from pydantic import BaseModel
 
 
 class Board(BaseModel):
-    id = Column(String(64), primary_key=True)
-    title = Column(String(64))
+    re_id = Column(String(64))
+    title = Column(String(512))
     content = Column(Text)
     create_date = Column(Date)
     update_date = Column(Date)

@@ -19,7 +19,6 @@ class Comment_schema(BaseModel):
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
-                "_id": "066de609-b04a-4b30-b46c-32537c7f1f6e",
                 "post_id": "066de609-b04a-b46c-4b30-32537c7f1f6e",
                 "comment_id": "066de609-4b30-4b30-b04a-32537c7f1f6e",
                 "content": "content",

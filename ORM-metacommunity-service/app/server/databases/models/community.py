@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 
 class Community(BaseModel):
-    id = Column(String(64), primary_key=True)
+    name = Column(String(255))
     symptom = Column(Text)
     date = Column(Date)
     boards = Column(Text)
