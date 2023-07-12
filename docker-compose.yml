@@ -63,6 +63,7 @@ services:
       - "8003:8003"
     links:
       - orm-symptom-service
+      - redis
     depends_on:
       - orm-symptom-service
       - redis
@@ -88,6 +89,37 @@ services:
       - mongodb
     depends_on:
       - mongodb
+
+  community-service:
+    restart: always
+    build: ./community-service
+    container_name: community-service
+    volumes:
+      - ./community-service:/app
+    env_file:
+      - .env
+    environment:
+      - ORM_METACOMMUNITY_SERVICE=${ORM_METACOMMUNITY_SERVICE}
+      - ORM_MEMBER_SERVICE=${ORM_MEMBER_SERVICE}
+      - ORM_BOARD_SERVICE=${ORM_BOARD_SERVICE}
+      - ORM_COMMENT_SERVICE=${ORM_COMMENT_SERVICE}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DATABASE=${REDIS_DATABASE}
+    ports:
+      - "8005:8005"
+    links:
+      - orm-metacommunity-service
+      - orm-member-service
+      - orm-board-service
+      - orm-comment-service
+      - redis
+    depends_on:
+      - orm-metacommunity-service
+      - orm-member-service
+      - orm-board-service
+      - orm-comment-service
+      - redis
 
   orm-metacommunity-service:
     restart: always
