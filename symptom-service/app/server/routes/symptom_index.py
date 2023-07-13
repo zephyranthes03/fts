@@ -6,7 +6,7 @@ from fastapi import APIRouter, Body, File, UploadFile, Request, Depends
 
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
+# from fastapi.templating import Jinja2Templates
 
 from io import BytesIO
 from PIL import Image
@@ -17,7 +17,7 @@ from app.server.util.preload import verify_token
 UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER")
 
-templates = Jinja2Templates(directory="templates")
+# templates = Jinja2Templates(directory="templates")
 
 metadata = None 
 st = None
