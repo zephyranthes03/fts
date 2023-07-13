@@ -1,3 +1,6 @@
+import os
+from time import sleep
+from redis import Redis
 from pydantic import BaseModel
 
 from fastapi import FastAPI
@@ -20,6 +23,21 @@ async def read_root():
 
 @app.on_event("startup")
 async def startup_client():
+    redis_flag = False
+    mongodb_flag = False
+    redis_delay = 15
+    mongodb_flag = 30
+    while redis_flag == False:
+        redis_host = os.getenv("REDIS_HOST","redis")
+        r = Redis(redis_host, socket_connect_timeout=1) # short timeout for the test
+
+        r.ping()         
+        sleep(redis_delay)
+
+
+
+
+
     pass
     #await load_symptom_indexes()
     
