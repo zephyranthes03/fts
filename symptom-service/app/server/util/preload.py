@@ -6,5 +6,5 @@ async def verify_token(session_key: str = Header(None)):
     if session_key is None:
         raise HTTPException(status_code=400, detail="Invalid session")
     else:
-        session = session_load(session_key)
+        session = await session_load(session_key)
     return session
