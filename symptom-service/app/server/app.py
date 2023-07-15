@@ -1,19 +1,6 @@
 import os
 from time import sleep
 from redis import Redis
-# pymongo 3.5.1
-from pymongo import MongoClient
-from pymongo.errors import ServerSelectionTimeoutError
-
-client = MongoClient("mongodb://localhost:27000/", serverSelectionTimeoutMS=10, connectTimeoutMS=20000)
-
-try:
-    info = client.server_info() # Forces a call.
-except ServerSelectionTimeoutError:
-    print("server is down.")
-
-# If connection create a new one with serverSelectionTimeoutMS=30000
-
 
 from pydantic import BaseModel
 
