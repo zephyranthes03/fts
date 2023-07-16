@@ -24,15 +24,18 @@ from app.server.schemas.comment import (
 
 router = APIRouter()
 
-@router.post("/{community_id}", response_description="Comment data added into the database")
-async def add_comment_data(request: Request, community_id: str, comment: Comment_schema = Body(...)):
+@router.post("/{community_id}/{board_id}", response_description="Comment data added into the database")
+async def add_comment_data(request: Request, community_id: str, board_id: str,
+                           comment: Comment_schema = Body(...)):
     comment = jsonable_encoder(comment)
-    new_comment = await add_comment(request.app.database[community_id], comment)
+    new_comment = await add_comment(request.app.mongodb_client, 
+                                    community_id, board_id, comment)
     return ResponseModel(new_comment, "Comment added successfully.")
 
-@router.get("/{community_id}", response_description="Comments retrieved")
-async def get_comments_data(request: Request, community_id: str):
-    comments = await retrieve_comments(request.app.database[community_id])
+@router.get("/{community_id}/{board_id}", response_description="Comments retrieved")
+async def get_comments_data(request: Request, community_id: str, board_id: str):
+    comments = await retrieve_comments(request.app.mongodb_client, 
+                                       community_id, board_id)
     comments_list = list()
     if comments:
         for comment in comments:
@@ -42,27 +45,31 @@ async def get_comments_data(request: Request, community_id: str):
 
     return comments
 
-@router.get("/{community_id}/{id}", response_description="Comment data retrieved by comment_id")
-async def get_comment_data(request: Request, community_id: str, id: str):
-    comment = await retrieve_comment_by_id(request.app.database[community_id], id)
+@router.get("/{community_id}/{board_id}/{id}", response_description="Comment data retrieved by comment_id")
+async def get_comment_data(request: Request, community_id: str, board_id: str, id: str):
+    comment = await retrieve_comment_by_id(request.app.mongodb_client, 
+                                           community_id, board_id, id)
     return comment
 
-@router.put("/{community_id}/{id}")
-async def update_comment_data(request: Request, community_id: str, id: str, req: Update_comment_schema = Body(...)):
+@router.put("/{community_id}/{board_id}/{id}")
+async def update_comment_data(request: Request, 
+                              community_id: str, board_id: str, id: str, 
+                              req: Update_comment_schema = Body(...)):
     comment = {k: v for k, v in req.dict().items() if v is not None}
 
     if len(comment) >= 1:
-        update_result = await update_comment(request.app.database[community_id], id, comment)
-        print(update_result.modified_count,flush=True)
+        update_result = await update_comment(request.app.mongodb_client, 
+                                             community_id, board_id, id, comment)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
                 "An error occurred",
                 status.HTTP_404_NOT_FOUND,
-                f"Book with ID {id} not found"
+                f"Comment ID - {id} not found"
             )
 
     if (
-        existing_comment := await retrieve_comment_by_id(request.app.database[community_id], id)
+        existing_comment := await retrieve_comment_by_id(request.app.mongodb_client, 
+                                                         community_id, board_id, id)
     ) is not None:
         return ResponseModel(existing_comment, "Comment updated successfully.")
 
@@ -73,9 +80,11 @@ async def update_comment_data(request: Request, community_id: str, id: str, req:
     )
 
 
-@router.delete("/{community_id}/{id}")
-async def delete_comment_data(request: Request, community_id: str, id: str):
-    deleted_comment = await delete_comment(request.app.database[community_id], id)
+@router.delete("/{community_id}/{board_id}/{id}")
+async def delete_comment_data(request: Request, 
+                              community_id: str, board_id: str, id: str):
+    deleted_comment = await delete_comment(request.app.mongodb_client, 
+                                           community_id, board_id, id)
     if deleted_comment:
         return ResponseModel(
             "Comment with ID: {} name delete is successful".format(id),

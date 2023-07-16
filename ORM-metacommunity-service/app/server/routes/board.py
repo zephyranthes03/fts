@@ -24,14 +24,16 @@ from app.server.schemas.board import (
 
 router = APIRouter()
 
-@router.post("/", response_description="Board data added into the database")
-async def add_board_data(request: Request, board: Board_schema = Body(...)):
+@router.post("/{community_id}", response_description="Board data added into the database")
+async def add_board_data(request: Request, community_id: str, board: Board_schema = Body(...)):
+    print(community_id,flush=True)
     board = jsonable_encoder(board)
+    print(board,flush=True)
     new_board = await add_board(request.app.database['boards'], board)
     return ResponseModel(new_board, "Board added successfully.")
 
-@router.get("/", response_description="Boards retrieved")
-async def get_boards_data(request: Request):
+@router.get("/{community_id}", response_description="Boards retrieved")
+async def get_boards_data(request: Request, community_id: str):
     boards = await retrieve_boards(request.app.database['boards'])
     boards_list = list()
     if boards:
@@ -42,13 +44,13 @@ async def get_boards_data(request: Request):
 
     return boards
 
-@router.get("/{id}", response_description="Board data retrieved by board_id")
-async def get_board_data(request: Request, id: str):
+@router.get("/{community_id}/{id}", response_description="Board data retrieved by board_id")
+async def get_board_data(request: Request, community_id: str, id: str):
     board = await retrieve_board_by_id(request.app.database['boards'], id)
     return board
 
-@router.put("/{id}")
-async def update_board_data(request: Request, id: str, req: Update_board_schema = Body(...)):
+@router.put("/{community_id}/{id}")
+async def update_board_data(request: Request, community_id: str, id: str, req: Update_board_schema = Body(...)):
     board = {k: v for k, v in req.dict().items() if v is not None}
 
     if len(board) >= 1:
@@ -73,8 +75,8 @@ async def update_board_data(request: Request, id: str, req: Update_board_schema 
     )
 
 
-@router.delete("/{id}")
-async def delete_board_data(request: Request, id: str):
+@router.delete("/{community_id}/{id}")
+async def delete_board_data(request: Request, community_id: str, id: str):
     deleted_board = await delete_board(request.app.database['boards'], id)
     if deleted_board:
         return ResponseModel(

@@ -46,7 +46,7 @@ def startup_db_client():
     print(f"MongoDB is Ready", flush=True)
 
     app.mongodb_client = MongoClient(settings.DATABASE_URI)
-    app.database = app.mongodb_client[settings.DATABASE_COMMENT]
+    # app.database = app.mongodb_client[settings.DATABASE_COMMENT]
 
 @app.on_event("shutdown")
 def shutdown_db_client():

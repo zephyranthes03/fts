@@ -8,7 +8,7 @@ from app.config.config import settings
 class Comment_schema(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     post_id: str = Field(...)
-    comment_id: str = Field(...)
+    comment_re_id: str = Field(...)
     content: str = Field(...)
     create_date: str = Field(...)
     like: list = Field(...)
@@ -20,7 +20,7 @@ class Comment_schema(BaseModel):
         schema_extra = {
             "example": {
                 "post_id": "066de609-b04a-b46c-4b30-32537c7f1f6e",
-                "comment_id": "066de609-4b30-4b30-b04a-32537c7f1f6e",
+                "comment_re_id": "066de609-4b30-4b30-b04a-32537c7f1f6e",
                 "content": "content",
                 "create_date": "2017-10-13T10:53:53Z",
                 "like": ["066de609-b04a-4b30-b46c-32537c7f1f6e"],
@@ -29,7 +29,7 @@ class Comment_schema(BaseModel):
             }
         }
 
-class Update_board_schema(BaseModel):
+class Update_comment_schema(BaseModel):
     post_id: str = Field(...)
     comment_id: str = Field(...)
     content: str = Field(...)

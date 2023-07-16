@@ -24,15 +24,18 @@ from app.server.schemas.board import (
 
 router = APIRouter()
 
-@router.post("/{community_id}", response_description="Board data added into the database")
-async def add_board_data(request: Request, community_id: str, board: Board_schema = Body(...)):
+@router.post("/{community_id}/{board_id}", response_description="Board data added into the database")
+async def add_board_data(request: Request, community_id: str, board_id: str, board: Board_schema = Body(...)):
     board = jsonable_encoder(board)
-    new_board = await add_board(request.app.database[community_id], board)
+    new_board = await add_board(request.app.mongodb_client,
+                                community_id, board_id,
+                                board)
     return ResponseModel(new_board, "Board added successfully.")
 
-@router.get("/{community_id}", response_description="Boards retrieved")
-async def get_boards_data(request: Request, community_id: str):
-    boards = await retrieve_boards(request.app.database[community_id])
+@router.get("/{community_id}/{board_id}", response_description="Boards retrieved")
+async def get_boards_data(request: Request, community_id: str, board_id: str):
+    boards = await retrieve_boards(request.app.mongodb_client,
+                                   community_id, board_id)
     boards_list = list()
     if boards:
         for board in boards:
@@ -42,17 +45,21 @@ async def get_boards_data(request: Request, community_id: str):
 
     return boards
 
-@router.get("/{community_id}/{id}", response_description="Board data retrieved by board_id")
-async def get_board_data(request: Request, community_id: str, id: str):
-    board = await retrieve_board_by_id(request.app.database[community_id], id)
+@router.get("/{community_id}/{board_id}/{id}", response_description="Board data retrieved by board_id")
+async def get_board_data(request: Request, community_id: str, board_id: str, id: str):
+    board = await retrieve_board_by_id(request.app.mongodb_client,
+                                       community_id, board_id,
+                                       id)
     return board
 
-@router.put("/{community_id}/{id}")
-async def update_board_data(request: Request, community_id: str, id: str, req: Update_board_schema = Body(...)):
+@router.put("/{community_id}/{board_id}/{id}")
+async def update_board_data(request: Request, community_id: str, board_id: str, id: str, req: Update_board_schema = Body(...)):
     board = {k: v for k, v in req.dict().items() if v is not None}
 
     if len(board) >= 1:
-        update_result = await update_board(request.app.database[community_id], id, board)
+        update_result = await update_board(request.app.mongodb_client,
+                                           community_id, board_id,
+                                           id, board)
         print(update_result.modified_count,flush=True)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
@@ -62,7 +69,8 @@ async def update_board_data(request: Request, community_id: str, id: str, req: U
             )
 
     if (
-        existing_board := await retrieve_board_by_id(request.app.database[community_id], id)
+        existing_board := await retrieve_board_by_id(request.app.mongodb_client,
+                                                     community_id, board_id, id)
     ) is not None:
         return ResponseModel(existing_board, "Board updated successfully.")
 
@@ -73,9 +81,11 @@ async def update_board_data(request: Request, community_id: str, id: str, req: U
     )
 
 
-@router.delete("/{community_id}/{id}")
-async def delete_board_data(request: Request, community_id: str, id: str):
-    deleted_board = await delete_board(request.app.database[community_id], id)
+@router.delete("/{community_id}/{board_id}/{id}")
+async def delete_board_data(request: Request, community_id: str, board_id: str, id: str):
+    deleted_board = await delete_board(request.app.mongodb_client,
+                                       community_id, board_id,
+                                       id)
     if deleted_board:
         return ResponseModel(
             "Board with ID: {} name delete is successful".format(id),

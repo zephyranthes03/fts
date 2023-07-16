@@ -24,7 +24,7 @@ class Board_schema(BaseModel):
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
-                "re_id": None,
+                "re_id": "",
                 "title": "title",
                 "content": "content",
                 "create_date": "2017-10-13T10:53:53Z",
@@ -55,7 +55,7 @@ class Update_board_schema(BaseModel):
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
-                "re_id": None,
+                "re_id": "",
                 "title": "title",
                 "content": "content",
                 "create_date": "2017-10-13T10:53:53Z",
