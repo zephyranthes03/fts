@@ -21,10 +21,10 @@ async def add_community(community:dict) -> dict:
                 r = await client.post(f'{os.getenv("ORM_METACOMMUNITY_SERVICE")}/community/', json=community)
                 data = r.json() 
                 t1_stop = process_time()
-                print("Elapsed time:", t1_stop, t1_start) 
+                print("Elapsed time:", t1_stop, t1_start)
                 print("Elapsed time during the whole program in seconds:",
                                                     t1_stop-t1_start)
-                return {'community': community['community'] }
+                return {'community': community['name'] }
                 
             else:
                 return {"error": "Diagnosis already exist!"}

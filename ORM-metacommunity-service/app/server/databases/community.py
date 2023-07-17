@@ -23,7 +23,15 @@ async def retrieve_community_by_id(database: Optional[any], id: str): # -> dict:
         {"_id": id}
     )
     return community
-    
+
+# Retrieve a community with a matching station id
+async def retrieve_community_by_name(database: Optional[any], name: str): # -> dict:
+    community = database.find_one(
+        {"name": name}
+    )
+    return community
+
+
 # Add a new community into to the database
 async def add_community(database: Optional[any], community_data: Community_schema ) -> dict:
     new_community = database.insert_one(community_data)

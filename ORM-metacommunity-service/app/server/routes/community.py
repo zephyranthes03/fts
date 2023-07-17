@@ -7,7 +7,8 @@ from app.server.databases.community import (
     delete_community,
     update_community,
     retrieve_communities,
-    retrieve_community_by_id
+    retrieve_community_by_id,
+    retrieve_community_by_name
 )
 from app.server.schemas.community import (
     ErrorResponseModel,
@@ -37,12 +38,17 @@ async def get_communities_data(request: Request):
 
     return communities
 
-@router.get("/{id}", response_description="Community data retrieved by community_id")
+@router.get("/id/{id}", response_description="Community data retrieved by community_id")
 async def get_community_data(request: Request, id: str):
     community = await retrieve_community_by_id(request.app.database['communities'], id)
     return community
 
-@router.put("/{id}")
+@router.get("/name/{name}", response_description="Community data retrieved by community name")
+async def get_community_data(request: Request, name: str):
+    community = await retrieve_community_by_name(request.app.database['communities'], name)
+    return community
+
+@router.put("/id/{id}")
 async def update_community_data(request: Request, id: str, req: Update_community_schema = Body(...)):
     community = {k: v for k, v in req.dict().items() if v is not None}
 
@@ -68,7 +74,7 @@ async def update_community_data(request: Request, id: str, req: Update_community
     )
 
 
-@router.delete("/{id}")
+@router.delete("/id/{id}")
 async def delete_community_data(request: Request, id: str):
     deleted_community = await delete_community(request.app.database['communities'], id)
     if deleted_community:

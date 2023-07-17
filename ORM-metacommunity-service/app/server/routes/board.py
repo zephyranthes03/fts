@@ -10,6 +10,7 @@ from app.server.databases.board import (
     update_board,
     retrieve_boards,
     retrieve_board_by_id,
+    retrieve_board_by_name
 )
 
 from app.server.schemas.board import (
@@ -44,12 +45,18 @@ async def get_boards_data(request: Request, community_id: str):
 
     return boards
 
-@router.get("/{community_id}/{id}", response_description="Board data retrieved by board_id")
+@router.get("/{community_id}/id/{id}", response_description="Board data retrieved by board_id")
 async def get_board_data(request: Request, community_id: str, id: str):
     board = await retrieve_board_by_id(request.app.database['boards'], id)
     return board
 
-@router.put("/{community_id}/{id}")
+@router.get("/{community_id}/name/{name}", response_description="Board data retrieved by board name field")
+async def get_board_data(request: Request, community_id: str, name: str):
+    board = await retrieve_board_by_name(request.app.database['boards'], name)
+    return board
+
+
+@router.put("/{community_id}/id/{id}")
 async def update_board_data(request: Request, community_id: str, id: str, req: Update_board_schema = Body(...)):
     board = {k: v for k, v in req.dict().items() if v is not None}
 
@@ -75,7 +82,7 @@ async def update_board_data(request: Request, community_id: str, id: str, req: U
     )
 
 
-@router.delete("/{community_id}/{id}")
+@router.delete("/{community_id}/id/{id}")
 async def delete_board_data(request: Request, community_id: str, id: str):
     deleted_board = await delete_board(request.app.database['boards'], id)
     if deleted_board:

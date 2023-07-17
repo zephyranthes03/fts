@@ -23,7 +23,15 @@ async def retrieve_board_by_id(database: Optional[any], id: str): # -> dict:
         {"_id": id}
     )
     return board
-    
+
+# Retrieve a board with a matching station name
+async def retrieve_board_by_name(database: Optional[any], name: str): # -> dict:
+    board = database.find_one(
+        {"name": name}
+    )
+    return board
+
+
 # Add a new board into to the database
 async def add_board(database: Optional[any], board_data: Board_schema ) -> dict:
     new_board = database.insert_one(board_data)
