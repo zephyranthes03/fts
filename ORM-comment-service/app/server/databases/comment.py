@@ -12,13 +12,20 @@ from app.server.schemas.comment import (
 )
 
 # Retrieve all comments present in the database
-async def retrieve_comments(mongodb_client: Optional[any], community_id: str, board_id: str) -> list:
+async def retrieve_comments(mongodb_client: Optional[any], community_id: str, board_id: str,
+                          page: int = 1, size: int = 10, search_keyword: str = "") -> list:
     database = mongodb_client[community_id]
     collection = database[board_id]
 
-    comments = list(collection.find())
+    comments = {}
+    if search_keyword:
+        comments = list(collection.find({},{
+            { "content": {'$regex': f".*search_keyword.*", "$options" :"i"}}}
+            ).skip((page - 1) * size).limit(size))
+    else:
+        comments = list(collection.find({}).skip((page - 1) * size).limit(size))
     return comments
-
+                            
 
 # Retrieve a comment with a matching station id
 async def retrieve_comment_by_id(mongodb_client: Optional[any], community_id: str, board_id: str, id: str): # -> dict:

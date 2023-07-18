@@ -33,9 +33,11 @@ async def add_comment_data(request: Request, community_id: str, board_id: str,
     return ResponseModel(new_comment, "Comment added successfully.")
 
 @router.get("/{community_id}/{board_id}", response_description="Comments retrieved")
-async def get_comments_data(request: Request, community_id: str, board_id: str):
+async def get_comments_data(request: Request, community_id: str, board_id: str,
+                          page: int = 1, size: int = 10, search_keyword: str = ""):
     comments = await retrieve_comments(request.app.mongodb_client, 
-                                       community_id, board_id)
+                                       community_id, board_id,
+                                       page, size, search_keyword)
     comments_list = list()
     if comments:
         for comment in comments:

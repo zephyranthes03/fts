@@ -33,9 +33,11 @@ async def add_board_data(request: Request, community_id: str, board_id: str, boa
     return ResponseModel(new_board, "Board added successfully.")
 
 @router.get("/{community_id}/{board_id}", response_description="Boards retrieved")
-async def get_boards_data(request: Request, community_id: str, board_id: str):
+async def get_boards_data(request: Request, community_id: str, board_id: str,
+                          page: int = 1, size: int = 10, search_keyword: str = ""):
     boards = await retrieve_boards(request.app.mongodb_client,
-                                   community_id, board_id)
+                                   community_id, board_id,
+                                   page, size, search_keyword)
     boards_list = list()
     if boards:
         for board in boards:

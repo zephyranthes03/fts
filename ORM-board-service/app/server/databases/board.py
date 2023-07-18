@@ -15,13 +15,20 @@ from app.server.schemas.board import (
 # pagenation 
 
 async def retrieve_boards(mongodb_client: Optional[any], 
-                          community_id: str, board_id: str) -> list:
+                          community_id: str, board_id: str,
+                          page: int = 1, size: int = 10, search_keyword: str = "") -> list:
     database = mongodb_client[community_id]
     collection = database[board_id]
 
-    boards = list(collection.find())
+    boards = {}
+    if search_keyword:
+        boards = list(collection.find({},{"$or":[
+            { "title": {'$regex': f".*search_keyword.*", "$options" :"i"}},
+            { "content": {'$regex': f".*search_keyword.*", "$options" :"i"}}]}
+            ).skip((page - 1) * size).limit(size))
+    else:
+        boards = list(collection.find({}).skip((page - 1) * size).limit(size))
     return boards
-
 
 # Retrieve a board with a matching station id
 async def retrieve_board_by_id(mongodb_client: Optional[any], 
