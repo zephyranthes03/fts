@@ -41,7 +41,7 @@ from app.server.schemas.community import (
 router = APIRouter()
 
 
-@router.post("/", response_description="Communiy data folder added into the database")
+@router.post("/", response_description="Community data folder added into the database")
 async def add_community_data(community: Community_schema = Body(...), dependencies:dict=Depends(verify_token)):
     community = jsonable_encoder(community)
     new_community = await add_community(community)
@@ -51,8 +51,7 @@ async def add_community_data(community: Community_schema = Body(...), dependenci
             500,
             new_community.get('message', None)
         )
-    return ResponseModel(new_community, "Communiy added successfully.")
-
+    return ResponseModel(new_community, "Community added successfully.")
 
 
 @router.get("/", response_description="Communites retrieved")
@@ -84,8 +83,8 @@ async def update_community_data(id: str, req: Update_community_schema = Body(...
     updated_community = await update_community(id, community)
     if 'data' in updated_community:
         return ResponseModel(
-            "Communiy with ID: {} name update is successful".format(id),
-            "Communiy name updated successfully",
+            "Community with ID: {} name update is successful".format(id),
+            "Community name updated successfully",
         )
     return ErrorResponseModel(
         "An error occurred",
@@ -93,7 +92,7 @@ async def update_community_data(id: str, req: Update_community_schema = Body(...
         "There was an error updating the community data.",
     )
 
-@router.delete("/id/{id}", response_description="Communiy data deleted from the database")
+@router.delete("/id/{id}", response_description="Community data deleted from the database")
 async def delete_community_data(id:str, dependencies:dict=Depends(verify_token)):
     deleted_community = await delete_community(id)
     if deleted_community == True:

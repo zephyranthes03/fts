@@ -10,6 +10,7 @@ from app.server.databases.member import (
     update_member,
     retrieve_members,
     retrieve_member_by_id,
+    retrieve_member_by_name
 )
 
 from app.server.schemas.member import (
@@ -42,12 +43,18 @@ async def get_members_data(request: Request, community_id: str):
 
     return members
 
-@router.get("/{community_id}/{id}", response_description="Member data retrieved by member_id")
+@router.get("/{community_id}/id/{id}", response_description="Member data retrieved by member_id")
 async def get_member_data(request: Request, community_id: str, id: str):
     member = await retrieve_member_by_id(request.app.database[community_id], id)
     return member
 
-@router.put("/{community_id}/{id}")
+@router.get("/{community_id}/name/{name}", response_description="Member data retrieved by member_id")
+async def get_member_data(request: Request, community_id: str, name: str):
+    member = await retrieve_member_by_name(request.app.database[community_id], name)
+    return member
+
+
+@router.put("/{community_id}/id/{id}")
 async def update_member_data(request: Request, community_id: str, id: str, req: Update_member_schema = Body(...)):
     member = {k: v for k, v in req.dict().items() if v is not None}
 
@@ -73,7 +80,7 @@ async def update_member_data(request: Request, community_id: str, id: str, req: 
     )
 
 
-@router.delete("/{community_id}/{id}")
+@router.delete("/{community_id}/id/{id}")
 async def delete_member_data(request: Request, community_id: str, id: str):
     deleted_member = await delete_member(request.app.database[community_id], id)
     if deleted_member:

@@ -23,7 +23,16 @@ async def retrieve_member_by_id(database: Optional[any], id: str): # -> dict:
         {"_id": id}
     )
     return member
-    
+
+
+# Retrieve a member with a matching station name
+async def retrieve_member_by_name(database: Optional[any], name: str): # -> dict:
+    member = database.find_one(
+        {"name": name}
+    )
+    return member
+
+
 # Add a new member into to the database
 async def add_member(database: Optional[any], member_data: Member_schema ) -> dict:
     new_member = database.insert_one(member_data)

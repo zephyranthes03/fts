@@ -3,7 +3,6 @@ from sqlalchemy.orm import relationship
 
 from pydantic import BaseModel
 
-
 class Board(BaseModel):
     re_id = Column(String(64))
     title = Column(String(512))
