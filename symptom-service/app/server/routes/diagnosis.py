@@ -42,7 +42,7 @@ router = APIRouter()
 
 
 @router.post("/", response_description="Diagnosis data folder added into the database")
-async def add_diagnosis_data(diagnosis: Diagnosis_schema = Body(...), dependencies:dict=Depends(verify_token)):
+async def add_diagnosis_data(diagnosis: Diagnosis_schema = Body(...)): #, dependencies:dict=Depends(verify_token)):
     diagnosis = jsonable_encoder(diagnosis)
     new_diagnosis = await add_diagnosis(diagnosis)
     if new_diagnosis.get('error', None):
@@ -56,28 +56,28 @@ async def add_diagnosis_data(diagnosis: Diagnosis_schema = Body(...), dependenci
 
 
 @router.get("/", response_description="Diagnosises retrieved")
-async def get_diagnosises(dependencies:dict=Depends(verify_token)):
+async def get_diagnosises(): # dependencies:dict=Depends(verify_token)):
     diagnosises = await read_diagnosises()
     if diagnosises:
         return ResponseModel(diagnosises, "Diagnosises data statistic retrieved successfully")
     return ResponseModel(diagnosises, "Empty list returned")
 
 @router.get("/id/{id}", response_description="Diagnosises retrieved")
-async def get_diagnosis_by_id(id:str, dependencies:dict=Depends(verify_token)):
+async def get_diagnosis_by_id(id:str): #, dependencies:dict=Depends(verify_token)):
     diagnosises = await read_diagnosis_by_id(id)
     if diagnosises:
         return ResponseModel(diagnosises, "Diagnosises data statistic retrieved successfully")
     return ResponseModel(diagnosises, "Empty list returned")
 
 @router.get("/name/{name}", response_description="Diagnosises retrieved")
-async def get_diagnosis_by_name(name:str, dependencies:dict=Depends(verify_token)):
+async def get_diagnosis_by_name(name:str): #, dependencies:dict=Depends(verify_token)):
     diagnosises = await read_diagnosis_by_name(name)
     if diagnosises:
         return ResponseModel(diagnosises, "Diagnosises data statistic retrieved successfully")
     return ResponseModel(diagnosises, "Empty list returned")
 
 @router.put("/id/{id}")
-async def update_diagnosis_data(id: str, req: Update_diagnosis_schema = Body(...), dependencies:dict=Depends(verify_token)):
+async def update_diagnosis_data(id: str, req: Update_diagnosis_schema = Body(...)): #, dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     print(req,flush=True)
     diagnosis = jsonable_encoder(req)
@@ -94,7 +94,7 @@ async def update_diagnosis_data(id: str, req: Update_diagnosis_schema = Body(...
     )
 
 @router.delete("/id/{id}", response_description="Diagnosis data deleted from the database")
-async def delete_diagnosis_data(id:str, dependencies:dict=Depends(verify_token)):
+async def delete_diagnosis_data(id:str): #, dependencies:dict=Depends(verify_token)):
     deleted_diagnosis = await delete_diagnosis(id)
     if deleted_diagnosis == True:
         return ResponseModel([], "Database is Deleted")
