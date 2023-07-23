@@ -9,3 +9,4 @@ DeepImageSearch
 python-multipart
 bcrypt
 redis
+Pillow
