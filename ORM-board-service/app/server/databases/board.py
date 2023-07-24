@@ -18,7 +18,7 @@ async def retrieve_boards(mongodb_client: Optional[any],
                           community_id: str, board_id: str,
                           page: int = 1, size: int = 10, search_keyword: str = "") -> list:
     database = mongodb_client[community_id]
-    collection = database[board_id]
+    collection = database[f"board_{board_id}"]
 
     boards = {}
     if search_keyword:
@@ -34,7 +34,7 @@ async def retrieve_boards(mongodb_client: Optional[any],
 async def retrieve_board_by_id(mongodb_client: Optional[any], 
                                community_id: str, board_id: str, id: str): # -> dict:
     database = mongodb_client[community_id]
-    collection = database[board_id]
+    collection = database[f"board_{board_id}"]
 
     board = collection.find_one(
         {"_id": id}
@@ -46,7 +46,7 @@ async def add_board(mongodb_client: Optional[any],
                     community_id: str, board_id: str, board_data: Board_schema ) -> dict:
 
     database = mongodb_client[community_id]
-    collection = database[board_id]
+    collection = database[f"board_{board_id}"]
 
     new_board = collection.insert_one(board_data)
     created_board = collection.find_one(
@@ -61,7 +61,7 @@ async def update_board(mongodb_client: Optional[any],
                        board_data: Update_board_schema) -> dict:
 
     database = mongodb_client[community_id]
-    collection = database[board_id]
+    collection = database[f"board_{board_id}"]
 
     update_result = collection.update_one(
         {"_id": id}, {"$set": board_data}
@@ -74,7 +74,7 @@ async def delete_board(mongodb_client: Optional[any],
                        community_id: str, board_id: str, id: str) -> int:
 
     database = mongodb_client[community_id]
-    collection = database[board_id]
+    collection = database[f"board_{board_id}"]
 
     delete_result = collection.delete_one({"_id": id})
     print(delete_result,flush=True)

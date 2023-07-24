@@ -15,7 +15,7 @@ from app.server.schemas.comment import (
 async def retrieve_comments(mongodb_client: Optional[any], community_id: str, board_id: str,
                           page: int = 1, size: int = 10, search_keyword: str = "") -> list:
     database = mongodb_client[community_id]
-    collection = database[board_id]
+    collection = database[f"comment_{board_id}"]
 
     comments = {}
     if search_keyword:
@@ -30,7 +30,7 @@ async def retrieve_comments(mongodb_client: Optional[any], community_id: str, bo
 # Retrieve a comment with a matching station id
 async def retrieve_comment_by_id(mongodb_client: Optional[any], community_id: str, board_id: str, id: str): # -> dict:
     database = mongodb_client[community_id]
-    collection = database[board_id]
+    collection = database[f"comment_{board_id}"]
 
     comment = collection.find_one(
         {"_id": id}
@@ -40,7 +40,7 @@ async def retrieve_comment_by_id(mongodb_client: Optional[any], community_id: st
 # Add a new comment into to the database
 async def add_comment(mongodb_client: Optional[any], community_id: str, board_id: str, comment_data: Comment_schema ) -> dict:
     database = mongodb_client[community_id]
-    collection = database[board_id]
+    collection = database[f"comment_{board_id}"]
 
     new_comment = collection.insert_one(comment_data)
     created_comment = collection.find_one(
@@ -52,7 +52,7 @@ async def add_comment(mongodb_client: Optional[any], community_id: str, board_id
 # Update a comment with a matching ID
 async def update_comment(mongodb_client: Optional[any], community_id: str, board_id: str, id: str, comment_data: Update_comment_schema) -> dict:
     database = mongodb_client[community_id]
-    collection = database[board_id]
+    collection = database[f"comment_{board_id}"]
 
     update_result = collection.update_one(
         {"_id": id}, {"$set": comment_data}
@@ -63,7 +63,7 @@ async def update_comment(mongodb_client: Optional[any], community_id: str, board
 # Delete a comment from the database
 async def delete_comment(mongodb_client: Optional[any], community_id: str, board_id: str, id: str) -> int:
     database = mongodb_client[community_id]
-    collection = database[board_id]
+    collection = database[f"comment_{board_id}"]
 
     delete_result = collection.delete_one({"_id": id})
     print(delete_result,flush=True)
