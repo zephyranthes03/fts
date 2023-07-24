@@ -77,6 +77,6 @@ async def delete_board(mongodb_client: Optional[any],
     collection = database[f"board_{board_id}"]
 
     delete_result = collection.delete_one({"_id": id})
-    print(delete_result,flush=True)
+    # print(delete_result,flush=True)
     return delete_result
 
