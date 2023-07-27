@@ -23,8 +23,8 @@ async def retrieve_boards(mongodb_client: Optional[any],
     boards = {}
     if search_keyword:
         boards = list(collection.find({},{"$or":[
-            { "title": {'$regex': f".*search_keyword.*", "$options" :"i"}},
-            { "content": {'$regex': f".*search_keyword.*", "$options" :"i"}}]}
+            { "title": {'$regex': f".*{search_keyword}.*", "$options" :"i"}},
+            { "content": {'$regex': f".*{search_keyword}.*", "$options" :"i"}}]}
             ).skip((page - 1) * size).limit(size))
     else:
         boards = list(collection.find({}).skip((page - 1) * size).limit(size))

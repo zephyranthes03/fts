@@ -13,6 +13,7 @@ class UserSchema(BaseModel):
     message_acceptance: str = Field(...)
     user_type: str = Field(...)
     expire_time: int = Field(...)
+    message: bool = Field(...)
 
     class Config:
         schema_extra = {
@@ -26,7 +27,8 @@ class UserSchema(BaseModel):
                 "email_acceptance": "all",
                 "message_acceptance": "community|system",
                 "user_type": "user",
-                "expire_time": 30
+                "expire_time": 30,
+                "message": False
             }
         }
 
@@ -40,7 +42,7 @@ class UpdateUserModel(BaseModel):
     message_acceptance: Optional[str]
     user_type: Optional[str]
     expire_time: Optional[int]
-
+    message: Optional[bool]
 
     class Config:
         schema_extra = {
@@ -53,7 +55,8 @@ class UpdateUserModel(BaseModel):
                 "email_acceptance": "all",
                 "message_acceptance": "community|system",
                 "user_type": "user",
-                "expire_time": 30
+                "expire_time": 30,
+                "message": True
             }
         }
         

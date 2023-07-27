@@ -41,10 +41,11 @@ from app.server.schemas.member import (
 router = APIRouter()
 
 
-@router.post("/", response_description="Member data folder added into the database")
-async def add_member_data(member: Member_schema = Body(...), dependencies:dict=Depends(verify_token)):
+
+@router.post("/{community_id}", response_description="Member data folder added into the database")
+async def add_member_data(community_id:str, member: Member_schema = Body(...), dependencies:dict=Depends(verify_token)):
     member = jsonable_encoder(member)
-    new_member = await add_member(member)
+    new_member = await add_member(community_id, member)
     if new_member.get('error', None):
         return ErrorResponseModel(
             new_member.get('error', None),
@@ -53,34 +54,33 @@ async def add_member_data(member: Member_schema = Body(...), dependencies:dict=D
         )
     return ResponseModel(new_member, "Member added successfully.")
 
-
-@router.get("/", response_description="Communites retrieved")
-async def get_members(dependencies:dict=Depends(verify_token)):
-    members = await read_members()
+@router.get("/{community_id}", response_description="Communites retrieved")
+async def get_members(community_id:str, dependencies:dict=Depends(verify_token)):
+    members = await read_members(community_id)
     if members:
         return ResponseModel(members, "Communites data statistic retrieved successfully")
     return ResponseModel(members, "Empty list returned")
 
-@router.get("/id/{id}", response_description="Communites retrieved")
-async def get_member_by_id(id:str, dependencies:dict=Depends(verify_token)):
+@router.get("/{community_id}/id/{id}", response_description="Communites retrieved")
+async def get_member_by_id(community_id:str, id:str, dependencies:dict=Depends(verify_token)):
     members = await read_member_by_id(id)
     if members:
         return ResponseModel(members, "Communites data statistic retrieved successfully")
     return ResponseModel(members, "Empty list returned")
 
-@router.get("/name/{name}", response_description="Communites retrieved")
-async def get_member_by_name(name:str, dependencies:dict=Depends(verify_token)):
-    members = await read_member_by_name(name)
+@router.get("/{community_id}/name/{name}", response_description="Communites retrieved")
+async def get_member_by_name(community_id:str, name:str, dependencies:dict=Depends(verify_token)):
+    members = await read_member_by_name(community_id, name)
     if members:
         return ResponseModel(members, "Communites data statistic retrieved successfully")
     return ResponseModel(members, "Empty list returned")
 
-@router.put("/id/{id}")
-async def update_member_data(id: str, req: Update_member_schema = Body(...), dependencies:dict=Depends(verify_token)):
+@router.put("/{community_id}/id/{id}")
+async def update_member_data(community_id:str, id: str, req: Update_member_schema = Body(...), dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     print(req,flush=True)
     member = jsonable_encoder(req)
-    updated_member = await update_member(id, member)
+    updated_member = await update_member(community_id, id, member)
     if 'data' in updated_member:
         return ResponseModel(
             "Member with ID: {} name update is successful".format(id),
@@ -92,11 +92,47 @@ async def update_member_data(id: str, req: Update_member_schema = Body(...), dep
         "There was an error updating the member data.",
     )
 
-@router.delete("/id/{id}", response_description="Member data deleted from the database")
-async def delete_member_data(id:str, dependencies:dict=Depends(verify_token)):
-    deleted_member = await delete_member(id)
+@router.delete("/{community_id}/id/{id}", response_description="Member data deleted from the database")
+async def delete_member_data(community_id:str, id:str, dependencies:dict=Depends(verify_token)):
+    deleted_member = await delete_member(community_id, id)
     if deleted_member == True:
         return ResponseModel([], "Database is Deleted")
     return ErrorResponseModel(
         "An error occurred", 404, "Database deletation is failiure"
     )
+
+@router.post("/{community_id}/invite/{member_id}", response_description="Member invitation")
+async def add_member_data(community_id:str, member: Member_schema = Body(...), dependencies:dict=Depends(verify_token)):
+    member = jsonable_encoder(member)
+    new_member = await add_member(community_id, member)
+    if new_member.get('error', None):
+        return ErrorResponseModel(
+            new_member.get('error', None),
+            500,
+            new_member.get('message', None)
+        )
+    return ResponseModel(new_member, "Member added successfully.")
+
+@router.post("/{community_id}/request", response_description="Member apply to the community")
+async def add_member_data(community_id:str, member: Member_schema = Body(...), dependencies:dict=Depends(verify_token)):
+    member = jsonable_encoder(member)
+    new_member = await add_member(community_id, member)
+    if new_member.get('error', None):
+        return ErrorResponseModel(
+            new_member.get('error', None),
+            500,
+            new_member.get('message', None)
+        )
+    return ResponseModel(new_member, "Member added successfully.")
+
+@router.post("/{community_id}/response", response_description="Member application permit from the community admin")
+async def add_member_data(community_id:str, member: Member_schema = Body(...), dependencies:dict=Depends(verify_token)):
+    member = jsonable_encoder(member)
+    new_member = await add_member(community_id, member)
+    if new_member.get('error', None):
+        return ErrorResponseModel(
+            new_member.get('error', None),
+            500,
+            new_member.get('message', None)
+        )
+    return ResponseModel(new_member, "Member added successfully.")
