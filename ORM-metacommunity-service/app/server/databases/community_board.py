@@ -6,7 +6,7 @@ from typing import List, Optional
 # import databases
 # from fastapi import FastAPI
 
-from app.server.schemas.board import (
+from app.server.schemas.community_board import (
     Community_board_schema,
     Update_community_board_schema,
 )

@@ -7,7 +7,7 @@ from pymongo.errors import ServerSelectionTimeoutError
 
 from app.config.config import settings
 
-from app.server.routes.board import router as BoardRouter
+from app.server.routes.community_board import router as BoardRouter
 from app.server.routes.community import router as CommunityRouter
 
 def include_router(app):
