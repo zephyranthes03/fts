@@ -15,33 +15,42 @@ from app.server.schemas.log_community import (
 # pagenation 
 
 async def retrieve_Log_communities(mongodb_client: Optional[any], 
-                          community_id: str, user_id: str,
+                          community_id: str, 
                           page: int = 1, size: int = 10, search_keyword: str = "") -> list:
     collection_name = datetime.strftime(datetime.now(), '%Y-%m')  
     database = mongodb_client[f"log_{community_id}"]
     collection = database[collection_name]
 
-    Log_communities = {}
-    if search_keyword:
-        Log_communities = list(collection.find({},{"$or":[
-            { "action": {'$regex': f".*search_keyword.*", "$options" :"i"}},
-            { "user_id": {'$regex': f".*search_keyword.*", "$options" :"i"}}]}
-            ).skip((page - 1) * size).limit(size))
-    else:
-        Log_communities = list(collection.find({}).skip((page - 1) * size).limit(size))
+    Log_communities = list(collection.find({}).skip((page - 1) * size).limit(size))
     return Log_communities
 
 # Retrieve a log_community with a matching station id
-async def retrieve_log_community_by_id(mongodb_client: Optional[any], 
-                               community_id: str, user_id: str, id: str): # -> dict:
+async def retrieve_log_community_by_user_id(mongodb_client: Optional[any], 
+                               community_id: str, user_id: str,
+                               page: int = 1, size: int = 10) -> list: 
     collection_name = datetime.strftime(datetime.now(), '%Y-%m')  
     database = mongodb_client[f"log_{community_id}"]
     collection = database[collection_name]
 
-    log_community = collection.find_one(
-        {"_id": id}
-    )
-    return log_community
+    Log_communities = list(collection.find({},{
+        { "user_id": {user_id}}}
+        ).skip((page - 1) * size).limit(size))
+
+    return Log_communities
+
+# Retrieve a log_community with a matching station id
+async def retrieve_log_community_by_id(mongodb_client: Optional[any], 
+                               community_id: str, id: str,
+                               page: int = 1, size: int = 10) -> list: 
+    collection_name = datetime.strftime(datetime.now(), '%Y-%m')  
+    database = mongodb_client[f"log_{community_id}"]
+    collection = database[collection_name]
+
+    Log_communities = list(collection.find({},{
+        { "_id": {id}}}
+        ).skip((page - 1) * size).limit(size))
+
+    return Log_communities
     
 # Add a new log_community into to the database
 async def add_log_community(mongodb_client: Optional[any], 
@@ -60,7 +69,7 @@ async def add_log_community(mongodb_client: Optional[any],
 
 # Update a log_community with a matching ID
 async def update_log_community(mongodb_client: Optional[any],
-                       community_id: str, user_id: str, id: str, 
+                       community_id: str, id: str, 
                        log_community_data: Update_log_community_schema) -> dict:
 
     collection_name = datetime.strftime(datetime.now(), '%Y-%m')  

@@ -210,6 +210,28 @@ services:
     depends_on:
       - mongodb
 
+  orm-log-service:
+    restart: always
+    build:
+      context: ./ORM-log-service
+      dockerfile: Dockerfile
+    container_name: orm-log-service
+    volumes:
+      - ./ORM-log-service:/app
+    ports:
+      - "${ORM_LOG_SERVICE_PORT}:${ORM_LOG_SERVICE_PORT}"
+    env_file:
+      - .env
+    environment:
+      - MONGODB_URL=${MONGODB_URL}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - COMMUNITY_DATABASE_COMMENT=${COMMUNITY_DATABASE_COMMENT}
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+
   redis:
     image: redis:alpine
     command: redis-server --port 6379

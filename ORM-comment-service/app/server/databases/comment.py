@@ -20,7 +20,7 @@ async def retrieve_comments(mongodb_client: Optional[any], community_id: str, bo
     comments = {}
     if search_keyword:
         comments = list(collection.find({},{
-            { "content": {'$regex': f".*search_keyword.*", "$options" :"i"}}}
+            { "content": {'$regex': f".*{search_keyword}.*", "$options" :"i"}}}
             ).skip((page - 1) * size).limit(size))
     else:
         comments = list(collection.find({}).skip((page - 1) * size).limit(size))

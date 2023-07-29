@@ -10,6 +10,7 @@ from app.server.databases.log_community import (
     update_log_community,
     retrieve_Log_communities,
     retrieve_log_community_by_id,
+    retrieve_log_community_by_user_id,
 )
 
 from app.server.schemas.log_community import (
@@ -32,11 +33,11 @@ async def add_log_community_data(request: Request, community_id: str, user_id: s
                                 log_community)
     return ResponseModel(new_log_community, "log_community added successfully.")
 
-@router.get("/{community_id}/{user_id}", response_description="Log_communities retrieved")
-async def get_Log_communities_data(request: Request, community_id: str, user_id: str,
+@router.get("/{community_id}", response_description="Log_communities retrieved")
+async def get_Log_communities_data(request: Request, community_id: str,
                           page: int = 1, size: int = 10, search_keyword: str = ""):
     Log_communities = await retrieve_Log_communities(request.app.mongodb_client,
-                                   community_id, user_id,
+                                   community_id,
                                    page, size, search_keyword)
     Log_communities_list = list()
     if Log_communities:
@@ -47,21 +48,19 @@ async def get_Log_communities_data(request: Request, community_id: str, user_id:
 
     return Log_communities
 
-@router.get("/{community_id}/{user_id}/{id}", response_description="log_community data retrieved by user_id")
-async def get_log_community_data(request: Request, community_id: str, user_id: str, id: str):
-    log_community = await retrieve_log_community_by_id(request.app.mongodb_client,
-                                       community_id, user_id,
-                                       id)
+@router.get("/{community_id}/{user_id}", response_description="log_community data retrieved by user_id")
+async def get_log_community_data(request: Request, community_id: str, user_id: str):
+    log_community = await retrieve_log_community_by_user_id(request.app.mongodb_client,
+                                       community_id, user_id)
     return log_community
 
-@router.put("/{community_id}/{user_id}/{id}")
+@router.put("/{community_id}/{id}")
 async def update_log_community_data(request: Request, community_id: str, user_id: str, id: str, req: Update_log_community_schema = Body(...)):
     log_community = {k: v for k, v in req.dict().items() if v is not None}
 
     if len(log_community) >= 1:
         update_result = await update_log_community(request.app.mongodb_client,
-                                           community_id, user_id,
-                                           id, log_community)
+                                           community_id, id, log_community)
         print(update_result.modified_count,flush=True)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
