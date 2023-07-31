@@ -8,9 +8,11 @@ from pymongo.errors import ServerSelectionTimeoutError
 from app.config.config import settings
 
 from app.server.routes.member import router as MemberRouter
+from app.server.routes.application import router as ApplicationRouter
 
 def include_router(app):
     app.include_router(MemberRouter, tags=["Member"], prefix="/member")
+    app.include_router(ApplicationRouter, tags=["Application"], prefix="/application")
 
 # def configure_static(app):
 #     app.mount("/static", StaticFiles(directory="static"), name="static")

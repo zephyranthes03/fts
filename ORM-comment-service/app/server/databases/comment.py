@@ -12,7 +12,7 @@ from app.server.schemas.comment import (
 )
 
 # Retrieve all comments present in the database
-async def retrieve_comments(mongodb_client: Optional[any], community_id: str, board_id: str,
+async def retrieve_comments(mongodb_client: Optional[any], community_id: str, board_id: str, post_id: str,
                           page: int = 1, size: int = 10, search_keyword: str = "") -> list:
     database = mongodb_client[community_id]
     collection = database[f"comment_{board_id}"]
@@ -26,9 +26,18 @@ async def retrieve_comments(mongodb_client: Optional[any], community_id: str, bo
         comments = list(collection.find({}).skip((page - 1) * size).limit(size))
     return comments
                             
+# Retrieve a comment with a matching station id
+async def retrieve_comment_by_post_id(mongodb_client: Optional[any], community_id: str, board_id: str, post_id: str): # -> dict:
+    database = mongodb_client[community_id]
+    collection = database[f"comment_{board_id}"]
+
+    comment = collection.find_one(
+        {"post_id": post_id}
+    )
+    return comment
 
 # Retrieve a comment with a matching station id
-async def retrieve_comment_by_id(mongodb_client: Optional[any], community_id: str, board_id: str, id: str): # -> dict:
+async def retrieve_comment_by_id(mongodb_client: Optional[any], community_id: str, board_id: str, post_id: str, id: str): # -> dict:
     database = mongodb_client[community_id]
     collection = database[f"comment_{board_id}"]
 
@@ -38,7 +47,7 @@ async def retrieve_comment_by_id(mongodb_client: Optional[any], community_id: st
     return comment
     
 # Add a new comment into to the database
-async def add_comment(mongodb_client: Optional[any], community_id: str, board_id: str, comment_data: Comment_schema ) -> dict:
+async def add_comment(mongodb_client: Optional[any], community_id: str, board_id: str, post_id: str, comment_data: Comment_schema ) -> dict:
     database = mongodb_client[community_id]
     collection = database[f"comment_{board_id}"]
 
@@ -50,7 +59,7 @@ async def add_comment(mongodb_client: Optional[any], community_id: str, board_id
 
 
 # Update a comment with a matching ID
-async def update_comment(mongodb_client: Optional[any], community_id: str, board_id: str, id: str, comment_data: Update_comment_schema) -> dict:
+async def update_comment(mongodb_client: Optional[any], community_id: str, board_id: str, post_id: str, id: str, comment_data: Update_comment_schema) -> dict:
     database = mongodb_client[community_id]
     collection = database[f"comment_{board_id}"]
 
@@ -61,7 +70,7 @@ async def update_comment(mongodb_client: Optional[any], community_id: str, board
 
 
 # Delete a comment from the database
-async def delete_comment(mongodb_client: Optional[any], community_id: str, board_id: str, id: str) -> int:
+async def delete_comment(mongodb_client: Optional[any], community_id: str, board_id: str, post_id: str, id: str) -> int:
     database = mongodb_client[community_id]
     collection = database[f"comment_{board_id}"]
 

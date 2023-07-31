@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 
 from pydantic import BaseModel
 
-class Board(BaseModel):
+class Community_board(BaseModel):
     kind = Column(String(64))
     name = Column(String(256))
     comment = Column(Text)

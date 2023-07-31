@@ -9,14 +9,39 @@ from pydantic import BaseModel
 from fastapi import FastAPI
 
 from app.server.routes.community import router as CommunityRouter
+from app.server.routes.member import router as MemberRouter
+from app.server.routes.application import router as ApplicationRouter
 
-app = FastAPI()
 
-app.include_router(CommunityRouter, tags=["Community"], prefix="/community")
+def include_router(app):
+    app.include_router(CommunityRouter, tags=["Community"], prefix="/community")
+    app.include_router(MemberRouter, tags=["Member"], prefix="/member")
+    app.include_router(ApplicationRouter, tags=["Application"], prefix="/application")
+
+# def configure_static(app):
+#     app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# def create_tables():
+#     print(Base.metadata.tables,flush=True)
+#     if len(Base.metadata.tables)==0:
+#         Base.metadata.create_all(bind=engine)
+
+def start_application():
+    app = FastAPI()
+    include_router(app)
+    # configure_static(app)
+    # create_tables()
+    return app
+
+
+app = start_application()
+
 
 @app.get("/", tags=["health_check"])
 async def read_root():
     return {"message": "Welcome to health check link"}
+
+
 
 @app.on_event("startup")
 async def startup_client():
