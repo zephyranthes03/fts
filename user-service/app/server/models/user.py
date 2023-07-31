@@ -14,6 +14,8 @@ class UserSchema(BaseModel):
     user_type: str = Field(...)
     expire_time: int = Field(...)
     message: bool = Field(...)
+    friend: str = Field(...)
+    survey: str = Field(...)
 
     class Config:
         schema_extra = {
@@ -28,7 +30,10 @@ class UserSchema(BaseModel):
                 "message_acceptance": "community|system",
                 "user_type": "user",
                 "expire_time": 30,
-                "message": False
+                "message": False,
+                "friend": "[]",
+                "permission": "{'survey':'open'}"
+
             }
         }
 
@@ -43,6 +48,8 @@ class UpdateUserModel(BaseModel):
     user_type: Optional[str]
     expire_time: Optional[int]
     message: Optional[bool]
+    friend: Optional[str]
+    permission: Optional[str] # all|close|friend|community ?
 
     class Config:
         schema_extra = {
@@ -56,7 +63,9 @@ class UpdateUserModel(BaseModel):
                 "message_acceptance": "community|system",
                 "user_type": "user",
                 "expire_time": 30,
-                "message": True
+                "message": True,
+                "friend": "[]",
+                "permission": "{'survey':'friend'}"
             }
         }
         
