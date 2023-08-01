@@ -13,9 +13,11 @@ class UserSchema(BaseModel):
     message_acceptance: str = Field(...)
     user_type: str = Field(...)
     expire_time: int = Field(...)
+    last_check_time: dict = Field(...) # 커뮤니티별 마지막 확인 시간 - 나중에 마지막 확인 시간 이후에 등록된 글에 추가 태그(new)를 출력하기 위해 사용
+    interested_tag: list = Field(...)
     message: bool = Field(...)
     friend: str = Field(...)
-    survey: str = Field(...)
+    permission: str = Field(...)
 
     class Config:
         schema_extra = {
@@ -24,15 +26,17 @@ class UserSchema(BaseModel):
                 "email": "john_doe@gmail.com",
                 "password": "test",
                 "create_date": "19850109",
-                "community": "{'acne':{'grade':'user','status':'early'}}",
+                "community": {'acne':{'grade':'user','status':'early'}},
                 "phone": "USC00332098",
                 "email_acceptance": "all",
-                "message_acceptance": "community|system",
+                "message_acceptance": ["community","system"],
                 "user_type": "user",
                 "expire_time": 30,
+                "last_check_time": {'community_id':'2021-01-01T00:00:00Z'},
+                "interested_tag": ['tag1', 'tag2'],
                 "message": False,
-                "friend": "[]",
-                "permission": "{'survey':'open'}"
+                "friend": [],
+                "permission": {'survey':'open'}
 
             }
         }
@@ -47,6 +51,8 @@ class UpdateUserModel(BaseModel):
     message_acceptance: Optional[str]
     user_type: Optional[str]
     expire_time: Optional[int]
+    last_check_time: Optional[dict] # 커뮤니티별 마지막 확인 시간 - 나중에 마지막 확인 시간 이후에 등록된 글에 추가 태그(new)를 출력하기 위해 사용
+    interested_tag: Optional[list]
     message: Optional[bool]
     friend: Optional[str]
     permission: Optional[str] # all|close|friend|community ?
@@ -57,15 +63,18 @@ class UpdateUserModel(BaseModel):
                 "email": "john_doe@gmail.com",
                 "password": "test",
                 "create_date": "19850109",
-                "community": "{'acne':{'grade':'user','status':'early'}}",
+                "community": {'acne':{'grade':'user','status':'early'}},
                 "phone": "USC00332098",
                 "email_acceptance": "all",
-                "message_acceptance": "community|system",
+                "message_acceptance": ["community","system"],
                 "user_type": "user",
                 "expire_time": 30,
+                "last_check_time": {'community_id':'2021-01-01T00:00:00Z'},
+                "interested_tag": ['tag1', 'tag2'],
                 "message": True,
-                "friend": "[]",
-                "permission": "{'survey':'friend'}"
+                "friend": [],
+                "permission": {'survey':'friend'}
+
             }
         }
         

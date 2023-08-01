@@ -11,10 +11,13 @@ class UserSchema(BaseModel):
     phone: str = Field(...)
     email_acceptance: str = Field(...)
     message_acceptance: list = Field(...)
-    user_type: str = Field(...)
+    user_type: str = Field(...) # user, provider, admin
     expire_time: int = Field(...)
     last_check_time: dict = Field(...) # 커뮤니티별 마지막 확인 시간 - 나중에 마지막 확인 시간 이후에 등록된 글에 추가 태그(new)를 출력하기 위해 사용
     interested_tag: list = Field(...)
+    message: bool = Field(...)
+    friend: list = Field(...)
+    permission: dict = Field(...) # all|close|friend|community 
 
     class Config:
         schema_extra = {
@@ -30,7 +33,11 @@ class UserSchema(BaseModel):
                 "user_type": "user",
                 "expire_time": 30,
                 "last_check_time": {'community_id':'2021-01-01T00:00:00Z'},
-                "interested_tag": ['tag1', 'tag2']
+                "interested_tag": ['tag1', 'tag2'],
+                "message": False,
+                "friend": [],
+                "permission": {'survey':'open'}
+
             }
         }
 
@@ -69,6 +76,9 @@ class UpdateUserModel(BaseModel):
     expire_time: Optional[int]
     last_check_time: Optional[dict] # 커뮤니티별 마지막 확인 시간 - 나중에 마지막 확인 시간 이후에 등록된 글에 추가 태그(new)를 출력하기 위해 사용
     interested_tag: Optional[list]
+    message: Optional[bool]
+    friend: Optional[list]
+    permission: Optional[dict] # all|close|friend|community ?
 
     class Config:
         schema_extra = {
@@ -83,7 +93,10 @@ class UpdateUserModel(BaseModel):
                 "user_type": "user",
                 "expire_time": 30,
                 "last_check_time": {'community_id':'2021-01-01T00:00:00Z'},
-                "interested_tag": ['tag1', 'tag2']
+                "interested_tag": ['tag1', 'tag2'],
+                "message": True,
+                "friend": [],
+                "permission": {'survey':'friend'}
             }
         }
 
