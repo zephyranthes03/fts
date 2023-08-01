@@ -55,8 +55,8 @@ async def add_board_data(community_id:str, board_id:str, board: Board_schema = B
     return ResponseModel(new_board, "Board added successfully.")
 
 @router.get("/{community_id}/board/{board_id}", response_description="Communites retrieved")
-async def get_boards(community_id:str, dependencies:dict=Depends(verify_token)):
-    boards = await read_boards(community_id, board_id, board_id:str)
+async def get_boards(community_id:str, board_id:str, dependencies:dict=Depends(verify_token)):
+    boards = await read_boards(community_id, board_id)
     if boards:
         return ResponseModel(boards, "Communites data statistic retrieved successfully")
     return ResponseModel(boards, "Empty list returned")
