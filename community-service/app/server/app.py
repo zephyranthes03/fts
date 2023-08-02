@@ -50,7 +50,11 @@ async def startup_client():
     while redis_flag == False:
         redis_host = os.getenv("REDIS_HOST","redis")
         r = Redis(redis_host, socket_connect_timeout=1) # short timeout for the test
-        redis_flag = r.ping()
+        try:
+            redis_flag = r.ping()
+        except Exception as e:
+            print("Redis ping has error", e, flush=True)
+
         if redis_flag == False:
             print(f"Redis is not Ready yet try again {redis_delay} seconds later", flush=True)
             sleep(redis_delay)
