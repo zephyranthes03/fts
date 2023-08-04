@@ -35,4 +35,4 @@ async def set_password(password):
     password_hash = await generate_password_hash(password)
     return password_hash
 
-    user['user_id'] = str(await check_password_hash(user['user_id']))
+    user['email'] = str(await check_password_hash(user['email']))

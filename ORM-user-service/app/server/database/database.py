@@ -42,16 +42,21 @@ metadata = sqlalchemy.MetaData()
 users = sqlalchemy.Table(
     DATABASE_NAME,
     metadata,
-    sqlalchemy.Column("id", sqlalchemy.String(45), primary_key=True),
-    sqlalchemy.Column("email", sqlalchemy.String(45), primary_key=True),
+    # sqlalchemy.Column("id", sqlalchemy.String(64), primary_key=True),
+    sqlalchemy.Column("email", sqlalchemy.String(64), primary_key=True),
     sqlalchemy.Column("password", sqlalchemy.String(255)),
-    sqlalchemy.Column("create_date", sqlalchemy.Date),
+    sqlalchemy.Column("create_date", sqlalchemy.DateTime),
     sqlalchemy.Column("community", sqlalchemy.Text),
     sqlalchemy.Column("phone", sqlalchemy.String(15)),
     sqlalchemy.Column("email_acceptance", sqlalchemy.String(255)),
     sqlalchemy.Column("message_acceptance", sqlalchemy.String(255)),
     sqlalchemy.Column("user_type", sqlalchemy.String(255)),
     sqlalchemy.Column("expire_time", sqlalchemy.Integer),
+    sqlalchemy.Column("last_check_time", sqlalchemy.Text),
+    sqlalchemy.Column("interested_tag", sqlalchemy.Text),
+    sqlalchemy.Column("message", sqlalchemy.Boolean),
+    sqlalchemy.Column("friend", sqlalchemy.Text),
+    sqlalchemy.Column("permission", sqlalchemy.Text),
     # sqlalchemy.Column("date_convert", sqlalchemy.Date),
 )
 
@@ -59,7 +64,7 @@ metadata.create_all(engine)
 
 class User(BaseModel):
     __tablename__ = DATABASE_NAME
-    id: str
+    # id: str
     email: str
     password: str
     create_date: datetime
@@ -69,6 +74,12 @@ class User(BaseModel):
     message_acceptance: str
     user_type: str
     expire_time: int
+    last_check_time: str
+    interested_tag: str
+    message: bool
+    friend: str
+    permission: str
+
 
 class SocialEmail(BaseModel):
     email: str
@@ -106,10 +117,11 @@ async def retrieve_user_by_id(user_id: str): # -> dict:
 # Retrieve a user with a matching station id
 async def retrieve_user_by_email(email: str): # -> dict:
     with engine.connect() as conn:
-        query = users.select().where(users.c.id==email)
+        query = users.select().where(users.c.email==email)
         result = list()
         for row in conn.execute(query):
             result = list(row)
+        print(result,flush=True)
         return result
 
 # Retrieve a user with a matching social_email
@@ -135,27 +147,43 @@ async def retrieve_user_by_email_password(email: Email): # -> dict:
 # Add a new user into to the database
 async def add_users(user_data: List[User]) -> dict:
     count = 0
+    count_exist = 0
     with engine.connect() as conn:
         for user in user_data:
-            count += 1
-            query = users.insert().values(id=f"{user['id']}",email=f"{user['email']}",password=f"{user['password']}",
-                create_date=user['create_date'],community=user['community'],phone=user['phone'],
-                email_acceptance=user['email_acceptance'], message_acceptance=user['message_acceptance'], 
-                user_type=user['user_type'],expire_time=user['expire_time'])
-            last_record_id = conn.execute(query)
-        conn.commit()
-        return {"Total inserted record": count}
+            exist_field = await retrieve_user_by_email(user_data['email'])
+            if exist_field:
+                count_exist += 1
+            else:
+                count += 1
+            
+                query = users.insert().values(email=f"{user['email']}",password=f"{user['password']}",
+                    create_date=user['create_date'],community=user['community'],phone=user['phone'],
+                    email_acceptance=user['email_acceptance'], message_acceptance=user['message_acceptance'], 
+                    user_type=user['user_type'],expire_time=user['expire_time'],last_check_time=user['last_check_time'],
+                    interested_tag=user['interested_tag'],message=user['message'],friend=user['friend'],permission=user['permission'])
+                last_record_id = conn.execute(query)
+            conn.commit()
+        return {"Total inserted record": count, "Total exist record": count_exist}
 
 # Add a new user into to the database
 async def add_user(user_data: User) -> dict:
-    with engine.connect() as conn:        
-        query = users.insert().values(id=f"{user_data['id']}",email=f"{user_data['email']}",password=f"{user_data['password']}",
+    with engine.connect() as conn:
+        exist_field = await retrieve_user_by_email(user_data['email'])
+        if exist_field:
+            return {"message": "user already exist"}
+        
+        query = users.insert().values(email=f"{user_data['email']}",password=f"{user_data['password']}",
             create_date=user_data['create_date'],community=user_data['community'],phone=user_data['phone'],
             email_acceptance=user_data['email_acceptance'], message_acceptance=user_data['message_acceptance'], 
-            user_type=user_data['user_type'],expire_time=user_data['expire_time'])
+            user_type=user_data['user_type'],expire_time=user_data['expire_time'],last_check_time=user_data['last_check_time'],
+            interested_tag=user_data['interested_tag'],message=user_data['message'],friend=user_data['friend'],
+            permission=user_data['permission'])
         last_record_id = conn.execute(query)
         conn.commit()
-        return {**user_data, "id": last_record_id}
+        print('test',flush=True)
+        print(last_record_id,flush=True)
+        print('test',flush=True)
+        return {**user_data, "email": last_record_id}
 
 
 # Update a user with a matching ID
@@ -164,11 +192,14 @@ async def update_user(user_id: str, user_data: User) -> dict:
     if len(user_data) < 1:
         return False
     with engine.connect() as conn:
-        query = users.update().where(users.c.id==user_id).values(email=f"{user_data['email']}",password=f"{user_data['password']}",
+        query = users.update().where(users.c.email==user_id).values(password=f"{user_data['password']}",
             create_date=user_data['create_date'],community=user_data['community'],phone=user_data['phone'],
             email_acceptance=user_data['email_acceptance'], message_acceptance=user_data['message_acceptance'], 
-            user_type=user_data['user_type'],expire_time=user_data['expire_time'])   
+            user_type=user_data['user_type'],expire_time=user_data['expire_time'],last_check_time=user_data['last_check_time'],
+            interested_tag=user_data['interested_tag'],message=user_data['message'],friend=user_data['friend'],
+            permission=user_data['permission'])   
         last_record_id = conn.execute(query)
+
         conn.commit()
         return {**user_data, "id": last_record_id}
 
@@ -176,7 +207,7 @@ async def update_user(user_id: str, user_data: User) -> dict:
 # Delete a user from the database
 async def delete_user(user_id: str):
     with engine.connect() as conn:        
-        query = users.delete().where(users.c.id==user_id)
+        query = users.delete().where(users.c.email==user_id)
         conn.execute(query)
         conn.commit()
         return True

@@ -42,7 +42,7 @@ async def get_users():
     users_list = list()
     if users:
         for user in users:
-            user.pop(2)
+            user.pop(1)
             user_dict = await user_list_to_dict(user)
             users_list.append(user_dict)
 
@@ -54,7 +54,7 @@ async def get_user_data_by_id(id: str):
     user = await retrieve_user_by_id(id)
     user_dict = dict()
     if user:
-        user.pop(2)
+        user.pop(1)
         user_dict = await user_list_to_dict(user)
         return user_dict
     return ResponseModel(user, "Empty list returned")
@@ -64,7 +64,7 @@ async def get_user_data_by_email(email: str):
     user = await retrieve_user_by_email(email)
     user_dict = dict()
     if user:
-        user.pop(2)
+        user.pop(1)
         user_dict = await user_list_to_dict(user)
         return user_dict
     return ResponseModel(user, "Empty list returned")
@@ -75,7 +75,7 @@ async def get_user_data_social_email(socialEmail: SocialEmailSchema = Body(...))
     user = await retrieve_user_by_social_email(socialEmail)
     user_dict = dict()
     if user:
-        user.pop(2) # remove password
+        user.pop(1) # remove password
         user_dict = await user_list_to_dict(user)
         return user_dict
     return ResponseModel({}, "Empty list returned")
@@ -87,7 +87,7 @@ async def get_user_data_email_password(email: EmailSchema = Body(...)):
     user = await retrieve_user_by_email_password(email)
     user_dict = dict()
     if user:
-        user.pop(2) # remove password
+        user.pop(1) # remove password
         user_dict = await user_list_to_dict(user)
         return user_dict
     return ResponseModel({}, "Empty list returned")

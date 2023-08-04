@@ -18,7 +18,8 @@ async def add_user(user:dict) -> dict:
             r = await client.get(f'{os.getenv("ORM_USER_SERVICE")}/user/email/{email}')
             data = r.json() 
             print(data,flush=True)
-            if data.get('detail', 'Failure') == 'Not Found':
+            print(bool(data.get('data', [])) is False ,flush=True)
+            if data.get('data', []):
 
                 print(f'{os.getenv("ORM_USER_SERVICE")}/user/',flush=True)
                 r = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/', json=user)
