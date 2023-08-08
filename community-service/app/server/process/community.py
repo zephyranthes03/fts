@@ -27,10 +27,10 @@ async def add_community(community:dict) -> dict:
                 return {'community': community['name'] }
                 
             else:
-                return {"error": "Diagnosis already exist!"}
+                return {"error": "Community name is already exist!"}
 
         else:
-            return {"error": "Diagnosis couldn't be Empty."}
+            return {"error": "Community name couldn't be Empty."}
 
 
 

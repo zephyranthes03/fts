@@ -69,7 +69,7 @@ async def update_message_data(request: Request, user_id: str, id: str, req: Upda
 
     if len(message) >= 1:
         update_result = await update_message(request.app.mongodb_client,
-                                           user_id, id, message)
+                                             user_id, id, message)
         print(update_result.modified_count,flush=True)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
@@ -91,10 +91,9 @@ async def update_message_data(request: Request, user_id: str, id: str, req: Upda
 
 
 @router.delete("/{message_type}/{user_id}/{id}")
-async def delete_message_data(request: Request, community_id: str, message_id: str, id: str):
+async def delete_message_data(request: Request, user_id: str, id: str):
     deleted_message = await delete_message(request.app.mongodb_client,
-                                       community_id, message_id,
-                                       id)
+                                       user_id, id)
     if deleted_message:
         return ResponseModel(
             "Message with ID: {} name delete is successful".format(id),

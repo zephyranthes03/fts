@@ -111,13 +111,13 @@ services:
     links:
       - orm-metacommunity-service
       - orm-member-service
-      - orm-board-service
+      - orm-post-service
       - orm-comment-service
       - redis
     depends_on:
       - orm-metacommunity-service
       - orm-member-service
-      - orm-board-service
+      - orm-post-service
       - orm-comment-service
       - redis
 
@@ -165,16 +165,16 @@ services:
     depends_on:
       - mongodb            
 
-  orm-board-service:
+  orm-post-service:
     restart: always
     build:
-      context: ./ORM-board-service
+      context: ./ORM-post-service
       dockerfile: Dockerfile
-    container_name: orm-board-service
+    container_name: orm-post-service
     volumes:
-      - ./ORM-board-service:/app
+      - ./ORM-post-service:/app
     ports:
-      - "${ORM_BOARD_SERVICE_PORT}:${ORM_BOARD_SERVICE_PORT}"
+      - "${ORM_POST_SERVICE_PORT}:${ORM_POST_SERVICE_PORT}"
     env_file:
       - .env
     environment:

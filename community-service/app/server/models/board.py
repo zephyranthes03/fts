@@ -3,16 +3,14 @@ from sqlalchemy.orm import relationship
 
 from pydantic import BaseModel
 
-class Board(BaseModel):
-    re_id = Column(String(64))
-    title = Column(String(512))
-    content = Column(Text)
-    create_date = Column(Date)
-    update_date = Column(Date)
-    pinned = Column(Boolean)
-    read_count = Column(Integer),
-    like_count = Column(Integer),
-    like = Column(Text)
-    limit = Column(String(512))
-    admin_limit = Column(String(512))
 
+class Board(BaseModel):
+    kind = Column(String(64))
+    name = Column(String(256))
+    comment = Column(Text)
+    condition = Column(String(1024))
+    blacklist = Column(Text)
+    whitelist = Column(Text)
+    manager = Column(Text)
+    community_id = Column(String(64))
+    limit = Column(Text)

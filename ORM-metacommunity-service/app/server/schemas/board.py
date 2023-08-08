@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from app.server.schemas.common import ErrorResponseModel, ResponseModel
 from app.config.config import settings
 
-class Community_board_schema(BaseModel):
+class Board_schema(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     kind: str = Field(...)
     name: str = Field(...)
@@ -33,7 +33,7 @@ class Community_board_schema(BaseModel):
             }
         }
 
-class Update_community_board_schema(BaseModel):
+class Update_board_schema(BaseModel):
     kind: str = Field(...)
     name: str = Field(...)
     comment: str = Field(...)

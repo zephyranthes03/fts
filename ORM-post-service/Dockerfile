@@ -2,7 +2,7 @@ FROM python:3.11
 
 ADD . /app
 
-# ADD ./orm-board-service/app.py /app
+# ADD ./orm-post-service/app.py /app
 
 WORKDIR /app
 
