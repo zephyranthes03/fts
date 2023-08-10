@@ -4,20 +4,20 @@ from fastapi.encoders import jsonable_encoder
 from typing import List
 # from sqlalchemy.orm import Session
 
-from app.server.databases.community_board import (
-    add_community_board,
-    delete_community_board,
-    update_community_board,
-    retrieve_community_boards,
-    retrieve_community_board_by_id,
-    retrieve_community_board_by_name
+from app.server.databases.board import (
+    add_board,
+    delete_board,
+    update_board,
+    retrieve_boards,
+    retrieve_board_by_id,
+    retrieve_board_by_name
 )
 
-from app.server.schemas.community_board import (
+from app.server.schemas.board import (
     ErrorResponseModel,
     ResponseModel,
-    Community_board_schema,
-    Update_community_board_schema,
+    Board_schema,
+    Update_board_schema,
 )
 
 # from app.server.databases.session import get_db
@@ -26,42 +26,42 @@ from app.server.schemas.community_board import (
 router = APIRouter()
 
 @router.post("/{community_id}", response_description="Community Board data added into the database")
-async def add_community_board_data(request: Request, community_id: str, community_board: Community_board_schema = Body(...)):
+async def add_board_data(request: Request, community_id: str, board: Board_schema = Body(...)):
     print(community_id,flush=True)
-    community_board = jsonable_encoder(community_board)
+    board = jsonable_encoder(board)
     print(board,flush=True)
-    new_community_board = await add_community_board(request.app.database['community_boards'], community_board)
-    return ResponseModel(new_community_board, "Community Board added successfully.")
+    new_board = await add_board(request.app.mongodb_client, community_id, board)
+    return ResponseModel(new_board, "Community Board added successfully.")
 
 @router.get("/{community_id}", response_description="Community Board retrieved")
-async def get_community_boards_data(request: Request, community_id: str):
-    community_boards = await retrieve_community_boards(request.app.database['community_boards'])
-    community_boards_list = list()
-    if community_boards:
-        for board in community_boards:
+async def get_boards_data(request: Request, community_id: str):
+    boards = await retrieve_boards(request.app.mongodb_client, community_id)
+    boards_list = list()
+    if boards:
+        for board in boards:
             # board_dict = await board_list_to_dict(board)
-            community_boards_list.append(board)
-        return community_boards_list
+            boards_list.append(board)
+        return boards_list
 
     return boards
 
 @router.get("/{community_id}/id/{id}", response_description="Community Board data retrieved by board_id")
-async def get_community_board_data(request: Request, community_id: str, id: str):
-    community_board = await retrieve_community_board_by_id(request.app.database['community_boards'], id)
-    return community_board
+async def get_board_data(request: Request, community_id: str, id: str):
+    board = await retrieve_board_by_id(request.app.mongodb_client, community_id, id)
+    return board
 
 @router.get("/{community_id}/name/{name}", response_description="Community Board data retrieved by board name field")
-async def get_community_board_data(request: Request, community_id: str, name: str):
-    community_board = await retrieve_community_board_by_name(request.app.database['community_boards'], name)
-    return community_board
+async def get_board_data(request: Request, community_id: str, name: str):
+    board = await retrieve_board_by_name(request.app.mongodb_client, community_id, name)
+    return board
 
 
 @router.put("/{community_id}/id/{id}")
-async def update_community_board_data(request: Request, community_id: str, id: str, req: Update_community_board_schema = Body(...)):
-    community_board = {k: v for k, v in req.dict().items() if v is not None}
+async def update_board_data(request: Request, community_id: str, id: str, req: Update_board_schema = Body(...)):
+    board = {k: v for k, v in req.dict().items() if v is not None}
 
-    if len(community_board) >= 1:
-        update_result = await update_community_board(request.app.database["community_boards"], id, community_board)
+    if len(board) >= 1:
+        update_result = await update_board(request.app.mongodb_client, community_id, id, board)
         print(update_result.modified_count,flush=True)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
@@ -71,9 +71,9 @@ async def update_community_board_data(request: Request, community_id: str, id: s
             )
 
     if (
-        existing_community_board := await retrieve_community_board_by_id(request.app.database['community_boards'], id)
+        existing_board := await retrieve_board_by_id(request.app.mongodb_client, community_id, id)
     ) is not None:
-        return ResponseModel(existing_community_board, "Community Board updated successfully.")
+        return ResponseModel(existing_board, "Community Board updated successfully.")
 
     return ErrorResponseModel(
         "An error occurred",
@@ -84,8 +84,8 @@ async def update_community_board_data(request: Request, community_id: str, id: s
 
 @router.delete("/{community_id}/id/{id}")
 async def delete_board_data(request: Request, community_id: str, id: str):
-    deleted_community_board = await delete_community_board(request.app.database['boards'], id)
-    if deleted_community_board:
+    deleted_board = await delete_board(request.app.mongodb_client, community_id, id)
+    if deleted_board:
         return ResponseModel(
             "Community Board with ID: {} name delete is successful".format(id),
             "Community Board name deleted successfully",

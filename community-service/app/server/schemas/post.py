@@ -7,6 +7,7 @@ from app.config.config import settings
 
 class Post_schema(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    related_post_id: str = Field(...)
     re_id: str = Field(...)
     title: str = Field(...)
     content: str = Field(...)
@@ -18,12 +19,14 @@ class Post_schema(BaseModel):
     like: list = Field(...)
     limit: dict = Field(...)
     admin_limit: dict = Field(...)
+    tag: list = Field(...)
 
 
     class Config:
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
+                "related_post_id": "test",
                 "re_id": "",
                 "title": "title",
                 "content": "content",
@@ -34,11 +37,13 @@ class Post_schema(BaseModel):
                 "like_count": 0,
                 "like": [],
                 "limit" : {},
-                "admin_limit" : {}
+                "admin_limit" : {},
+                "tag": ['tag1', 'tag2']
             }
         }
 
 class Update_post_schema(BaseModel):
+    related_post_id: str = Field(...)
     re_id: str = Field(...)
     title: str = Field(...)
     content: str = Field(...)
@@ -50,11 +55,13 @@ class Update_post_schema(BaseModel):
     like: list = Field(...)
     limit: dict = Field(...)
     admin_limit: dict = Field(...)
+    tag: list = Field(...)
 
     class Config:
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
+                "related_post_id": "test",
                 "re_id": "",
                 "title": "title",
                 "content": "content",
@@ -65,7 +72,8 @@ class Update_post_schema(BaseModel):
                 "like_count": 1,
                 "like": ["066de609-b04a-4b30-b46c-32537c7f1f6e"],
                 "limit" : {"deleted":True},
-                "admin_limit" : {"hide":True}
+                "admin_limit" : {"hide":True},
+                "tag": ['tag1', 'tag2','tag3']
             }
         }
 

@@ -18,7 +18,7 @@ async def add_post(community_id:str, board_id:str, post:dict) -> dict:
         print("Elapsed time:", t1_stop, t1_start)
         print("Elapsed time during the whole program in seconds:",
                                             t1_stop-t1_start)
-        return {'post': post['name'] }
+        return {'post': data }
                 
     return {"error": "Diagnosis couldn't be Empty."}
 
@@ -100,7 +100,7 @@ async def like_post_by_id(community_id:str, board_id:str, id: str, user_id: str)
 async def read_post_by_name(community_id:str, board_id:str, name: str) -> dict:
     t1_start = process_time()
     async with httpx.AsyncClient() as client:
-        r = await client.get(f'{os.getenv("ORM_POST_SERVICE")}/post/name/{name}', timeout=300) 
+        r = await client.get(f'{os.getenv("ORM_POST_SERVICE")}/post/{board_id}/name/{name}', timeout=300) 
         print(r.json(),flush=True)
 
         data = r.json()

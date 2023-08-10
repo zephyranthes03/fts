@@ -28,12 +28,12 @@ router = APIRouter()
 @router.post("/{community_id}", response_description="Member data added into the database")
 async def add_member_data(request: Request, community_id: str, member: Member_schema = Body(...)):
     member = jsonable_encoder(member)
-    new_member = await add_member(request.app.database[community_id], member)
+    new_member = await add_member(request.app.mongodb_client, community_id, member)
     return ResponseModel(new_member, "Member added successfully.")
 
 @router.get("/{community_id}", response_description="Members retrieved")
 async def get_members_data(request: Request, community_id: str):
-    members = await retrieve_members(request.app.database[community_id])
+    members = await retrieve_members(request.app.mongodb_client, community_id)
     members_list = list()
     if members:
         for member in members:
@@ -45,12 +45,12 @@ async def get_members_data(request: Request, community_id: str):
 
 @router.get("/{community_id}/id/{id}", response_description="Member data retrieved by member_id")
 async def get_member_data(request: Request, community_id: str, id: str):
-    member = await retrieve_member_by_id(request.app.database[community_id], id)
+    member = await retrieve_member_by_id(request.app.mongodb_client, community_id, id)
     return member
 
 @router.get("/{community_id}/name/{name}", response_description="Member data retrieved by member_id")
 async def get_member_data(request: Request, community_id: str, name: str):
-    member = await retrieve_member_by_name(request.app.database[community_id], name)
+    member = await retrieve_member_by_name(request.app.mongodb_client, community_id, name)
     return member
 
 
@@ -59,7 +59,7 @@ async def update_member_data(request: Request, community_id: str, id: str, req: 
     member = {k: v for k, v in req.dict().items() if v is not None}
 
     if len(member) >= 1:
-        update_result = await update_member(request.app.database[community_id], id, member)
+        update_result = await update_member(request.app.mongodb_client, community_id, id, member)
         print(update_result.modified_count,flush=True)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
@@ -69,7 +69,7 @@ async def update_member_data(request: Request, community_id: str, id: str, req: 
             )
 
     if (
-        existing_member := await retrieve_member_by_id(request.app.database[community_id], id)
+        existing_member := await retrieve_member_by_id(request.app.mongodb_client, community_id, id)
     ) is not None:
         return ResponseModel(existing_member, "Member updated successfully.")
 
@@ -82,7 +82,7 @@ async def update_member_data(request: Request, community_id: str, id: str, req: 
 
 @router.delete("/{community_id}/id/{id}")
 async def delete_member_data(request: Request, community_id: str, id: str):
-    deleted_member = await delete_member(request.app.database[community_id], id)
+    deleted_member = await delete_member(request.app.mongodb_client, community_id, id)
     if deleted_member:
         return ResponseModel(
             "Member with ID: {} name delete is successful".format(id),

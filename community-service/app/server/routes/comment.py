@@ -42,7 +42,7 @@ router = APIRouter()
 
 
 
-@router.post("/{community_id}/board/{board_id}/post/{post_id}", response_description="Comment data folder added into the database")
+@router.post("/{community_id}/{board_id}/post/{post_id}", response_description="Comment data folder added into the database")
 async def add_comment_data(community_id:str, board_id:str, post_id:str, comment: Comment_schema = Body(...), dependencies:dict=Depends(verify_token)):
     comment = jsonable_encoder(comment)
     new_comment = await add_comment(community_id, board_id, post_id, comment)
@@ -54,28 +54,28 @@ async def add_comment_data(community_id:str, board_id:str, post_id:str, comment:
         )
     return ResponseModel(new_comment, "Comment added successfully.")
 
-@router.get("/{community_id}/board/{board_id}/post/{post_id}", response_description="Communites retrieved")
+@router.get("/{community_id}/{board_id}/post/{post_id}", response_description="Communites retrieved")
 async def get_comments(community_id:str, board_id:str, post_id:str, dependencies:dict=Depends(verify_token)):
     comments = await read_comments(community_id, board_id, post_id)
     if comments:
         return ResponseModel(comments, "Communites data statistic retrieved successfully")
     return ResponseModel(comments, "Empty list returned")
 
-@router.get("/{community_id}/board/{board_id}/post/{post_id}/id/{id}", response_description="Communites retrieved")
+@router.get("/{community_id}/{board_id}/post/{post_id}/id/{id}", response_description="Communites retrieved")
 async def get_comment_by_id(community_id:str, board_id:str, post_id:str, id:str, dependencies:dict=Depends(verify_token)):
     comments = await read_comment_by_id(community_id, board_id, post_id, id)
     if comments:
         return ResponseModel(comments, "Communites data statistic retrieved successfully")
     return ResponseModel(comments, "Empty list returned")
 
-@router.get("/{community_id}/board/{board_id}/post/{post_id}/name/{name}", response_description="Communites retrieved")
+@router.get("/{community_id}/{board_id}/post/{post_id}/name/{name}", response_description="Communites retrieved")
 async def get_comment_by_name(community_id:str, board_id:str, post_id:str, name:str, dependencies:dict=Depends(verify_token)):
     comments = await read_comment_by_name(community_id, board_id, post_id, name)
     if comments:
         return ResponseModel(comments, "Communites data statistic retrieved successfully")
     return ResponseModel(comments, "Empty list returned")
 
-@router.put("/{community_id}/board/{board_id}/post/{post_id}/id/{id}")
+@router.put("/{community_id}/{board_id}/post/{post_id}/id/{id}")
 async def update_comment_data(community_id:str, board_id:str, post_id:str, id: str, req: Update_comment_schema = Body(...), dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     print(req,flush=True)
@@ -92,7 +92,7 @@ async def update_comment_data(community_id:str, board_id:str, post_id:str, id: s
         "There was an error updating the comment data.",
     )
 
-@router.delete("/{community_id}/board/{board_id}/post/{post_id}/id/{id}", response_description="Comment data deleted from the database")
+@router.delete("/{community_id}/{board_id}/post/{post_id}/id/{id}", response_description="Comment data deleted from the database")
 async def delete_comment_data(community_id:str, board_id:str, post_id:str, id:str, dependencies:dict=Depends(verify_token)):
     deleted_comment = await delete_comment(community_id, board_id, post_id, id)
     if deleted_comment == True:

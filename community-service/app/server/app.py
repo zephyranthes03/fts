@@ -12,6 +12,7 @@ from app.server.routes.community import router as CommunityRouter
 from app.server.routes.post import router as PostRouter
 from app.server.routes.member import router as MemberRouter
 from app.server.routes.application import router as ApplicationRouter
+from app.server.routes.comment import router as CommentRouter
 
 
 def include_router(app):
@@ -19,6 +20,7 @@ def include_router(app):
     app.include_router(MemberRouter, tags=["Member"], prefix="/member")
     app.include_router(PostRouter, tags=["Post"], prefix="/post")
     app.include_router(ApplicationRouter, tags=["Application"], prefix="/application")
+    app.include_router(CommentRouter, tags=["Comment"], prefix="/comment")
 
 # def configure_static(app):
 #     app.mount("/static", StaticFiles(directory="static"), name="static")

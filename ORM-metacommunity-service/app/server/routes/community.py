@@ -28,7 +28,7 @@ async def add_community_data(request: Request, community: Community_schema = Bod
 
 @router.get("/", response_description="Communities retrieved")
 async def get_communities_data(request: Request):
-    communities = await retrieve_communities(request.app.database['communities'])
+    communities = await retrieve_communities(request.app.database['communites'])
     communities_list = list()
     if communities:
         for community in communities:

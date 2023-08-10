@@ -116,9 +116,9 @@ async def join_invitation_data(community_id:str, member_id:str, invitation_messa
     return ResponseModel(new_application, "Application added successfully.")
 
 @router.post("/{community_id}/request", response_description="Application apply to the community")
-async def join_request_data(community_id:str, member_id:str, request_form: dict, dependencies:dict=Depends(verify_token)):
+async def join_request_data(community_id:str, member_id:str, invitaion_message: dict, dependencies:dict=Depends(verify_token)):
     request_form = jsonable_encoder(request_form)
-    new_application = await join_request_data(community_id, member_id, request_form)
+    new_application = await join_response(community_id, member_id, request_form)
     if new_application.get('error', None):
         return ErrorResponseModel(
             new_application.get('error', None),
@@ -129,7 +129,7 @@ async def join_request_data(community_id:str, member_id:str, request_form: dict,
 
 @router.post("/{community_id}/response", response_description="Application application permit from the community admin")
 async def join_response_data(community_id:str, member_id:str, response_message:str, dependencies:dict=Depends(verify_token)):
-    new_application = await join_request_data(community_id, member_id, response_message)
+    new_application = await join_response(community_id, member_id, response_message)
     if new_application.get('error', None):
         return ErrorResponseModel(
             new_application.get('error', None),
@@ -137,3 +137,12 @@ async def join_response_data(community_id:str, member_id:str, response_message:s
             new_application.get('message', None)
         )
     return ResponseModel(new_application, "Application added successfully.")
+
+
+# Delete a application from the database
+async def join_request(community_id:str, member_id:str, invitation_message:str):
+    pass
+\
+# Delete a application from the database
+async def join_response(community_id:str, member_id:str, invitation_message:str):
+    pass

@@ -80,7 +80,7 @@ async def read_board_by_id(community_id:str, board_id:str, id: str) -> dict:
 async def read_board_by_name(community_id:str, board_id:str, name: str) -> dict:
     t1_start = process_time()
     async with httpx.AsyncClient() as client:
-        r = await client.get(f'{os.getenv("ORM_BOARD_SERVICE")}/board/name/{name}', timeout=300) 
+        r = await client.get(f'{os.getenv("ORM_BOARD_SERVICE")}/board/{board_id}/name/{name}', timeout=300) 
         print(r.json(),flush=True)
 
         data = r.json()

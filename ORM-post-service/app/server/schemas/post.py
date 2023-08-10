@@ -5,8 +5,9 @@ from pydantic import BaseModel, Field
 from app.server.schemas.common import ErrorResponseModel, ResponseModel
 from app.config.config import settings
 
-class Board_schema(BaseModel):
+class Post_schema(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    related_post_id: str = Field(...)
     re_id: str = Field(...)
     title: str = Field(...)
     content: str = Field(...)
@@ -25,6 +26,7 @@ class Board_schema(BaseModel):
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
+                "related_post_id": "test",
                 "re_id": "",
                 "title": "title",
                 "content": "content",
@@ -40,7 +42,8 @@ class Board_schema(BaseModel):
             }
         }
 
-class Update_board_schema(BaseModel):
+class Update_post_schema(BaseModel):
+    related_post_id: str = Field(...)
     re_id: str = Field(...)
     title: str = Field(...)
     content: str = Field(...)
@@ -58,6 +61,7 @@ class Update_board_schema(BaseModel):
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
+                "related_post_id": "test",
                 "re_id": "",
                 "title": "title",
                 "content": "content",
