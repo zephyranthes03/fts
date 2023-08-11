@@ -74,9 +74,8 @@ async def read_user_by_email(email: str) -> dict:
     t1_start = process_time()
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_USER_SERVICE")}/user/email/{email}', timeout=300) 
-        print(r.json()['data'],flush=True)
-
-        data = r.json()['data']
+        print(r.json(),flush=True)
+        data = r.json()
 
         t1_stop = process_time()
         print("Elapsed time:", t1_stop, t1_start) 
@@ -157,7 +156,7 @@ async def social_login(request):
     param = dict(request.query_params.items())
     print(f'request query params : {param}')  
     output["param"] = param
-    
+
     try : 
         json = await request.json()
         print(f'request json         : {json}')
