@@ -4,31 +4,58 @@
 
 ## Language & Database : Python(FastAPI) & Mysql
 
-### Mysql Database : user, Table : user 
+## External domain : http://imgroo.kr
+
+
+# User-service 
+
+
+user-service port : 8001
+
+Documents link : http://imgroo.kr:8001/docs
+
+
+## Mysql Database : user, Table : user 
 
 ```
 use user;
 sqlalchemy.Table(
     user,
     metadata,
-    sqlalchemy.Column("id", sqlalchemy.String(45), primary_key=True),
-    sqlalchemy.Column("email", sqlalchemy.String(45), primary_key=True),
+    # sqlalchemy.Column("id", sqlalchemy.String(64), primary_key=True),
+    sqlalchemy.Column("email", sqlalchemy.String(64), primary_key=True),
     sqlalchemy.Column("password", sqlalchemy.String(255)),
-    sqlalchemy.Column("create_date", sqlalchemy.Date),
+    sqlalchemy.Column("create_date", sqlalchemy.DateTime),
     sqlalchemy.Column("community", sqlalchemy.Text),
     sqlalchemy.Column("phone", sqlalchemy.String(15)),
     sqlalchemy.Column("email_acceptance", sqlalchemy.String(255)),
     sqlalchemy.Column("message_acceptance", sqlalchemy.String(255)),
     sqlalchemy.Column("user_type", sqlalchemy.String(255)),
     sqlalchemy.Column("expire_time", sqlalchemy.Integer),
+    sqlalchemy.Column("last_check_time", sqlalchemy.Text),
+    sqlalchemy.Column("interested_tag", sqlalchemy.Text),
+    sqlalchemy.Column("message", sqlalchemy.Boolean),
+    sqlalchemy.Column("friend", sqlalchemy.Text),
+    sqlalchemy.Column("permission", sqlalchemy.Text),
+    # sqlalchemy.Column("date_convert", sqlalchemy.Date),
 )
 ```
+## user service RestAPI endpoint
 
-## REST API
+# Symptom-service 
 
-### orm-user-service : http://localhost:8002/docs
+symptom-service port : 8003
 
-### user-service : http://localhost:8001/docs
+Documents link : http://imgroo.kr:8003/docs
+
+
+# Community-service 
+
+community-service port : 8005
+
+Documents link : http://imgroo.kr:8005/docs
+
+
 
 ## Deployment
 
@@ -61,3 +88,7 @@ file location : `user-service/process.py'
 
 
 
+- Community-service
+
+
+  

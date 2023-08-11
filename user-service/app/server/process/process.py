@@ -146,3 +146,25 @@ async def delete_user(id:str):
     if r.status_code == 200:
         return True
     return False
+
+
+async def social_login(request):
+    output = {}
+    header = dict(request.headers.items())
+    print(f'request header       : {header}' )
+    output["header"] = header
+
+    param = dict(request.query_params.items())
+    print(f'request query params : {param}')  
+    output["param"] = param
+    
+    try : 
+        json = await request.json()
+        print(f'request json         : {json}')
+        output["json"] = json
+    except Exception as err:
+        # could not parse json
+        body = await request.body()
+        print(f'request body         : {body}')
+        output["body"]= body
+    return output

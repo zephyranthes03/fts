@@ -1,5 +1,6 @@
 from typing import Any
 import httpx
+import logging
 from fastapi import APIRouter, Body, Depends, Request, Response, Header, HTTPException
 from fastapi.encoders import jsonable_encoder
 
@@ -11,7 +12,8 @@ from app.server.process.process import (
     read_user_by_email_password,
     delete_user,
     add_user,
-    update_user
+    update_user,
+    social_login
 )
 
 
@@ -84,6 +86,15 @@ async def post_user_social_email(socialEmail: SocialEmailSchema = Body(...)):
         await session_create(user)
         return ResponseModel(user, "User data retrieved successfully")
     return ResponseModel(user, "Empty list returned")
+
+@router.post("/social_login", response_description="Users retrieved by social login")
+async def post_user_social_login(request: Request):
+    try:
+        output = await social_login(request)
+        return {"status": "OK", "data": output}
+    except Exception as err:
+        logging.error(f'could not print REQUEST: {err}')
+        return {"status": "ERR", "error": str(err)}
 
 @router.post("/email", response_description="User data retrieved by email and password")
 async def get_user_data(email: EmailSchema = Body(...)):

@@ -40,28 +40,6 @@ class UserSchema(BaseModel):
             }
         }
 
-class SocialEmailSchema(BaseModel):
-    email: str = Field(...)
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "email": "john_doe@gmail.com",
-            }
-        }   
-
-class EmailSchema(BaseModel):
-    email: str = Field(...)
-    password: str = Field(...)
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "email": "john_doe@gmail.com",
-                "password": "test",
-            }
-        }        
-
 
 class UpdateUserModel(BaseModel):
     # email: Optional[str]
@@ -99,6 +77,28 @@ class UpdateUserModel(BaseModel):
             }
         }
 
+
+class SocialEmailSchema(BaseModel):
+    email: str = Field(...)
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "john_doe@gmail.com",
+            }
+        }   
+
+class EmailSchema(BaseModel):
+    email: str = Field(...)
+    password: str = Field(...)
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "john_doe@gmail.com",
+                "password": "test",
+            }
+        }        
 
 def ResponseModel(data, message):
     return {
