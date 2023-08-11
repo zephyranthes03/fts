@@ -6,6 +6,7 @@
 
 ## External domain : http://imgroo.kr
 
+## Check environment setting : .env or .env.sample
 
 # User-service 
 
@@ -42,6 +43,8 @@ sqlalchemy.Table(
 ```
 ## user service RestAPI endpoint
 
+
+
 # Symptom-service 
 
 symptom-service port : 8003
@@ -54,6 +57,8 @@ Documents link : http://imgroo.kr:8003/docs
 community-service port : 8005
 
 Documents link : http://imgroo.kr:8005/docs
+
+## MongoDB user id and password can find from .env 
 
 
 
