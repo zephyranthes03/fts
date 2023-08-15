@@ -7,17 +7,17 @@ class UserSchema(BaseModel):
     email: str = Field(...)
     password: str = Field(...)
     create_date: str = Field(...)
-    community: str = Field(...)
+    community: dict = Field(...)
     phone: str = Field(...)
     email_acceptance: str = Field(...)
-    message_acceptance: str = Field(...)
+    message_acceptance: list = Field(...)
     user_type: str = Field(...) # user, provider, admin
     expire_time: int = Field(...)
-    last_check_time: str = Field(...) # 커뮤니티별 마지막 확인 시간 - 나중에 마지막 확인 시간 이후에 등록된 글에 추가 태그(new)를 출력하기 위해 사용
-    interested_tag: str = Field(...)
+    last_check_time: dict = Field(...) # 커뮤니티별 마지막 확인 시간 - 나중에 마지막 확인 시간 이후에 등록된 글에 추가 태그(new)를 출력하기 위해 사용
+    interested_tag: list = Field(...)
     message: bool = Field(...)
-    friend: str = Field(...)
-    permission: str = Field(...) # all|close|friend|community 
+    friend: list = Field(...)
+    permission: dict = Field(...) # all|close|friend|community 
 
     class Config:
         schema_extra = {
@@ -25,17 +25,17 @@ class UserSchema(BaseModel):
                 "email": "john_doe1@gmail.com",
                 "password": "test",
                 "create_date": "2021-01-01 00:00:00",
-                "community": "{'acne':{'grade':'user','status':'early'}}",
+                "community": {'acne':{'grade':'user','status':'early'}},
                 "phone": "72065122567",
                 "email_acceptance": "all",
-                "message_acceptance": "['community','system']",
+                "message_acceptance": ['community','system'],
                 "user_type": "user",
                 "expire_time": 30,
-                "last_check_time": "{'community_id':'2021-01-01T00:00:00Z'}",
-                "interested_tag": "['tag1', 'tag2']",
+                "last_check_time": {'community_id':'2021-01-01T00:00:00Z'},
+                "interested_tag": ['tag1', 'tag2'],
                 "message": False,
-                "friend": "[]",
-                "permission": "{'survey':'open'}"
+                "friend": [],
+                "permission": {'survey':'open'}
 
             }
         }
@@ -67,17 +67,17 @@ class UpdateUserModel(BaseModel):
     # email: Optional[str]
     password: Optional[str]
     create_date: Optional[str]
-    community: Optional[str] # Optional[dict]
+    community: Optional[dict] # Optional[dict]
     phone: Optional[str]
     email_acceptance: Optional[str]
-    message_acceptance: Optional[str] # Optional[list]
+    message_acceptance: Optional[list] # Optional[list]
     user_type: Optional[str]
     expire_time: Optional[int]
-    last_check_time: Optional[str] # Optional[dict] # 커뮤니티별 마지막 확인 시간 - 나중에 마지막 확인 시간 이후에 등록된 글에 추가 태그(new)를 출력하기 위해 사용
-    interested_tag: Optional[str] # Optional[list]
+    last_check_time: Optional[dict] # Optional[dict] # 커뮤니티별 마지막 확인 시간 - 나중에 마지막 확인 시간 이후에 등록된 글에 추가 태그(new)를 출력하기 위해 사용
+    interested_tag: Optional[list] # Optional[list]
     message: Optional[bool]
-    friend: Optional[str] # Optional[list]
-    permission: Optional[str] # Optional[dict] # all|close|friend|community ?
+    friend: Optional[list] # Optional[list]
+    permission: Optional[dict] # Optional[dict] # all|close|friend|community ?
 
     class Config:
         schema_extra = {
@@ -85,17 +85,17 @@ class UpdateUserModel(BaseModel):
                 # "email": "john_doe@gmail.com",
                 "password": "test",
                 "create_date": "2021-01-01 00:00:00",
-                "community": "{'acne':{'grade':'user','status':'early'}}",
+                "community": {'acne':{'grade':'user','status':'early'}},
                 "phone": "72065122567",
                 "email_acceptance": "all",
-                "message_acceptance": "['community','system']",
+                "message_acceptance": ['community','system'],
                 "user_type": "user",
                 "expire_time": 30,
-                "last_check_time": "{'community_id':'2021-01-01T00:00:00Z'}",
-                "interested_tag": "['tag1', 'tag2']",
+                "last_check_time": {'community_id':'2021-01-01T00:00:00Z'},
+                "interested_tag": ['tag1', 'tag2'],
                 "message": False,
-                "friend": "[]",
-                "permission": "{'survey':'open'}"
+                "friend": [],
+                "permission": {'survey':'open'}
             }
         }
 

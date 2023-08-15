@@ -20,18 +20,22 @@ from app.server.models.user import (
     SocialEmailSchema,
     EmailSchema,
 )
+
 from app.server.util.encrypt import (
     set_password,
     check_password_hash
 )
 
-from app.server.util.convert import user_list_to_dict
+from app.server.util.convert import user_from_str, user_to_str
 
 router = APIRouter()
 
 @router.post("/", response_description="User data added into the database")
 async def add_user_data(user: UserSchema = Body(...)):
     user = jsonable_encoder(user)
+    user = await user_to_str(user)
+    # print(user,flush=True)
+
     user['password'] = str(await set_password(user['password']))
     new_user = await add_user(user)
     return ResponseModel(new_user, "User added successfully.")
@@ -42,8 +46,7 @@ async def get_users():
     users_list = list()
     if users:
         for user in users:
-            user.pop(1)
-            user_dict = await user_list_to_dict(user)
+            user_dict = await user_from_str(user)
             users_list.append(user_dict)
 
         return users_list
@@ -54,8 +57,7 @@ async def get_user_data_by_id(id: str):
     user = await retrieve_user_by_id(id)
     user_dict = dict()
     if user:
-        user.pop(1)
-        user_dict = await user_list_to_dict(user)
+        user_dict = await user_from_str(user)
         return user_dict
     return ResponseModel(user, "Empty list returned")
 
@@ -64,8 +66,7 @@ async def get_user_data_by_email(email: str):
     user = await retrieve_user_by_email(email)
     user_dict = dict()
     if user:
-        user.pop(1)
-        user_dict = await user_list_to_dict(user)
+        user_dict = await user_from_str(user)
         return user_dict
     return ResponseModel(user, "Empty list returned")
 
@@ -75,8 +76,7 @@ async def get_user_data_social_email(socialEmail: SocialEmailSchema = Body(...))
     user = await retrieve_user_by_social_email(socialEmail)
     user_dict = dict()
     if user:
-        user.pop(1) # remove password
-        user_dict = await user_list_to_dict(user)
+        user_dict = await user_from_str(user)
         return user_dict
     return ResponseModel({}, "Empty list returned")
 
@@ -87,15 +87,16 @@ async def get_user_data_email_password(email: EmailSchema = Body(...)):
     user = await retrieve_user_by_email_password(email)
     user_dict = dict()
     if user:
-        user.pop(1) # remove password
-        user_dict = await user_list_to_dict(user)
+        user_dict = await user_from_str(user)
         return user_dict
     return ResponseModel({}, "Empty list returned")
 
 @router.put("/id/{id}")
 async def update_user_data(id: str, req: UpdateUserModel = Body(...)):
     req = {k: v for k, v in req.dict().items() if v is not None}
-    req['password'] = str(await set_password(req['password']))
+    req = await user_to_str(req)
+    if 'password' in req:
+        req['password'] = str(await set_password(req['password']))
     user = jsonable_encoder(req)
     updated_user = await update_user(id, user)
     if updated_user:

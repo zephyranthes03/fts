@@ -17,10 +17,9 @@ async def add_user(user:dict) -> dict:
         if email:
             r = await client.get(f'{os.getenv("ORM_USER_SERVICE")}/user/email/{email}')
             data = r.json() 
-            print(data,flush=True)
-            print(bool(data.get('data', [])) is False ,flush=True)
-            if bool(data.get('data', [])) is False:
-
+            # print(data,flush=True)
+            # print(data.get("email",None),flush=True)
+            if data.get("email", None) is None:
                 print(f'{os.getenv("ORM_USER_SERVICE")}/user/',flush=True)
                 r = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/', json=user)
                 data = r.json() 
@@ -59,7 +58,7 @@ async def read_users(): # -> dict:
     data = None
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_USER_SERVICE")}/user/', timeout=300)
-        print(r.json(),flush=True)
+        # print(r.json(),flush=True)
         if len(r.json()) > 0:
             data = r.json()
 	        
@@ -74,7 +73,7 @@ async def read_user_by_email(email: str) -> dict:
     t1_start = process_time()
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_USER_SERVICE")}/user/email/{email}', timeout=300) 
-        print(r.json(),flush=True)
+        # print(r.json(),flush=True)
         data = r.json()
 
         t1_stop = process_time()
@@ -89,7 +88,7 @@ async def read_user_by_id(id: str) -> dict:
     t1_start = process_time()
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_USER_SERVICE")}/user/id/{id}', timeout=300) 
-        print(r.json()['data'],flush=True)
+        # print(r.json(),flush=True)
 
         data = r.json()['data']
 
