@@ -24,21 +24,43 @@ class UserSchema(BaseModel):
             "example": {
                 "email": "john_doe1@gmail.com",
                 "password": "test",
-                "create_date": "2021-01-01T00:00:00Z",
-                "community": "{'acne':{'grade':'user','status':'early'}}",
+                "create_date": "2021-01-01 00:00:00",
+                "community": {'acne':{'grade':'user','status':'early'}},
                 "phone": "72065122567",
                 "email_acceptance": "all",
-                "message_acceptance": "['community','system']",
+                "message_acceptance": ['community','system'],
                 "user_type": "user",
                 "expire_time": 30,
-                "last_check_time": "{'community_id':'2021-01-01T00:00:00Z'}",
-                "interested_tag": "['tag1', 'tag2']",
+                "last_check_time": {'community_id':'2021-01-01T00:00:00Z'},
+                "interested_tag": ['tag1', 'tag2'],
                 "message": False,
-                "friend": "[]",
-                "permission": "{'survey':'open'}"
+                "friend": [],
+                "permission": {'survey':'open'}
 
             }
         }
+
+class SocialEmailSchema(BaseModel):
+    email: str = Field(...)
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "john_doe@gmail.com",
+            }
+        }   
+
+class EmailSchema(BaseModel):
+    email: str = Field(...)
+    password: str = Field(...)
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "john_doe@gmail.com",
+                "password": "test",
+            }
+        }        
 
 
 class UpdateUserModel(BaseModel):
@@ -62,43 +84,21 @@ class UpdateUserModel(BaseModel):
             "example": {
                 # "email": "john_doe@gmail.com",
                 "password": "test",
-                "create_date": "19850109",
-                "community": "{'acne':{'grade':'user','status':'early'}}",
+                "create_date": "2021-01-01 00:00:00",
+                "community": {'acne':{'grade':'user','status':'early'}},
                 "phone": "72065122567",
                 "email_acceptance": "all",
-                "message_acceptance": "['community','system']",
+                "message_acceptance": ['community','system'],
                 "user_type": "user",
                 "expire_time": 30,
-                "last_check_time": "{'community_id':'2021-01-01T00:00:00Z'}",
-                "interested_tag": "['tag1', 'tag2']",
+                "last_check_time": {'community_id':'2021-01-01T00:00:00Z'},
+                "interested_tag": ['tag1', 'tag2'],
                 "message": False,
-                "friend": "[]",
-                "permission": "{'survey':'open'}"
+                "friend": [],
+                "permission": {'survey':'open'}
             }
         }
 
-
-class SocialEmailSchema(BaseModel):
-    email: str = Field(...)
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "email": "john_doe@gmail.com",
-            }
-        }   
-
-class EmailSchema(BaseModel):
-    email: str = Field(...)
-    password: str = Field(...)
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "email": "john_doe@gmail.com",
-                "password": "test",
-            }
-        }        
 
 def ResponseModel(data, message):
     return {
