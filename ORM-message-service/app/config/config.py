@@ -3,7 +3,7 @@ from pathlib import Path
 
 class Settings:
     DATABASE_POST: str  = os.getenv("COMMUNITY_DATABASE_POST", "board")
-    DATABASE_COMMENT: str  = os.getenv("COMMUNITY_DATABASE_COMMENT", "comment")
+    DATABASE_MESSAGE: str  = os.getenv("COMMUNITY_DATABASE_MESSAGE", "message")
 
     MONGO_INITDB_ROOT_USERNAME: str = os.getenv("MONGO_INITDB_ROOT_USERNAME")
     MONGO_INITDB_ROOT_PASSWORD: str = os.getenv("MONGO_INITDB_ROOT_PASSWORD")
