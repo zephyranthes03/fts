@@ -4,6 +4,7 @@ from pathlib import Path
 class Settings:
 
     DATABASE_METACOMMUNITY: str  = os.getenv("COMMUNITY_DATABASE_METACOMMUNITY", "metaCommunity")
+    DATABASE_METACOMMUNITY: str  = os.getenv("COMMUNITY_DATABASE_METACOMMUNITY", "metaCommunity")
 
     MONGO_INITDB_ROOT_USERNAME: str = os.getenv("MONGO_INITDB_ROOT_USERNAME")
     MONGO_INITDB_ROOT_PASSWORD: str = os.getenv("MONGO_INITDB_ROOT_PASSWORD")
