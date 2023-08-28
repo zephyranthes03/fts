@@ -62,20 +62,20 @@ services:
     ports:
       - "8003:8003"
     links:
-      - orm-symptom-service
+      - orm-services
       - redis
     depends_on:
-      - orm-symptom-service
+      - orm-services
       - redis
       
-  orm-symptom-service:
+  orm-services:
     restart: always
     build:
-      context: ./ORM-symptom-service
+      context: ./ORM-services
       dockerfile: Dockerfile
-    container_name: orm-symptom-service
+    container_name: orm-services
     volumes:
-      - ./ORM-symptom-service:/app
+      - ./ORM-services:/app
     ports:
       - "8004:8004"
     env_file:
@@ -109,151 +109,11 @@ services:
     ports:
       - "8005:8005"
     links:
-      - orm-metacommunity-service
-      - orm-member-service
-      - orm-post-service
-      - orm-comment-service
+      - orm-services
       - redis
     depends_on:
-      - orm-metacommunity-service
-      - orm-member-service
-      - orm-post-service
-      - orm-comment-service
+      - orm-services
       - redis
-
-  orm-metacommunity-service:
-    restart: always
-    build:
-      context: ./ORM-metacommunity-service
-      dockerfile: Dockerfile
-    container_name: orm-metacommunity-service
-    volumes:
-      - ./ORM-metacommunity-service:/app
-    ports:
-      - "${ORM_METACOMMUNITY_SERVICE_PORT}:${ORM_METACOMMUNITY_SERVICE_PORT}"
-    env_file:
-      - .env
-    environment:
-      - MONGODB_URL=${MONGODB_URL}
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-      - COMMUNITY_DATABASE_METACOMMUNITY=${COMMUNITY_DATABASE_METACOMMUNITY}
-    links:
-      - mongodb
-    depends_on:
-      - mongodb
-
-  orm-member-service:
-    restart: always
-    build:
-      context: ./ORM-member-service
-      dockerfile: Dockerfile
-    container_name: orm-member-service
-    volumes:
-      - ./ORM-member-service:/app
-    ports:
-      - "${ORM_MEMBER_SERVICE_PORT}:${ORM_MEMBER_SERVICE_PORT}"
-    env_file:
-      - .env
-    environment:
-      - MONGODB_URL=${MONGODB_URL}
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-      - COMMUNITY_DATABASE_MEMBER=${COMMUNITY_DATABASE_MEMBER}
-    links:
-      - mongodb
-    depends_on:
-      - mongodb            
-
-  orm-post-service:
-    restart: always
-    build:
-      context: ./ORM-post-service
-      dockerfile: Dockerfile
-    container_name: orm-post-service
-    volumes:
-      - ./ORM-post-service:/app
-    ports:
-      - "${ORM_POST_SERVICE_PORT}:${ORM_POST_SERVICE_PORT}"
-    env_file:
-      - .env
-    environment:
-      - MONGODB_URL=${MONGODB_URL}
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-      - COMMUNITY_DATABASE_POST=${COMMUNITY_DATABASE_POST}
-    links:
-      - mongodb
-    depends_on:
-      - mongodb
-
-
-  orm-comment-service:
-    restart: always
-    build:
-      context: ./ORM-comment-service
-      dockerfile: Dockerfile
-    container_name: orm-comment-service
-    volumes:
-      - ./ORM-comment-service:/app
-    ports:
-      - "${ORM_COMMENT_SERVICE_PORT}:${ORM_COMMENT_SERVICE_PORT}"
-    env_file:
-      - .env
-    environment:
-      - MONGODB_URL=${MONGODB_URL}
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-      - COMMUNITY_DATABASE_COMMENT=${COMMUNITY_DATABASE_COMMENT}
-    links:
-      - mongodb
-    depends_on:
-      - mongodb
-
-  orm-log-service:
-    restart: always
-    build:
-      context: ./ORM-log-service
-      dockerfile: Dockerfile
-    container_name: orm-log-service
-    volumes:
-      - ./ORM-log-service:/app
-    ports:
-      - "${ORM_LOG_SERVICE_PORT}:${ORM_LOG_SERVICE_PORT}"
-    env_file:
-      - .env
-    environment:
-      - MONGODB_URL=${MONGODB_URL}
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-      - COMMUNITY_DATABASE_COMMENT=${COMMUNITY_DATABASE_COMMENT}
-    links:
-      - mongodb
-    depends_on:
-      - mongodb
-
-
-  orm-message-service:
-    restart: always
-    build:
-      context: ./ORM-message-service
-      dockerfile: Dockerfile
-    container_name: orm-message-service
-    volumes:
-      - ./ORM-message-service:/app
-    ports:
-      - "${ORM_MESSAGE_SERVICE_PORT}:${ORM_MESSAGE_SERVICE_PORT}"
-    env_file:
-      - .env
-    environment:
-      - MONGODB_URL=${MONGODB_URL}
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-      - COMMUNITY_DATABASE_COMMENT=${COMMUNITY_DATABASE_COMMENT}
-    links:
-      - mongodb
-    depends_on:
-      - mongodb
 
   redis:
     image: redis:alpine
