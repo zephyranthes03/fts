@@ -3,16 +3,11 @@ from sqlalchemy.orm import relationship
 
 from pydantic import BaseModel
 
-class Board(BaseModel):
-    re_id = Column(String(64))
-    title = Column(String(512))
+class Message(BaseModel):
+    sender_id = Column(String(64))
+    receiver_id = Column(String(64))
+    message_type = Column(String(64))
     content = Column(Text)
-    create_date = Column(Date)
-    update_date = Column(Date)
+    send_date = Column(Date)
+    receive_date = Column(Date)
     pinned = Column(Boolean)
-    read_count = Column(Integer),
-    like_count = Column(Integer),
-    like = Column(Text)
-    limit = Column(String(512))
-    admin_limit = Column(String(512))
-

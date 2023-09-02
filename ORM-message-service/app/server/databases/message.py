@@ -15,20 +15,20 @@ from app.server.schemas.message import (
 # pagenation 
 
 async def retrieve_messages(mongodb_client: Optional[any], 
-                          user_id: str, conversation_id: str,
+                          receiver: str, message: str,
                           page: int = 1, size: int = 10) -> list:
     database = mongodb_client["message"]
-    collection = database[f"message_{str(hash(user_id)%100)}"]
+    collection = database[f"message_{str(hash(receiver)%100)}"]
 
     messages = []
-    if conversation_id:
+    if message:
         messages = list(collection.find({},{"$and":[
-            { "receiver_id": {user_id}},
-            { "conversation_id": {conversation_id}}]}
+            { "receiver": {receiver}},
+            { "message": {message}}]}
             ).skip((page - 1) * size).limit(size))
     else:
         messages = list(collection.find({},{
-            { "receiver_id": {user_id}}}
+            { "receiver": {receiver}}}
             ).skip((page - 1) * size).limit(size))
     return messages
 

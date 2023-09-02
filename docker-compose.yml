@@ -71,11 +71,11 @@ services:
   orm-services:
     restart: always
     build:
-      context: ./ORM-services
+      context: ./orm-services
       dockerfile: Dockerfile
     container_name: orm-services
     volumes:
-      - ./ORM-services:/app
+      - ./orm-services:/app
     ports:
       - "8004:8004"
     env_file:
