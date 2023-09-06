@@ -13,7 +13,7 @@ services:
       - ORM_USER_SERVICE=${ORM_USER_SERVICE}
       - TEST=$TEST
     ports:
-      - "{USER_SERVICE_PORT}:{USER_SERVICE_PORT}"
+      - 8001:8001
     links:
       - orm-user-service
     depends_on:
@@ -29,7 +29,7 @@ services:
     volumes:
       - ./ORM-user-service:/app
     ports:
-      - "{ORM_USER_SERVICE_PORT}:{ORM_USER_SERVICE_PORT}"
+      - 8002:8002
     env_file:
       - .env
     environment:
@@ -60,7 +60,7 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_DATABASE=${REDIS_DATABASE}
     ports:
-      - "{SYMPTOM_SERVICE_PORT}:{SYMPTOM_SERVICE_PORT}"
+      - 8003:8003
     links:
       - orm-services
       - redis
