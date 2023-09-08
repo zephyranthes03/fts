@@ -64,12 +64,12 @@ async def get_users(dependencies:dict=Depends(verify_token)):
         return ResponseModel(users, "Users data statistic retrieved successfully")
     return ResponseModel(users, "Empty list returned")
 
-@router.get("/id/{id}", response_description="Users retrieved by id")
-async def get_user_by_id(id:str, dependencies:dict=Depends(verify_token)):
-    users = await read_user_by_id(id)
-    if users:
-        return ResponseModel(users, "Users data statistic retrieved successfully")
-    return ResponseModel(users, "Empty list returned")
+# @router.get("/id/{id}", response_description="Users retrieved by id")
+# async def get_user_by_id(id:str, dependencies:dict=Depends(verify_token)):
+#     users = await read_user_by_id(id)
+#     if users:
+#         return ResponseModel(users, "Users data statistic retrieved successfully")
+#     return ResponseModel(users, "Empty list returned")
 
 @router.get("/email/{email}", response_description="Users retrieved by email")
 async def get_user_by_email(email:str, dependencies:dict=Depends(verify_token)):
@@ -113,12 +113,12 @@ async def redis_delete_session(dependencies:dict=Depends(verify_token)):
         return ResponseModel(session_delete(dependencies["id"]), "User session disconnected successfully")
     return ResponseModel("User session is empty", "Empty session returned")
 
-@router.put("/id/{id}")
-async def update_user_data(id: str, req: UpdateUserModel = Body(...), dependencies:dict=Depends(verify_token)):
+@router.put("/email/{email}")
+async def update_user_data(email: str, req: UpdateUserModel = Body(...), dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     print(req,flush=True)
     user = jsonable_encoder(req)
-    updated_user = await update_user(id, user)
+    updated_user = await update_user(email, user)
     if 'data' in updated_user:
         return ResponseModel(
             "User with ID: {} name update is successful".format(id),
@@ -130,9 +130,9 @@ async def update_user_data(id: str, req: UpdateUserModel = Body(...), dependenci
         "There was an error updating the user data.",
     )
 
-@router.delete("/id/{id}", response_description="User data deleted from the database")
-async def delete_user_data(id:str, dependencies:dict=Depends(verify_token)):
-    deleted_user = await delete_user(id)
+@router.delete("/email/{email}", response_description="User data deleted from the database")
+async def delete_user_data(email:str, dependencies:dict=Depends(verify_token)):
+    deleted_user = await delete_user(email)
     if deleted_user == True:
         return ResponseModel([], "Database is Deleted")
     return ErrorResponseModel(

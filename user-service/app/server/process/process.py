@@ -37,11 +37,11 @@ async def add_user(user:dict) -> dict:
 
     
 
-async def update_user(id:str, user:dict) -> dict:
+async def update_user(email:str, user:dict) -> dict:
     t1_start = process_time()
-    
+    data = None
     async with httpx.AsyncClient() as client:
-        r = await client.put(f'{os.getenv("ORM_USER_SERVICE")}/user/id/{id}',
+        r = await client.put(f'{os.getenv("ORM_USER_SERVICE")}/user/email/{email}',
                             json=user)
         data = r.json()
         print(data,flush=True)
@@ -139,8 +139,8 @@ async def read_user_by_email_password(email: dict)-> dict:
 
 
 # Delete a user from the database
-async def delete_user(id:str):
-    r = httpx.delete(f'{os.getenv("ORM_USER_SERVICE")}/user/id/{id}') 
+async def delete_user(email:str):
+    r = httpx.delete(f'{os.getenv("ORM_USER_SERVICE")}/user/email/{email}') 
     if r.status_code == 200:
         return True
     return False

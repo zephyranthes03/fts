@@ -187,12 +187,12 @@ async def add_user(user_data: User) -> dict:
 
 
 # Update a user with a matching ID
-async def update_user(user_id: str, user_data: User) -> dict:
+async def update_user(user_email: str, user_data: User) -> dict:
     # Return false if an empty request body is sent.
     if len(user_data) < 1:
         return False
     with engine.connect() as conn:
-        query = users.update().where(users.c.email==user_id).values(password=f"{user_data['password']}",
+        query = users.update().where(users.c.email==user_email).values(password=f"{user_data['password']}",
             create_date=user_data['create_date'],community=user_data['community'],phone=user_data['phone'],
             email_acceptance=user_data['email_acceptance'], message_acceptance=user_data['message_acceptance'], 
             user_type=user_data['user_type'],expire_time=user_data['expire_time'],last_check_time=user_data['last_check_time'],
@@ -201,13 +201,13 @@ async def update_user(user_id: str, user_data: User) -> dict:
         last_record_id = conn.execute(query)
 
         conn.commit()
-        return {**user_data, "id": last_record_id}
+        return {**user_data, "email": last_record_id}
 
 
 # Delete a user from the database
-async def delete_user(user_id: str):
+async def delete_user(user_email: str):
     with engine.connect() as conn:        
-        query = users.delete().where(users.c.email==user_id)
+        query = users.delete().where(users.c.email==user_email)
         conn.execute(query)
         conn.commit()
         return True

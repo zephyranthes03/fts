@@ -91,18 +91,18 @@ async def get_user_data_email_password(email: EmailSchema = Body(...)):
         return user_dict
     return ResponseModel({}, "Empty list returned")
 
-@router.put("/id/{id}")
-async def update_user_data(id: str, req: UpdateUserModel = Body(...)):
+@router.put("/email/{email}")
+async def update_user_data(email: str, req: UpdateUserModel = Body(...)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     req = await user_to_str(req)
     if 'password' in req:
         req['password'] = str(await set_password(req['password']))
     user = jsonable_encoder(req)
-    updated_user = await update_user(id, user)
+    updated_user = await update_user(email, user)
     if updated_user:
         return ResponseModel(
-            "User with ID: {} name update is successful".format(id),
-            "User name updated successfully",
+            "User with Email: {} update is successful".format(email),
+            "User updated successfully",
         )
     return ErrorResponseModel(
         "An error occurred",
@@ -111,11 +111,11 @@ async def update_user_data(id: str, req: UpdateUserModel = Body(...)):
     )
 
 
-@router.delete("/id/{id}", response_description="User data deleted from the database")
-async def delete_user_data(id:str):
-    deleted_user = await delete_user(id)
+@router.delete("/email/{email}", response_description="User data deleted from the database")
+async def delete_user_data(email:str):
+    deleted_user = await delete_user(email)
     if deleted_user:
         return ResponseModel([], "Empty list returned")
     return ErrorResponseModel(
-        "An error occurred", 404, "User with id {0} doesn't exist".format(id)
+        "An error occurred", 404, "User with email {0} doesn't exist".format(id)
     )
