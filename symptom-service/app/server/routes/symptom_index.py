@@ -194,7 +194,7 @@ async def update_symptom_index_data(id: str, req: Update_symptom_index_schema = 
 async def delete_symptom_index_data(id:str): #, dependencies:dict=Depends(verify_token)):
     deleted_symptom_index = await delete_symptom_index(id)
     if deleted_symptom_index == True:
-        return ResponseModel([], "Database is Deleted")
+        return ResponseModel(id, " record is Deleted")
     return ErrorResponseModel(
         "An error occurred", 404, "Database deletation is failiure"
     )

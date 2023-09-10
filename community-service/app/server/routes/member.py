@@ -96,7 +96,7 @@ async def update_member_data(community_id:str, id: str, req: Update_member_schem
 async def delete_member_data(community_id:str, id:str, dependencies:dict=Depends(verify_token)):
     deleted_member = await delete_member(community_id, id)
     if deleted_member == True:
-        return ResponseModel([], "Database is Deleted")
+        return ResponseModel(id, " record is Deleted")
     return ErrorResponseModel(
         "An error occurred", 404, "Database deletation is failiure"
     )

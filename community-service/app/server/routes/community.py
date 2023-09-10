@@ -96,7 +96,7 @@ async def update_community_data(id: str, req: Update_community_schema = Body(...
 async def delete_community_data(id:str, dependencies:dict=Depends(verify_token)):
     deleted_community = await delete_community(id)
     if deleted_community == True:
-        return ResponseModel([], "Database is Deleted")
+        return ResponseModel(id, " record is Deleted")
     return ErrorResponseModel(
         "An error occurred", 404, "Database deletation is failiure"
     )

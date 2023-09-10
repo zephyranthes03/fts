@@ -134,7 +134,7 @@ async def update_user_data(email: str, req: UpdateUserModel = Body(...), depende
 async def delete_user_data(email:str, dependencies:dict=Depends(verify_token)):
     deleted_user = await delete_user(email)
     if deleted_user == True:
-        return ResponseModel([], "Database is Deleted")
+        return ResponseModel(email, " record is Deleted")
     return ErrorResponseModel(
         "An error occurred", 404, "Database deletation is failiure"
     )

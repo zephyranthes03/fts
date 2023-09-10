@@ -96,7 +96,7 @@ async def update_comment_data(community_id:str, board_id:str, post_id:str, id: s
 async def delete_comment_data(community_id:str, board_id:str, post_id:str, id:str, dependencies:dict=Depends(verify_token)):
     deleted_comment = await delete_comment(community_id, board_id, post_id, id)
     if deleted_comment == True:
-        return ResponseModel([], "Database is Deleted")
+        return ResponseModel(id, " record is Deleted")
     return ErrorResponseModel(
         "An error occurred", 404, "Database deletation is failiure"
     )

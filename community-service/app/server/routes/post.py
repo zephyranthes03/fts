@@ -106,7 +106,7 @@ async def update_post_data(community_id:str, board_id:str, id: str, req: Update_
 async def delete_post_data(community_id:str, board_id:str, id:str, dependencies:dict=Depends(verify_token)):
     deleted_post = await delete_post(community_id, board_id, id)
     if deleted_post == True:
-        return ResponseModel([], "Database is Deleted")
+        return ResponseModel(id, " record is Deleted")
     return ErrorResponseModel(
         "An error occurred", 404, "Database deletation is failiure"
     )

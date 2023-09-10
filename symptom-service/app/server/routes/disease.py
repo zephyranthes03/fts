@@ -94,7 +94,7 @@ async def update_disease_data(id: str, req: Update_disease_schema = Body(...)): 
 async def delete_disease_data(id:str): #, dependencies:dict=Depends(verify_token)):
     deleted_disease = await delete_disease(id)
     if deleted_disease == True:
-        return ResponseModel([], "Database is Deleted")
+        return ResponseModel(id, " record is Deleted")
     return ErrorResponseModel(
         "An error occurred", 404, "Database deletation is failiure"
     )
