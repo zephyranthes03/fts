@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 mysql-data/
+postgre-data/
 .DS_Store
 mongodb/
 #orm-services/
