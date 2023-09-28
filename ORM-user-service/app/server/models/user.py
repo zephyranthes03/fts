@@ -18,6 +18,7 @@ class UserSchema(BaseModel):
     message: bool = Field(...)
     friend: list = Field(...)
     permission: dict = Field(...) # all|close|friend|community 
+    symtpom_ids: list = Field(...)
 
     class Config:
         schema_extra = {
@@ -35,7 +36,8 @@ class UserSchema(BaseModel):
                 "interested_tag": ['tag1', 'tag2'],
                 "message": False,
                 "friend": [],
-                "permission": {'survey':'open'}
+                "permission": {'survey':'open'},
+                "symptom_ids": []
 
             }
         }
@@ -78,6 +80,8 @@ class UpdateUserModel(BaseModel):
     message: Optional[bool]
     friend: Optional[list] # Optional[list]
     permission: Optional[dict] # Optional[dict] # all|close|friend|community ?
+    symtpom_ids: list = Field(...)
+
 
     class Config:
         schema_extra = {
@@ -95,7 +99,8 @@ class UpdateUserModel(BaseModel):
                 "interested_tag": ['tag1', 'tag2'],
                 "message": False,
                 "friend": [],
-                "permission": {'survey':'open'}
+                "permission": {'survey':'open'},
+                "symptom_ids": []
             }
         }
 

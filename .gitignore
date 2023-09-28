@@ -6,3 +6,4 @@ postgre-data/
 .DS_Store
 mongodb/
 orm-services/
+symptom-service/upload/

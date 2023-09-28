@@ -16,6 +16,7 @@ class Symptom_index_schema(BaseModel):
     disease: str = Field(...)
     diagnosis: str = Field(...)
     image_file: str = Field(...)
+    email: str = Field(...)
 
     class Config:
         schema_extra = {
@@ -29,6 +30,7 @@ class Symptom_index_schema(BaseModel):
                 "disease": "",
                 "diagnosis": "ringworm",
                 "image_file": "19850109.jpg",
+                "email": "john_doe1@gmail.com"
             }
         }
 
@@ -42,6 +44,7 @@ class Update_symptom_index_schema(BaseModel):
     disease: str = Field(...)
     diagnosis: str = Field(...)
     image_file: str = Field(...)
+    email: str = Field(...)
 
     class Config:
         schema_extra = {
@@ -55,5 +58,6 @@ class Update_symptom_index_schema(BaseModel):
                 "disease": "",
                 "diagnosis": "ringworm",
                 "image_file": "19850109.jpg",
+                "email": "john_doe1@gmail.com"
             }
         }

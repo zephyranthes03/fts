@@ -14,8 +14,8 @@ from DeepImageSearch import Load_Data, Search_Setup
 
 from app.server.util.preload import verify_token
 
-UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER")
-SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER")
+UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER", "./upload/")
+SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER", "./sample/")
 
 # templates = Jinja2Templates(directory="templates")
 
@@ -69,24 +69,38 @@ async def load_symptom_indexes():
 # Response : 사용자가 올린 이미지와 비슷한 비교 이미지를 클라이언트로 업로드
 @router.post("/request", response_class=HTMLResponse, response_description="Upload symptomnostic diagnosis")
 # async def upload_symptom_diagnosis(symptom: Diagnosis_schema = Body(...), file: UploadFile):
-async def upload_symptom(request: Request, symptom_id: str, symptom_file: bytes = File(...)): #, dependencies:dict=Depends(verify_token)):
+# async def upload_symptom(request: Request, email: str, symptom_file: bytes = UploadFile(...)): #, dependencies:dict=Depends(verify_token)):
+async def upload_symptom(request: Request, email: str, symptom_file: UploadFile = File(...)): #, dependencies:dict=Depends(verify_token)):
 
     ## Collecting diagnosis
 
     ## TODO: Should we Collect diagnosis file type with jpg or png?
-    ext = symptom_file.filename[symptom_file.rfind(".")+1:]
+    print(symptom_file,flush=True)
+    print(symptom_file.filename,flush=True)
+    ext = symptom_file.filename[symptom_file.filename.rfind(".")+1:]
     now = datetime.now()
     year = now.strftime("%Y")
     month = now.strftime("%m")
     date = now.strftime("%d")
-    target_filefolder = os.path.join(UPLOAD_IMAGE_FOLDER, year, month)
-    if os.path.exists(target_filefolder):
+    target_filefolder = os.path.join(UPLOAD_IMAGE_FOLDER, year, month, date)
+    if not os.path.exists(target_filefolder):
         os.makedirs(target_filefolder)
-    new_filename = os.path.join(UPLOAD_IMAGE_FOLDER, year, month, date, f"{symptom_id}.{ext}")
+    new_filename = os.path.join(UPLOAD_IMAGE_FOLDER, year, month, date, f"{email[:email.index('@')]}_{symptom_file.filename}")
+
+    print(new_filename,flush=True)
+
+    try:
+        contents = symptom_file.file.read()
+        with open(symptom_file.filename, 'wb') as f:
+            f.write(contents)
+    except Exception:
+        return {"message": "There was an error uploading the file"}
+    finally:
+        symptom_file.file.close()
 
     with open(symptom_file.filename,'rb') as file:
         write_file = open(new_filename,'wb')
-        write_file.write(await file.read())
+        write_file.write(file.read())
         write_file.close()
         if st is not None:
             symptom_print_list = st.get_similar_diagnosises(diagnosis_path=new_filename, number_of_diagnosises=9)

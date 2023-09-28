@@ -57,6 +57,7 @@ users = sqlalchemy.Table(
     sqlalchemy.Column("message", sqlalchemy.Boolean),
     sqlalchemy.Column("friend", sqlalchemy.Text),
     sqlalchemy.Column("permission", sqlalchemy.Text),
+    sqlalchemy.Column("symtpom_ids", sqlalchemy.String(1024))
     # sqlalchemy.Column("date_convert", sqlalchemy.Date),
 )
 
