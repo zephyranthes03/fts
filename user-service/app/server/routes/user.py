@@ -82,10 +82,10 @@ async def get_user_by_email(email:str, dependencies:dict=Depends(verify_token)):
 async def post_user_social_email(socialEmail: SocialEmailSchema = Body(...)):
     socialEmail = jsonable_encoder(socialEmail)
     user = await read_user_by_social_email(socialEmail)
-    if user:
+    if user['data']:
         await session_create(user)
         return ResponseModel(user, "User data retrieved successfully")
-    return ResponseModel(user, "Empty list returned")
+    return ResponseModel(user, "Login Failure")
 
 @router.post("/social_login", response_description="Users retrieved by social login")
 async def post_user_social_login(request: Request):
@@ -100,12 +100,12 @@ async def post_user_social_login(request: Request):
 async def get_user_data(email: EmailSchema = Body(...)):
     email = jsonable_encoder(email)
     user = await read_user_by_email_password(email)
-    if user:
+    if user['data']:
         print("print_from email",flush=True)
         print(user,flush=True)
         await session_create(user)
         return ResponseModel(user, "User data retrieved successfully")
-    return ResponseModel(user, "Empty list returned")
+    return ResponseModel(user, "Login Failure")
 
 @router.post("/disconnect", response_description="Disconnect session(Remove session data from Redis)")
 async def redis_delete_session(dependencies:dict=Depends(verify_token)):
