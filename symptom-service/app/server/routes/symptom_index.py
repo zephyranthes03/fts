@@ -5,7 +5,7 @@ from datetime import datetime
 from fastapi import APIRouter, Body, File, UploadFile, Request, Depends
 
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 # from fastapi.templating import Jinja2Templates
 
 from io import BytesIO
@@ -70,44 +70,40 @@ async def load_symptom_indexes():
 @router.post("/request", response_class=HTMLResponse, response_description="Upload symptomnostic diagnosis")
 # async def upload_symptom_diagnosis(symptom: Diagnosis_schema = Body(...), file: UploadFile):
 # async def upload_symptom(request: Request, email: str, symptom_file: bytes = UploadFile(...)): #, dependencies:dict=Depends(verify_token)):
-async def upload_symptom(request: Request, email: str, symptom_file: UploadFile = File(...)): #, dependencies:dict=Depends(verify_token)):
+async def upload_symptom(request: Request, email: str, symptom_center_image: UploadFile = File(...), symptom_wide_image: UploadFile = File(...)): #, dependencies:dict=Depends(verify_token)):
 
     ## Collecting diagnosis
 
     ## TODO: Should we Collect diagnosis file type with jpg or png?
-    print(symptom_file,flush=True)
-    print(symptom_file.filename,flush=True)
-    ext = symptom_file.filename[symptom_file.filename.rfind(".")+1:]
+    # print(symptom_center_image.filename,flush=True)
+    ext_center = symptom_center_image.filename[symptom_center_image.filename.rfind(".")+1:]
+    ext_wide = symptom_wide_image.filename[symptom_wide_image.filename.rfind(".")+1:]
     now = datetime.now()
     year = now.strftime("%Y")
     month = now.strftime("%m")
     date = now.strftime("%d")
     target_filefolder = os.path.join(UPLOAD_IMAGE_FOLDER, year, month, date)
+
     if not os.path.exists(target_filefolder):
         os.makedirs(target_filefolder)
-    new_filename = os.path.join(UPLOAD_IMAGE_FOLDER, year, month, date, f"{email[:email.index('@')]}_{symptom_file.filename}")
+    new_center_image = os.path.join(UPLOAD_IMAGE_FOLDER, year, month, date, f"{email}_{symptom_center_image.filename}")
+    new_wide_image = os.path.join(UPLOAD_IMAGE_FOLDER, year, month, date, f"{email}_{symptom_wide_image.filename}")
 
-    print(new_filename,flush=True)
+    write_centor_file = open(new_center_image,'wb')
+    write_centor_file.write(symptom_center_image.file.read())
+    write_centor_file.close()
 
-    try:
-        contents = symptom_file.file.read()
-        with open(symptom_file.filename, 'wb') as f:
-            f.write(contents)
-    except Exception:
-        return {"message": "There was an error uploading the file"}
-    finally:
-        symptom_file.file.close()
+    write_wide_file = open(new_wide_image,'wb')
+    write_wide_file.write(symptom_wide_image.file.read())
+    write_wide_file.close()
+        # if st is not None:
+        #     symptom_print_list = st.get_similar_diagnosises(diagnosis_path=new_center_image, number_of_diagnosises=9)
+        #     print(symptom_print_list,flush=True)
 
-    with open(symptom_file.filename,'rb') as file:
-        write_file = open(new_filename,'wb')
-        write_file.write(file.read())
-        write_file.close()
-        if st is not None:
-            symptom_print_list = st.get_similar_diagnosises(diagnosis_path=new_filename, number_of_diagnosises=9)
-            print(symptom_print_list,flush=True)
-
-    # return templates.TemplateResponse("select_disease_sample.html", {"request": request, "diagnosis_list":diagnosis_print_list})
-    return ResponseModel({"similiar_diagnosis_list":symptom_print_list}, "Return Similar diagnosis")
+    # return ResponseModel({"status":200, "center_image": new_center_image[new_center_image.rfind('/'):],
+    #                       "wide_image": new_wide_image[new_wide_image.rfind('/'):] }, "Uploaded!")
+    return JSONResponse(status_code=200, content={"status":200, "center_image": new_center_image[new_center_image.rfind('/'):],
+                         "wide_image": new_wide_image[new_wide_image.rfind('/'):] })
 
 
 # Request : 사용자가 선택한 이미지 리스트를 서버로 전송
