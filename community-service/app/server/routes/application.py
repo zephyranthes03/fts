@@ -57,25 +57,25 @@ async def add_application_data(community_id:str, application: Application_schema
         )
     return ResponseModel(new_application, "Application added successfully.")
 
-@router.get("/{community_id}", response_description="Communites retrieved")
+@router.get("/{community_id}", response_description="communities retrieved")
 async def get_applications(community_id:str, dependencies:dict=Depends(verify_token)):
     applications = await read_applications(community_id)
     if applications:
-        return ResponseModel(applications, "Communites data statistic retrieved successfully")
+        return ResponseModel(applications, "communities data statistic retrieved successfully")
     return ResponseModel(applications, "Empty list returned")
 
-@router.get("/{community_id}/id/{id}", response_description="Communites retrieved")
+@router.get("/{community_id}/id/{id}", response_description="communities retrieved")
 async def get_application_by_id(community_id:str, id:str, dependencies:dict=Depends(verify_token)):
     applications = await read_application_by_id(community_id, id)
     if applications:
-        return ResponseModel(applications, "Communites data statistic retrieved successfully")
+        return ResponseModel(applications, "communities data statistic retrieved successfully")
     return ResponseModel(applications, "Empty list returned")
 
-@router.get("/{community_id}/name/{name}", response_description="Communites retrieved")
+@router.get("/{community_id}/name/{name}", response_description="communities retrieved")
 async def get_application_by_name(community_id:str, name:str, dependencies:dict=Depends(verify_token)):
     applications = await read_application_by_name(community_id, name)
     if applications:
-        return ResponseModel(applications, "Communites data statistic retrieved successfully")
+        return ResponseModel(applications, "communities data statistic retrieved successfully")
     return ResponseModel(applications, "Empty list returned")
 
 @router.put("/{community_id}/id/{id}")

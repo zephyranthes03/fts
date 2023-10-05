@@ -11,11 +11,12 @@ async def add_community(community:dict) -> dict:
     t1_start = process_time()
     
     async with httpx.AsyncClient() as client:
-        name = community.get('disease', None)
+        name = community.get('name', None)
         if name:
             r = await client.get(f'{os.getenv("ORM_METACOMMUNITY_SERVICE")}/community/name/{name}')
             data = r.json() 
-            if data.get('detail', 'Failure') == 'Not Found':
+
+            if data is None or (data and data.get('detail', 'Failure') == 'Not Found'):
 
                 print(f'{os.getenv("ORM_METACOMMUNITY_SERVICE")}/community/',flush=True)
                 r = await client.post(f'{os.getenv("ORM_METACOMMUNITY_SERVICE")}/community/', json=community)

@@ -5,6 +5,7 @@ from typing import List, Optional
 
 # import databases
 # from fastapi import FastAPI
+from app.config.config import settings
 
 from app.server.schemas.message import (
     Message_schema,
@@ -17,7 +18,7 @@ from app.server.schemas.message import (
 async def retrieve_messages(mongodb_client: Optional[any], 
                           receiver: str, message: str,
                           page: int = 1, size: int = 10) -> list:
-    database = mongodb_client["message"]
+    database = mongodb_client[settings.DATABASE_MESSAGE]
     collection = database[f"message_{str(hash(receiver)%100)}"]
 
     messages = []
@@ -35,7 +36,7 @@ async def retrieve_messages(mongodb_client: Optional[any],
 # Retrieve a message with a matching station id
 async def retrieve_message_by_id(mongodb_client: Optional[any], 
                                user_id: str, id: str): # -> dict:
-    database = mongodb_client["message"]
+    database = mongodb_client[settings.DATABASE_MESSAGE]
     collection = database[f"message_{str(hash(user_id)%100)}"]
 
     message = collection.find_one(
@@ -47,7 +48,7 @@ async def retrieve_message_by_id(mongodb_client: Optional[any],
 async def add_message(mongodb_client: Optional[any], 
                     user_id: str, message_data: Message_schema ) -> dict:
 
-    database = mongodb_client["message"]
+    database = mongodb_client[settings.DATABASE_MESSAGE]
     collection = database[f"message_{str(hash(user_id)%100)}"]
 
     new_message = collection.insert_one(message_data)
@@ -62,7 +63,7 @@ async def update_message(mongodb_client: Optional[any],
                        user_id: str, id: str, 
                        message_data: Update_message_schema) -> dict:
 
-    database = mongodb_client["message"]
+    database = mongodb_client[settings.DATABASE_MESSAGE]
     collection = database[f"message_{str(hash(user_id)%100)}"]
 
     update_result = collection.update_one(
@@ -75,7 +76,7 @@ async def update_message(mongodb_client: Optional[any],
 async def delete_message(mongodb_client: Optional[any], 
                        user_id: str, id: str) -> int:
 
-    database = mongodb_client["message"]
+    database = mongodb_client[settings.DATABASE_MESSAGE]
     collection = database[f"message_{str(hash(user_id)%100)}"]
 
     delete_result = collection.delete_one({"_id": id})

@@ -13,7 +13,7 @@ services:
       - ORM_USER_SERVICE=${ORM_USER_SERVICE}
       - TEST=$TEST
     ports:
-      - "{USER_SERVICE_PORT}:{USER_SERVICE_PORT}"
+      - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
     links:
       - orm-user-service
     depends_on:
@@ -29,7 +29,7 @@ services:
     volumes:
       - ./ORM-user-service:/app
     ports:
-      - "{ORM_USER_SERVICE_PORT}:{ORM_USER_SERVICE_PORT}"
+      - "${ORM_USER_SERVICE_PORT}:${ORM_USER_SERVICE_PORT}"
     env_file:
       - .env
     environment:
@@ -60,12 +60,12 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_DATABASE=${REDIS_DATABASE}
     ports:
-      - "{SYMPTOM_SERVICE_PORT}:{SYMPTOM_SERVICE_PORT}"
+      - "${SYMPTOM_SERVICE_PORT}:${SYMPTOM_SERVICE_PORT}"
     links:
-      - orm-services
+      - orm-symptom-service
       - redis
     depends_on:
-      - orm-services
+      - orm-symptom-service
       - redis
       
   orm-symptom-service:
@@ -77,7 +77,7 @@ services:
     volumes:
       - ./ORM-symptom-service:/app
     ports:
-      - "{ORM_SYMPTOM_SERVICE_PORT}:{ORM_SYMPTOM_SERVICE_PORT}"
+      - "${ORM_SYMPTOM_SERVICE_PORT}:${ORM_SYMPTOM_SERVICE_PORT}"
     env_file:
       - .env
     environment:
@@ -107,7 +107,7 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_DATABASE=${REDIS_DATABASE}
     ports:
-      - "8005:8005"
+      - "${COMMUNITY_SERVICE_PORT}:${COMMUNITY_SERVICE_PORT}"
     links:
       - orm-metacommunity-service
       - orm-member-service
@@ -181,7 +181,7 @@ services:
       - MONGODB_URL=${MONGODB_URL}
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-      - COMMUNITY_DATABASE_POST=${COMMUNITY_DATABASE_POST}
+      - COMMUNITY_DATABASE_BOARD=${COMMUNITY_DATABASE_BOARD}
     links:
       - mongodb
     depends_on:

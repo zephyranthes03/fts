@@ -54,26 +54,26 @@ async def add_board_data(community_id:str, board_id:str, board: Board_schema = B
         )
     return ResponseModel(new_board, "Board added successfully.")
 
-@router.get("/{community_id}/{board_id}", response_description="Communites retrieved")
+@router.get("/{community_id}/{board_id}", response_description="Board retrieved")
 async def get_boards(community_id:str, board_id:str, dependencies:dict=Depends(verify_token)):
     boards = await read_boards(community_id, board_id)
     if boards:
-        return ResponseModel(boards, "Communites data statistic retrieved successfully")
+        return ResponseModel(boards, "Board data statistic retrieved successfully")
     return ResponseModel(boards, "Empty list returned")
 
-@router.get("/{community_id}/{board_id}/read/{id}", response_description="Communites retrieved")
+@router.get("/{community_id}/{board_id}/read/{id}", response_description="Board retrieved")
 async def get_board_by_id(community_id:str, board_id:str, id:str, dependencies:dict=Depends(verify_token)):
     boards = await read_board_by_id(community_id, board_id, id)
     if boards:
-        return ResponseModel(boards, "Communites data statistic retrieved successfully")
+        return ResponseModel(boards, "Board data statistic retrieved successfully")
     return ResponseModel(boards, "Empty list returned")
 
 
-@router.get("/{community_id}/{board_id}/name/{name}", response_description="Communites retrieved")
+@router.get("/{community_id}/{board_id}/name/{name}", response_description="Board retrieved")
 async def get_board_by_name(community_id:str, board_id:str, name:str, dependencies:dict=Depends(verify_token)):
     boards = await read_board_by_name(community_id, board_id, name)
     if boards:
-        return ResponseModel(boards, "Communites data statistic retrieved successfully")
+        return ResponseModel(boards, "Board data statistic retrieved successfully")
     return ResponseModel(boards, "Empty list returned")
 
 @router.put("/{community_id}/{board_id}/id/{id}")

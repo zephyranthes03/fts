@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 class Settings:
-    DATABASE_POST: str  = os.getenv("COMMUNITY_DATABASE_POST", "post")
+    DATABASE_BOARD: str  = os.getenv("COMMUNITY_DATABASE_BOARD", "board")
     DATABASE_LOG: str  = os.getenv("COMMUNITY_DATABASE_LOG", "log")
 
     MONGO_INITDB_ROOT_USERNAME: str = os.getenv("MONGO_INITDB_ROOT_USERNAME")

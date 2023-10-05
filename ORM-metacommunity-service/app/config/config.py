@@ -3,8 +3,8 @@ from pathlib import Path
 
 class Settings:
 
-    DATABASE_METACOMMUNITY: str  = os.getenv("COMMUNITY_DATABASE_METACOMMUNITY", "metaCommunity")
-    DATABASE_METACOMMUNITY: str  = os.getenv("COMMUNITY_DATABASE_METACOMMUNITY", "metaCommunity")
+    DATABASE_METACOMMUNITY: str  = os.getenv("COMMUNITY_DATABASE_METACOMMUNITY", "community")
+    DATABASE_BOARD: str = os.getenv("COMMUNITY_DATABASE_BOARD", "board")
 
     MONGO_INITDB_ROOT_USERNAME: str = os.getenv("MONGO_INITDB_ROOT_USERNAME")
     MONGO_INITDB_ROOT_PASSWORD: str = os.getenv("MONGO_INITDB_ROOT_PASSWORD")

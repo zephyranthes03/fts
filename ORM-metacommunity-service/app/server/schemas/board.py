@@ -13,7 +13,7 @@ class Board_schema(BaseModel):
     condition: dict = Field(...)
     blacklist: list = Field(...)
     whitelist: list = Field(...)
-    manager: str = Field(...)
+    manager: list = Field(...)
     community_id: str = Field(...)
     limit: dict = Field(...)
 
@@ -27,7 +27,7 @@ class Board_schema(BaseModel):
                 "condition": {},
                 "blacklist": [],
                 "whitelist": [],
-                "manager": "admin",
+                "manager": [{"id": "0000-0000-0000000", "username": "admin"}],
                 "community_id": "066de609-b04a-4b30-b46c-32537c7f1f6e",
                 "limit" : {}
             }
@@ -40,7 +40,7 @@ class Update_board_schema(BaseModel):
     condition: dict = Field(...)
     blacklist: list = Field(...)
     whitelist: list = Field(...)
-    manager: str = Field(...)
+    manager: list = Field(...)
     community_id: str = Field(...)
     limit: dict = Field(...)
 
@@ -54,7 +54,7 @@ class Update_board_schema(BaseModel):
                 "condition": {},
                 "blacklist": [],
                 "whitelist": [],
-                "manager": "admin",
+                "manager": [{"id": "0000-0000-0000000", "username": "admin"}],
                 "community_id": "066de609-b04a-4b30-b46c-32537c7f1f6e",
                 "limit" : {}
             }

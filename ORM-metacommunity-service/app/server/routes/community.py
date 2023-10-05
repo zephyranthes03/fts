@@ -2,6 +2,8 @@ from fastapi import APIRouter, Body, Request, Response, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from typing import List
 
+from app.config.config import settings
+
 from app.server.databases.community import (
     add_community,
     delete_community,
@@ -23,12 +25,12 @@ router = APIRouter()
 @router.post("/", response_description="Community data added into the database")
 async def add_community_data(request: Request, community: Community_schema = Body(...)):
     community = jsonable_encoder(community)
-    new_community = await add_community(request.app.database['communities'], community)
+    new_community = await add_community(request.app.database[settings.DATABASE_METACOMMUNITY], community)
     return ResponseModel(new_community, "Community added successfully.")
 
 @router.get("/", response_description="Communities retrieved")
 async def get_communities_data(request: Request):
-    communities = await retrieve_communities(request.app.database['communities'])
+    communities = await retrieve_communities(request.app.database[settings.DATABASE_METACOMMUNITY])
     communities_list = list()
     if communities:
         for community in communities:
@@ -40,12 +42,12 @@ async def get_communities_data(request: Request):
 
 @router.get("/id/{id}", response_description="Community data retrieved by community_id")
 async def get_community_data(request: Request, id: str):
-    community = await retrieve_community_by_id(request.app.database['communities'], id)
+    community = await retrieve_community_by_id(request.app.database[settings.DATABASE_METACOMMUNITY], id)
     return community
 
 @router.get("/name/{name}", response_description="Community data retrieved by community name")
 async def get_community_data(request: Request, name: str):
-    community = await retrieve_community_by_name(request.app.database['communities'], name)
+    community = await retrieve_community_by_name(request.app.database[settings.DATABASE_METACOMMUNITY], name)
     return community
 
 @router.put("/id/{id}")
@@ -53,7 +55,7 @@ async def update_community_data(request: Request, id: str, req: Update_community
     community = {k: v for k, v in req.dict().items() if v is not None}
 
     if len(community) >= 1:
-        update_result = await update_community(request.app.database["communities"], id, community)
+        update_result = await update_community(request.app.database[settings.DATABASE_METACOMMUNITY], id, community)
         print(update_result.modified_count,flush=True)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
@@ -63,7 +65,7 @@ async def update_community_data(request: Request, id: str, req: Update_community
             )
 
     if (
-        existing_community := await retrieve_community_by_id(request.app.database['communities'], id)
+        existing_community := await retrieve_community_by_id(request.app.database[settings.DATABASE_METACOMMUNITY], id)
     ) is not None:
         return ResponseModel(existing_community, "Community updated successfully.")
 
@@ -76,7 +78,7 @@ async def update_community_data(request: Request, id: str, req: Update_community
 
 @router.delete("/id/{id}")
 async def delete_community_data(request: Request, id: str):
-    deleted_community = await delete_community(request.app.database['communities'], id)
+    deleted_community = await delete_community(request.app.database[settings.DATABASE_METACOMMUNITY], id)
     if deleted_community:
         return ResponseModel(
             "Community with ID: {} name delete is successful".format(id),

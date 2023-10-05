@@ -8,7 +8,6 @@ class Community(BaseModel):
     symptom = Column(Text)
     date = Column(Date)
     boards = Column(Text)
-    manager = Column(String(255))
+    manager = Column(Text)
     image_file = Column(String(1024))
     content = Column(Text)
-
