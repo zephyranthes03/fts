@@ -54,25 +54,25 @@ async def add_member_data(community_id:str, member: Member_schema = Body(...), d
         )
     return ResponseModel(new_member, "Member added successfully.")
 
-@router.get("/{community_id}", response_description="Communites retrieved")
+@router.get("/{community_id}", response_description="Communities retrieved")
 async def get_members(community_id:str, dependencies:dict=Depends(verify_token)):
     members = await read_members(community_id)
     if members:
-        return ResponseModel(members, "Communites data statistic retrieved successfully")
+        return ResponseModel(members, "Communities data statistic retrieved successfully")
     return ResponseModel(members, "Empty list returned")
 
-@router.get("/{community_id}/id/{id}", response_description="Communites retrieved")
+@router.get("/{community_id}/id/{id}", response_description="Communities retrieved")
 async def get_member_by_id(community_id:str, id:str, dependencies:dict=Depends(verify_token)):
     members = await read_member_by_id(community_id, id)
     if members:
-        return ResponseModel(members, "Communites data statistic retrieved successfully")
+        return ResponseModel(members, "Communities data statistic retrieved successfully")
     return ResponseModel(members, "Empty list returned")
 
-@router.get("/{community_id}/name/{name}", response_description="Communites retrieved")
+@router.get("/{community_id}/name/{name}", response_description="Communities retrieved")
 async def get_member_by_name(community_id:str, name:str, dependencies:dict=Depends(verify_token)):
     members = await read_member_by_name(community_id, name)
     if members:
-        return ResponseModel(members, "Communites data statistic retrieved successfully")
+        return ResponseModel(members, "Communities data statistic retrieved successfully")
     return ResponseModel(members, "Empty list returned")
 
 @router.put("/{community_id}/id/{id}")

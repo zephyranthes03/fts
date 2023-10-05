@@ -59,30 +59,30 @@ async def add_post_data(community_id:str, board_id:str, post: Post_schema = Body
 async def get_posts(community_id:str, board_id:str, dependencies:dict=Depends(verify_token)):
     posts = await read_posts(community_id, board_id)
     if posts:
-        return ResponseModel(posts, "Communites data statistic retrieved successfully")
+        return ResponseModel(posts, "Communities data statistic retrieved successfully")
     return ResponseModel(posts, "Empty list returned")
 
-@router.get("/{community_id}/{board_id}/read/{id}", response_description="Communites post retrieved")
+@router.get("/{community_id}/{board_id}/read/{id}", response_description="Communities post retrieved")
 async def get_post_by_id(community_id:str, board_id:str, id:str, dependencies:dict=Depends(verify_token)):
     posts = await read_post_by_id(community_id, board_id, id)
     if posts:
-        return ResponseModel(posts, "Communites data statistic retrieved successfully")
+        return ResponseModel(posts, "Communities data statistic retrieved successfully")
     return ResponseModel(posts, "Empty list returned")
 
-@router.get("/{community_id}/{board_id}/like/{id}", response_description="Communites retrieved")
+@router.get("/{community_id}/{board_id}/like/{id}", response_description="Communities retrieved")
 async def get_post_by_id(community_id:str, board_id:str, id:str, dependencies:dict=Depends(verify_token)):
     print(dependencies,flush=True)
     posts = await like_post_by_id(community_id, board_id, id, dependencies)
     if posts:
-        return ResponseModel(posts, "Communites data statistic retrieved successfully")
+        return ResponseModel(posts, "Communities data statistic retrieved successfully")
     return ResponseModel(posts, "Empty list returned")
 
 
-@router.get("/{community_id}/{board_id}/name/{name}", response_description="Communites retrieved")
+@router.get("/{community_id}/{board_id}/name/{name}", response_description="Communities retrieved")
 async def get_post_by_name(community_id:str, board_id:str, name:str, dependencies:dict=Depends(verify_token)):
     posts = await read_post_by_name(community_id, board_id, name)
     if posts:
-        return ResponseModel(posts, "Communites data statistic retrieved successfully")
+        return ResponseModel(posts, "Communities data statistic retrieved successfully")
     return ResponseModel(posts, "Empty list returned")
 
 @router.put("/{community_id}/{board_id}/id/{id}")

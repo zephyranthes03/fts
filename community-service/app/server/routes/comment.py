@@ -54,25 +54,25 @@ async def add_comment_data(community_id:str, board_id:str, post_id:str, comment:
         )
     return ResponseModel(new_comment, "Comment added successfully.")
 
-@router.get("/{community_id}/{board_id}/post/{post_id}", response_description="Communites retrieved")
+@router.get("/{community_id}/{board_id}/post/{post_id}", response_description="Communities retrieved")
 async def get_comments(community_id:str, board_id:str, post_id:str, dependencies:dict=Depends(verify_token)):
     comments = await read_comments(community_id, board_id, post_id)
     if comments:
-        return ResponseModel(comments, "Communites data statistic retrieved successfully")
+        return ResponseModel(comments, "Communities data statistic retrieved successfully")
     return ResponseModel(comments, "Empty list returned")
 
-@router.get("/{community_id}/{board_id}/post/{post_id}/id/{id}", response_description="Communites retrieved")
+@router.get("/{community_id}/{board_id}/post/{post_id}/id/{id}", response_description="Communities retrieved")
 async def get_comment_by_id(community_id:str, board_id:str, post_id:str, id:str, dependencies:dict=Depends(verify_token)):
     comments = await read_comment_by_id(community_id, board_id, post_id, id)
     if comments:
-        return ResponseModel(comments, "Communites data statistic retrieved successfully")
+        return ResponseModel(comments, "Communities data statistic retrieved successfully")
     return ResponseModel(comments, "Empty list returned")
 
-@router.get("/{community_id}/{board_id}/post/{post_id}/name/{name}", response_description="Communites retrieved")
+@router.get("/{community_id}/{board_id}/post/{post_id}/name/{name}", response_description="Communities retrieved")
 async def get_comment_by_name(community_id:str, board_id:str, post_id:str, name:str, dependencies:dict=Depends(verify_token)):
     comments = await read_comment_by_name(community_id, board_id, post_id, name)
     if comments:
-        return ResponseModel(comments, "Communites data statistic retrieved successfully")
+        return ResponseModel(comments, "Communities data statistic retrieved successfully")
     return ResponseModel(comments, "Empty list returned")
 
 @router.put("/{community_id}/{board_id}/post/{post_id}/id/{id}")

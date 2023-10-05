@@ -54,26 +54,26 @@ async def add_community_data(community: Community_schema = Body(...), dependenci
     return ResponseModel(new_community, "Community added successfully.")
 
 
-@router.get("/", response_description="Communites retrieved")
-async def get_communites(dependencies:dict=Depends(verify_token)):
-    communites = await read_communities()
-    if communites:
-        return ResponseModel(communites, "Communites data statistic retrieved successfully")
-    return ResponseModel(communites, "Empty list returned")
+@router.get("/", response_description="Communities retrieved")
+async def get_communities(dependencies:dict=Depends(verify_token)):
+    communities = await read_communities()
+    if communities:
+        return ResponseModel(communities, "Communities data statistic retrieved successfully")
+    return ResponseModel(communities, "Empty list returned")
 
-@router.get("/id/{id}", response_description="Communites retrieved")
+@router.get("/id/{id}", response_description="Communities retrieved")
 async def get_community_by_id(id:str, dependencies:dict=Depends(verify_token)):
-    communites = await read_community_by_id(id)
-    if communites:
-        return ResponseModel(communites, "Communites data statistic retrieved successfully")
-    return ResponseModel(communites, "Empty list returned")
+    communities = await read_community_by_id(id)
+    if communities:
+        return ResponseModel(communities, "Communities data statistic retrieved successfully")
+    return ResponseModel(communities, "Empty list returned")
 
-@router.get("/name/{name}", response_description="Communites retrieved")
+@router.get("/name/{name}", response_description="Communities retrieved")
 async def get_community_by_name(name:str, dependencies:dict=Depends(verify_token)):
-    communites = await read_community_by_name(name)
-    if communites:
-        return ResponseModel(communites, "Communites data statistic retrieved successfully")
-    return ResponseModel(communites, "Empty list returned")
+    communities = await read_community_by_name(name)
+    if communities:
+        return ResponseModel(communities, "Communities data statistic retrieved successfully")
+    return ResponseModel(communities, "Empty list returned")
 
 @router.put("/id/{id}")
 async def update_community_data(id: str, req: Update_community_schema = Body(...), dependencies:dict=Depends(verify_token)):
