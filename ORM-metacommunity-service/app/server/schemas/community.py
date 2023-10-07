@@ -11,7 +11,7 @@ class Community_schema(BaseModel):
     symptom: str = Field(...)
     date: str = Field(...)
     applyform: list = Field(...)
-    boards: dict = Field(...)
+    boards: list = Field(...)
     manager: list = Field(...)
     image_file: str = Field(...)
     comment: str = Field(...)   
@@ -27,7 +27,7 @@ class Community_schema(BaseModel):
                               {'연령대': {'mandatory': True, 'type':'select','comment':'', 'option':['10대','20대','30대','40대이상']}},
                               {'설문': {'mandatory': True, 'type':'select','comment':'커뮤니티 메너를 잘 지켜주실거죠?','option':['네','아니오']}}
                 ],
-                "boards": {100:'intro'},
+                "boards": [],
                 "manager": [{"id":'0000000', 'userid':'admin'}],
                 "image_file": "http://localhost:8005/community/image/066de609-b04a-4b30-b46c-32537c7f1f6e.jpg",
                 "comment": "comment"
@@ -55,7 +55,7 @@ class Update_community_schema(BaseModel):
                               {'연령대': {'mandatory': True, 'type':'select','comment':'', 'option':['10대','20대','30대','40대이상']}},
                               {'설문': {'mandatory': True, 'type':'select','comment':'커뮤니티 메너를 잘 지켜주실거죠?','option':['네','아니오']}}
                 ],
-                "boards": {100:'intro'},
+                "boards": [],
                 "manager": [{"id":'0000000', 'userid':'admin'}],
                 "image_file": "http://localhost:8005/community/image/066de609-b04a-4b30-b46c-32537c7f1f6e.jpg",
                 "comment": "comment"

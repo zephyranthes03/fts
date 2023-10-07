@@ -16,6 +16,7 @@ class Board_schema(BaseModel):
     manager: list = Field(...)
     community_id: str = Field(...)
     limit: dict = Field(...)
+    lastupdatedate: str = Field(...)
 
     class Config:
         allow_population_by_field_name = True
@@ -29,7 +30,8 @@ class Board_schema(BaseModel):
                 "whitelist": [],
                 "manager": [{"id": "0000-0000-0000000", "username": "admin"}],
                 "community_id": "066de609-b04a-4b30-b46c-32537c7f1f6e",
-                "limit" : {}
+                "limit" : {},
+                "lastupdatedate": "2017-10-13T10:53:53Z"
             }
         }
 
@@ -43,6 +45,7 @@ class Update_board_schema(BaseModel):
     manager: list = Field(...)
     community_id: str = Field(...)
     limit: dict = Field(...)
+    lastupdatedate: str = Field(...)
 
     class Config:
         allow_population_by_field_name = True
@@ -56,7 +59,8 @@ class Update_board_schema(BaseModel):
                 "whitelist": [],
                 "manager": [{"id": "0000-0000-0000000", "username": "admin"}],
                 "community_id": "066de609-b04a-4b30-b46c-32537c7f1f6e",
-                "limit" : {}
+                "limit" : {},
+                "lastupdatedate": "2017-10-13T10:53:53Z"
             }
         }
 

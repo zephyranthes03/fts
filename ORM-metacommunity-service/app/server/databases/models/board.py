@@ -14,3 +14,4 @@ class Board(BaseModel):
     manager = Column(Text)
     community_id = Column(String(64))
     limit = Column(Text)
+    lastupdatedate = Column(Date)    
