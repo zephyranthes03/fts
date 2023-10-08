@@ -7,66 +7,60 @@ from app.config.config import settings
 
 class Board_schema(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
-    re_id: str = Field(...)
-    title: str = Field(...)
-    content: str = Field(...)
-    create_date: str = Field(...)
-    update_date: str = Field(...)
-    pinned: bool = Field(...)
-    read_count: int = Field(...)
-    like_count: int = Field(...)
-    like: list = Field(...)
+    kind: str = Field(...)
+    name: str = Field(...)
+    comment: str = Field(...)
+    condition: dict = Field(...)
+    blacklist: list = Field(...)
+    whitelist: list = Field(...)
+    manager: list = Field(...)
+    community_id: str = Field(...)
     limit: dict = Field(...)
-    admin_limit: dict = Field(...)
-
+    lastupdatedate: str = Field(...)
 
     class Config:
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
-                "re_id": "",
-                "title": "title",
-                "content": "content",
-                "create_date": "2017-10-13T10:53:53Z",
-                "update_date": "2017-10-13T10:53:53Z",
-                "pinned": True,
-                "read_count": 0,
-                "like_count": 0,
-                "like": [],
+                "kind": "board",
+                "name": "Intro",
+                "comment": "Free Intro board for this community",
+                "condition": {},
+                "blacklist": [],
+                "whitelist": [],
+                "manager": [{"id": "0000-0000-0000000", "username": "admin"}],
+                "community_id": "066de609-b04a-4b30-b46c-32537c7f1f6e",
                 "limit" : {},
-                "admin_limit" : {}
+                "lastupdatedate": "2017-10-13T10:53:53Z"
             }
         }
 
 class Update_board_schema(BaseModel):
-    re_id: str = Field(...)
-    title: str = Field(...)
-    content: str = Field(...)
-    create_date: str = Field(...)
-    update_date: str = Field(...)
-    pinned: bool = Field(...)
-    read_count: int = Field(...)
-    like_count: int = Field(...)
-    like: list = Field(...)
+    kind: str = Field(...)
+    name: str = Field(...)
+    comment: str = Field(...)
+    condition: dict = Field(...)
+    blacklist: list = Field(...)
+    whitelist: list = Field(...)
+    manager: list = Field(...)
+    community_id: str = Field(...)
     limit: dict = Field(...)
-    admin_limit: dict = Field(...)
+    lastupdatedate: str = Field(...)
 
     class Config:
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
-                "re_id": "",
-                "title": "title",
-                "content": "content",
-                "create_date": "2017-10-13T10:53:53Z",
-                "update_date": "2017-10-13T10:53:53Z",
-                "pinned": True,
-                "read_count": 1,
-                "like_count": 1,
-                "like": ["066de609-b04a-4b30-b46c-32537c7f1f6e"],
-                "limit" : {"deleted":True},
-                "admin_limit" : {"hide":True}
+                "kind": "board",
+                "name": "Intro",
+                "comment": "Free Intro board for this community",
+                "condition": {},
+                "blacklist": [],
+                "whitelist": [],
+                "manager": [{"id": "0000-0000-0000000", "username": "admin"}],
+                "community_id": "066de609-b04a-4b30-b46c-32537c7f1f6e",
+                "limit" : {},
+                "lastupdatedate": "2017-10-13T10:53:53Z"
             }
         }
-
 

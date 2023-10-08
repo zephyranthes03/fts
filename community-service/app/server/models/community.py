@@ -3,13 +3,11 @@ from sqlalchemy.orm import relationship
 
 from pydantic import BaseModel
 
-
 class Community(BaseModel):
     name = Column(String(255))
     symptom = Column(Text)
     date = Column(Date)
     boards = Column(Text)
-    manager = Column(String(255))
+    manager = Column(Text)
     image_file = Column(String(1024))
     content = Column(Text)
-
