@@ -62,7 +62,6 @@ async def add_board(mongodb_client: Optional[any], community_id:str, board_data:
         {"_id": new_board.inserted_id}
     )
 
-
     community_data = await retrieve_community_by_id(mongodb_client, community_id)
 
     community_data["boards"].append({"id": created_board["_id"], 
@@ -89,14 +88,16 @@ async def update_board(mongodb_client: Optional[any], community_id:str, id: str,
     community_data = await retrieve_community_by_id(mongodb_client, community_id)
 
     boards = community_data["boards"]
-    find_updated_boards =  list(filter(lambda boards: boards['id'] == id, boards))
-    board_index = boards.index(find_updated_boards[0])
+    # find_updated_boards =  list(filter(lambda boards: boards['id'] == id, boards))
+    # board_index = boards.index(find_updated_boards[0])
+
+    board_index = [i for i,_ in enumerate(boards) if _['id'] == id][0]
 
     community_data["boards"][board_index] = {"id": boards[board_index]["id"], 
                                      "kind": board_data["kind"], 
                                      "name": board_data["name"]}
 
-    update_result = await update_community(mongodb_client, community_id, community_data)
+    update_community_result = await update_community(mongodb_client, community_id, community_data)
 
     return update_result
 
@@ -111,12 +112,11 @@ async def delete_board(mongodb_client: Optional[any], community_id:str, id: str)
     community_data = await retrieve_community_by_id(mongodb_client, community_id)
 
     boards = community_data["boards"]
-    find_updated_boards =  list(filter(lambda boards: boards['id'] == id, boards))
-    board_index = boards.index(find_updated_boards[0])
+    board_index = [i for i,_ in enumerate(boards) if _['id'] == id][0]
 
     del community_data["boards"][board_index]
 
-    update_result = await update_community(mongodb_client, community_id, community_data)
+    update_community_result = await update_community(mongodb_client, community_id, community_data)
 
     return delete_result
 
