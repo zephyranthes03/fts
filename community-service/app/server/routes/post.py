@@ -5,7 +5,7 @@ from datetime import datetime
 from fastapi import APIRouter, Body, File, UploadFile, Request, Depends
 
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 # from fastapi.templating import Jinja2Templates
 
 from io import BytesIO
@@ -40,6 +40,8 @@ from app.server.schemas.post import (
 
 
 router = APIRouter()
+
+UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER", "./board/upload/")
 
 
 
@@ -110,3 +112,34 @@ async def delete_post_data(community_id:str, board_id:str, id:str, dependencies:
     return ErrorResponseModel(
         "An error occurred", 404, "Database deletation is failiure"
     )
+
+
+# Request : 서버로 사용자가 증상 발현부를 촬영한 이미지를 서버로 업로드 
+# Response : 사용자가 올린 이미지와 비슷한 비교 이미지를 클라이언트로 업로드
+@router.post("/request", response_class=HTMLResponse, response_description="Upload image for post content")
+# async def upload_symptom_diagnosis(symptom: Diagnosis_schema = Body(...), file: UploadFile):
+# async def upload_symptom(request: Request, email: str, symptom_file: bytes = UploadFile(...)): #, dependencies:dict=Depends(verify_token)):
+async def upload_symptom(request: Request, email: str, image: UploadFile = File(...)): #, dependencies:dict=Depends(verify_token)):
+
+    ## Collecting diagnosis
+
+    ## TODO: Should we Collect diagnosis file type with jpg or png?
+    # print(image.filename,flush=True)
+    ext_center = image.filename[image.filename.rfind(".")+1:]
+    now = datetime.now()
+    year = now.strftime("%Y")
+    month = now.strftime("%m")
+    date = now.strftime("%d")
+    target_filefolder = os.path.join(UPLOAD_IMAGE_FOLDER, year, month, date)
+
+    if not os.path.exists(target_filefolder):
+        os.makedirs(target_filefolder)
+    uplaoded_image = os.path.join(UPLOAD_IMAGE_FOLDER, year, month, date, f"{email}_{image.filename}")
+
+    write_centor_file = open(uplaoded_image,'wb')
+    write_centor_file.write(image.file.read())
+    write_centor_file.close()
+
+    # return ResponseModel({"status":200, "center_image": new_center_image[new_center_image.rfind('/'):],
+    #                       "wide_image": new_wide_image[new_wide_image.rfind('/'):] }, "Uploaded!")
+    return JSONResponse(status_code=200, content={"status":200, "uploaded_image": uplaoded_image[uplaoded_image.rfind('/'):] })

@@ -61,3 +61,4 @@ class Update_community_schema(BaseModel):
                 "comment": "comment"
             }
         }
+

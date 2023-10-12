@@ -1,5 +1,9 @@
-from fastapi import APIRouter, Body, Request, Response, HTTPException, status
+import os
+from datetime import datetime
+
+from fastapi import APIRouter, Body, Request, status
 from fastapi.encoders import jsonable_encoder
+
 from typing import List
 
 from app.config.config import settings
@@ -20,7 +24,6 @@ from app.server.schemas.community import (
 )
 
 router = APIRouter()
-
 
 @router.post("/", response_description="Community data added into the database")
 async def add_community_data(request: Request, community: Community_schema = Body(...)):
@@ -89,4 +92,3 @@ async def delete_community_data(request: Request, id: str):
         404,
         "There was an error updating the Community data.",
     )
-

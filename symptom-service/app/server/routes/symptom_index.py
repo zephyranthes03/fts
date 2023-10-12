@@ -14,7 +14,7 @@ from DeepImageSearch import Load_Data, Search_Setup
 
 from app.server.util.preload import verify_token
 
-UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER", "./upload/")
+UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER", "./symptom/upload/")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER", "./sample/")
 
 # templates = Jinja2Templates(directory="templates")
