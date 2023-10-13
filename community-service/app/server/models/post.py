@@ -10,12 +10,13 @@ class Post(BaseModel):
     content = Column(Text)
     create_date = Column(Date)
     update_date = Column(Date)
+    comment_updated_date = Column(Date)
     pinned = Column(Boolean)
-    read_count = Column(Integer),
-    like_count = Column(Integer),
+    read_count = Column(Integer)
+    like_count = Column(Integer)
+    comment_count = Column(Integer)
     like = Column(Text)
     limit = Column(String(512))
     admin_limit = Column(String(512))
     tag = Column(String(512))
-
 

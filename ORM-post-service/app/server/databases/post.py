@@ -15,10 +15,10 @@ from app.server.schemas.post import (
 # pagenation 
 
 async def retrieve_posts(mongodb_client: Optional[any], 
-                          community_id: str, post_id: str,
+                          community_id: str, board_id: str,
                           page: int = 1, size: int = 10, search_keyword: str = "") -> list:
     database = mongodb_client[f"post_{community_id}"]
-    collection = database[f"post_{post_id}"]
+    collection = database[f"post_{board_id}"]
 
     posts = {}
     if search_keyword:
@@ -32,21 +32,21 @@ async def retrieve_posts(mongodb_client: Optional[any],
 
 # Retrieve a post with a matching station id
 async def retrieve_post_by_id(mongodb_client: Optional[any], 
-                               community_id: str, post_id: str, id: str): # -> dict:
+                               community_id: str, board_id: str, post_id: str): # -> dict:
     database = mongodb_client[f"post_{community_id}"]
-    collection = database[f"post_{post_id}"]
+    collection = database[f"post_{board_id}"]
 
     post = collection.find_one(
-        {"_id": id}
+        {"_id": post_id}
     )
     return post
     
 # Add a new post into to the database
 async def add_post(mongodb_client: Optional[any], 
-                    community_id: str, post_id: str, post_data: Post_schema ) -> dict:
+                    community_id: str, board_id: str, post_data: Post_schema ) -> dict:
 
     database = mongodb_client[f"post_{community_id}"]
-    collection = database[f"post_{post_id}"]
+    collection = database[f"post_{board_id}"]
 
     new_post = collection.insert_one(post_data)
     created_post = collection.find_one(
@@ -57,26 +57,26 @@ async def add_post(mongodb_client: Optional[any],
 
 # Update a post with a matching ID
 async def update_post(mongodb_client: Optional[any],
-                       community_id: str, post_id: str, id: str, 
+                       community_id: str, board_id: str, post_id: str, 
                        post_data: Update_post_schema) -> dict:
 
     database = mongodb_client[f"post_{community_id}"]
-    collection = database[f"post_{post_id}"]
+    collection = database[f"post_{board_id}"]
 
     update_result = collection.update_one(
-        {"_id": id}, {"$set": post_data}
+        {"_id": post_id}, {"$set": post_data}
     )
     return update_result
 
 
 # Delete a post from the database
 async def delete_post(mongodb_client: Optional[any], 
-                       community_id: str, post_id: str, id: str) -> int:
+                       community_id: str, board_id: str, post_id: str) -> int:
 
     database = mongodb_client[f"post_{community_id}"]
-    collection = database[f"post_{post_id}"]
+    collection = database[f"post_{board_id}"]
 
-    delete_result = collection.delete_one({"_id": id})
+    delete_result = collection.delete_one({"_id": post_id})
     # print(delete_result,flush=True)
     return delete_result
 

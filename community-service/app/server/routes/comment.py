@@ -30,6 +30,11 @@ from app.server.process.comment import (
     update_comment,
 )
 
+from app.server.process.post import (
+    update_post,
+    read_post_by_id
+)
+
 from app.server.schemas.comment import (
     ErrorResponseModel,
     ResponseModel,
@@ -47,11 +52,17 @@ async def add_comment_data(community_id:str, board_id:str, post_id:str, comment:
     comment = jsonable_encoder(comment)
     new_comment = await add_comment(community_id, board_id, post_id, comment)
     if new_comment.get('error', None):
+        post_detail = await read_post_by_id(community_id, board_id, post_id)
+        post_detail["comment_count"] = post_detail["comment_count"] + 1
+        post_detail["comment_updated_date"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+        update_post(community_id, board_id, post_id, post_detail)
         return ErrorResponseModel(
             new_comment.get('error', None),
             500,
             new_comment.get('message', None)
         )
+    
+
     return ResponseModel(new_comment, "Comment added successfully.")
 
 @router.get("/{community_id}/{board_id}/post/{post_id}", response_description="Communities retrieved")
@@ -80,8 +91,12 @@ async def update_comment_data(community_id:str, board_id:str, post_id:str, id: s
     req = {k: v for k, v in req.dict().items() if v is not None}
     print(req,flush=True)
     comment = jsonable_encoder(req)
-    updated_comment = await update_comment(community_id, board_id, post_id, id, comment)
+    updated_comment = await update_comment(community_id, board_id, post_id, id, comment)    
     if 'data' in updated_comment:
+        post_detail = await read_post_by_id(community_id, board_id, post_id)
+        post_detail["comment_updated_date"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+        update_post(community_id, board_id, post_id, post_detail)
+
         return ResponseModel(
             "Comment with ID: {} name update is successful".format(id),
             "Comment name updated successfully",
@@ -96,6 +111,11 @@ async def update_comment_data(community_id:str, board_id:str, post_id:str, id: s
 async def delete_comment_data(community_id:str, board_id:str, post_id:str, id:str, dependencies:dict=Depends(verify_token)):
     deleted_comment = await delete_comment(community_id, board_id, post_id, id)
     if deleted_comment == True:
+        post_detail = await read_post_by_id(community_id, board_id, post_id)
+        post_detail["comment_count"] = post_detail["comment_count"] - 1
+        post_detail["comment_updated_date"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+        update_post(community_id, board_id, post_id, post_detail)
+
         return ResponseModel(id, " record is Deleted")
     return ErrorResponseModel(
         "An error occurred", 404, "Database deletation is failiure"
