@@ -20,10 +20,10 @@ class Comment_schema(BaseModel):
         schema_extra = {
             "example": {
                 "post_id": "066de609-b04a-b46c-4b30-32537c7f1f6e",
-                "comment_re_id": "066de609-4b30-4b30-b04a-32537c7f1f6e",
+                "comment_re_id": "",
                 "content": "content",
                 "create_date": "2017-10-13T10:53:53Z",
-                "like": ["066de609-b04a-4b30-b46c-32537c7f1f6e"],
+                "like": [],
                 "limit" : {},
                 "admin_limit" : {}
             }
