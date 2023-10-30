@@ -13,7 +13,7 @@ from app.server.process.process import (
     delete_user,
     add_user,
     update_user,
-    social_login
+    test_func
 )
 
 
@@ -78,6 +78,8 @@ async def get_user_by_email(email:str, dependencies:dict=Depends(verify_token)):
         return ResponseModel(users, "Users data statistic retrieved successfully")
     return ResponseModel(users, "Empty list returned")
 
+    
+# Login by Social Email
 @router.post("/social_email", response_description="Users retrieved by social email")
 async def post_user_social_email(socialEmail: SocialEmailSchema = Body(...)):
     socialEmail = jsonable_encoder(socialEmail)
@@ -87,15 +89,7 @@ async def post_user_social_email(socialEmail: SocialEmailSchema = Body(...)):
         return ResponseModel(user, "User data retrieved successfully")
     return ResponseModel(user, "Login Failure")
 
-@router.post("/social_login", response_description="Users retrieved by social login")
-async def post_user_social_login(request: Request):
-    try:
-        output = await social_login(request)
-        return {"status": "OK", "data": output}
-    except Exception as err:
-        logging.error(f'could not print REQUEST: {err}')
-        return {"status": "ERR", "error": str(err)}
-
+# Login by Email
 @router.post("/email", response_description="User data retrieved by email and password")
 async def get_user_data(email: EmailSchema = Body(...)):
     email = jsonable_encoder(email)
@@ -107,12 +101,14 @@ async def get_user_data(email: EmailSchema = Body(...)):
         return ResponseModel(user, "User data retrieved successfully")
     return ResponseModel(user, "Login Failure")
 
+# Session close
 @router.post("/disconnect", response_description="Disconnect session(Remove session data from Redis)")
 async def redis_delete_session(dependencies:dict=Depends(verify_token)):
     if id in dependencies:
         return ResponseModel(session_delete(dependencies["id"]), "User session disconnected successfully")
     return ResponseModel("User session is empty", "Empty session returned")
 
+# Update account
 @router.put("/email/{email}")
 async def update_user_data(email: str, req: UpdateUserModel = Body(...), dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
@@ -130,6 +126,7 @@ async def update_user_data(email: str, req: UpdateUserModel = Body(...), depende
         "There was an error updating the user data.",
     )
 
+# delete account
 @router.delete("/email/{email}", response_description="User data deleted from the database")
 async def delete_user_data(email:str, dependencies:dict=Depends(verify_token)):
     deleted_user = await delete_user(email)
@@ -138,3 +135,16 @@ async def delete_user_data(email:str, dependencies:dict=Depends(verify_token)):
     return ErrorResponseModel(
         "An error occurred", 404, "Database deletation is failiure"
     )
+
+
+#################### 
+# Test function
+#################### 
+@router.post("/test", response_description="Users retrieved by social login")
+async def post_user_social_login(request: Request):
+    try:
+        output = await test_func(request)
+        return {"status": "OK", "data": output}
+    except Exception as err:
+        logging.error(f'could not print REQUEST: {err}')
+        return {"status": "ERR", "error": str(err)}

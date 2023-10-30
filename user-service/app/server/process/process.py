@@ -146,7 +146,7 @@ async def delete_user(email:str):
     return False
 
 
-async def social_login(request):
+async def test_func(request):
     output = {}
     header = dict(request.headers.items())
     print(f'request header       : {header}' )

@@ -18,6 +18,8 @@ class UserSchema(BaseModel):
     message: bool = Field(...)
     friend: list = Field(...)
     permission: dict = Field(...) # all|close|friend|community 
+    symptom_id: list = Field(...)
+    symptom_tag: list = Field(...)
 
     class Config:
         schema_extra = {
@@ -35,18 +37,28 @@ class UserSchema(BaseModel):
                 "interested_tag": ['tag1', 'tag2'],
                 "message": False,
                 "friend": [],
-                "permission": {'survey':'open'}
-
+                "permission": {'survey':'open'},
+                "symptom_id": [],
+                "symptom_tag": []
             }
         }
 
 class SocialEmailSchema(BaseModel):
     email: str = Field(...)
+    social_type: str = Field(...)
+    extra_data: dict = Field(...)
 
     class Config:
         schema_extra = {
             "example": {
                 "email": "john_doe@gmail.com",
+                "social_type": "naver",
+                "extra_data": {
+                    "id": "id11111111111111111111",
+                    "name" : "Yongjin Chong",
+                    "gender" : "M",
+                    "age" : "30-39"
+                }
             }
         }   
 
@@ -78,6 +90,9 @@ class UpdateUserModel(BaseModel):
     message: Optional[bool]
     friend: Optional[list] # Optional[list]
     permission: Optional[dict] # Optional[dict] # all|close|friend|community ?
+    symptom_id: list = Field(...)
+    symptom_tag: list = Field(...)
+
 
     class Config:
         schema_extra = {
@@ -95,7 +110,9 @@ class UpdateUserModel(BaseModel):
                 "interested_tag": ['tag1', 'tag2'],
                 "message": False,
                 "friend": [],
-                "permission": {'survey':'open'}
+                "permission": {'survey':'open'},
+                "symptom_id": [],
+                "symptom_tag": []
             }
         }
 
