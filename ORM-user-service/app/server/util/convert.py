@@ -5,10 +5,11 @@ async def user_from_str(user_list:list) -> dict:
     user_dict = dict()
 
     user_menu_item = ['email','create_date','community','phone','email_acceptance','message_acceptance',
-                      'user_type','expire_time','last_check_time','interested_tag','message','friend','permission']
+                      'user_type','expire_time','last_check_time','interested_tag','message','friend',
+                      'permission', 'symptom_id', 'symptom_tag', 'name', 'nickname', 'age', 'gender']
 
     eval_user_menu_item = ['community','message_acceptance','last_check_time',
-                           'interested_tag','friend','permission']
+                           'interested_tag','friend','permission','symptom_id','symptom_tag']
 
     for i in range(len(user_menu_item)):
         if user_menu_item[i] in eval_user_menu_item:
@@ -22,7 +23,7 @@ async def user_from_str(user_list:list) -> dict:
 async def user_to_str(user_dict:dict) -> dict:
 
     eval_user_menu_item = ['community','message_acceptance','last_check_time',
-                           'interested_tag','friend','permission']
+                           'interested_tag','friend','permission','symptom_id','symptom_tag']
 
     for key,value in user_dict.items():
         if key in eval_user_menu_item:

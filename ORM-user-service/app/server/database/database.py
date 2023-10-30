@@ -57,7 +57,12 @@ users = sqlalchemy.Table(
     sqlalchemy.Column("message", sqlalchemy.Boolean),
     sqlalchemy.Column("friend", sqlalchemy.Text),
     sqlalchemy.Column("permission", sqlalchemy.Text),
-    sqlalchemy.Column("symtpom_ids", sqlalchemy.String(1024))
+    sqlalchemy.Column("symptom_id", sqlalchemy.String(1024)),
+    sqlalchemy.Column("symptom_tag", sqlalchemy.String(1024)),
+    sqlalchemy.Column("name", sqlalchemy.String(16)),
+    sqlalchemy.Column("nickname", sqlalchemy.String(64)),
+    sqlalchemy.Column("age", sqlalchemy.String(8)),
+    sqlalchemy.Column("gender", sqlalchemy.String(16))
     # sqlalchemy.Column("date_convert", sqlalchemy.Date),
 )
 
@@ -80,10 +85,18 @@ class User(BaseModel):
     message: bool
     friend: str
     permission: str
-
+    symptom_id: str
+    symptom_tag: str
+    name: str
+    nickname: str
+    age: str
+    gender: str
+    
 
 class SocialEmail(BaseModel):
     email: str
+    social_type: str
+    extra_data: str
 
 class Email(BaseModel):
     email: str
@@ -178,7 +191,9 @@ async def add_user(user_data: User) -> dict:
             email_acceptance=user_data['email_acceptance'], message_acceptance=user_data['message_acceptance'], 
             user_type=user_data['user_type'],expire_time=user_data['expire_time'],last_check_time=user_data['last_check_time'],
             interested_tag=user_data['interested_tag'],message=user_data['message'],friend=user_data['friend'],
-            permission=user_data['permission'])
+            permission=user_data['permission'],symptom_id=user_data['symptom_id'],symptom_tag=user_data['symptom_tag'],
+            name=user_data['name'],nickname=user_data['nickname'],age=user_data['age'],
+            gender=user_data['gender'])
         last_record_id = conn.execute(query)
         conn.commit()
         print('test',flush=True)
@@ -198,7 +213,9 @@ async def update_user(user_email: str, user_data: User) -> dict:
             email_acceptance=user_data['email_acceptance'], message_acceptance=user_data['message_acceptance'], 
             user_type=user_data['user_type'],expire_time=user_data['expire_time'],last_check_time=user_data['last_check_time'],
             interested_tag=user_data['interested_tag'],message=user_data['message'],friend=user_data['friend'],
-            permission=user_data['permission'])   
+            permission=user_data['permission'],symptom_id=user_data['symptom_id'],symptom_tag=user_data['symptom_tag'],
+            name=user_data['name'],nickname=user_data['nickname'],age=user_data['age'],
+            gender=user_data['gender'])
         last_record_id = conn.execute(query)
 
         conn.commit()
