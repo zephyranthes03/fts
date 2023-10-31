@@ -21,7 +21,7 @@ class UserSchema(BaseModel):
     permission: dict = Field(...) # all|close|friend|community 
     symptom_id: list = Field(...)
     symptom_tag: list = Field(...)
-    name: str = Field(...)
+    username: str = Field(...)
     nickname: str = Field(...)
     age: str = Field(...)
     gender: str = Field(...)
@@ -46,7 +46,7 @@ class UserSchema(BaseModel):
                 "permission": {'survey':'open'},
                 "symptom_id": [],
                 "symptom_tag": [],
-                "name": "John Doe",
+                "username": "John Doe",
                 "nickname": "John11",
                 "age": "40-49",
                 "gender": "M"
@@ -65,7 +65,8 @@ class SocialEmailSchema(BaseModel):
                 "social_type": "naver",
                 "extra_data": {
                     "id": "id11111111111111111111",
-                    "name" : "Yongjin Chong",
+                    "username" : "Yongjin Chong",
+                    "nickname" : "john_doe111",
                     "gender" : "M",
                     "age" : "30-39"
                 }
@@ -103,7 +104,7 @@ class UpdateUserModel(BaseModel):
     permission: Optional[dict] # Optional[dict] # all|close|friend|community ?
     symptom_id: Optional[list]
     symptom_tag: Optional[list]
-    name: Optional[str]
+    username: Optional[str]
     nickname: Optional[str]
     age: Optional[str]
     gender: Optional[str]
@@ -129,7 +130,7 @@ class UpdateUserModel(BaseModel):
                 "permission": {'survey':'open'},
                 "symptom_id": [],
                 "symptom_tag": [],
-                "name": "John Doe",
+                "username": "John Doe",
                 "nickname": "John11",
                 "age": "40-49",
                 "gender": "M"

@@ -62,7 +62,7 @@ async def get_users(dependencies:dict=Depends(verify_token)):
     users = await read_users()
     if users:
         return ResponseModel(users, "Users data statistic retrieved successfully")
-    return ResponseModel(users, "Empty list returned")
+    return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
 
 # @router.get("/id/{id}", response_description="Users retrieved by id")
 # async def get_user_by_id(id:str, dependencies:dict=Depends(verify_token)):
@@ -76,7 +76,7 @@ async def get_user_by_email(email:str, dependencies:dict=Depends(verify_token)):
     users = await read_user_by_email(email)
     if users:
         return ResponseModel(users, "Users data statistic retrieved successfully")
-    return ResponseModel(users, "Empty list returned")
+    return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
 
     
 # Login by Social Email
@@ -84,10 +84,14 @@ async def get_user_by_email(email:str, dependencies:dict=Depends(verify_token)):
 async def post_user_social_email(socialEmail: SocialEmailSchema = Body(...)):
     socialEmail = jsonable_encoder(socialEmail)
     user = await read_user_by_social_email(socialEmail)
-    if user['data']:
+    if user:
         await session_create(user)
-        return ResponseModel(user, "User data retrieved successfully")
-    return ResponseModel(user, "Login Failure")
+        if user['data']:
+            print(user['data'], flush=True)
+            return ResponseModel(user, "User data retrieved successfully")
+        else:
+            return ErrorResponseModel("Return dict is Empty", 400, 'User data retrieved failure')
+    return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
 
 # Login by Email
 @router.post("/email", response_description="User data retrieved by email and password")
@@ -99,14 +103,14 @@ async def get_user_data(email: EmailSchema = Body(...)):
         print(user,flush=True)
         await session_create(user)
         return ResponseModel(user, "User data retrieved successfully")
-    return ResponseModel(user, "Login Failure")
+    return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
 
 # Session close
 @router.post("/disconnect", response_description="Disconnect session(Remove session data from Redis)")
 async def redis_delete_session(dependencies:dict=Depends(verify_token)):
     if id in dependencies:
         return ResponseModel(session_delete(dependencies["id"]), "User session disconnected successfully")
-    return ResponseModel("User session is empty", "Empty session returned")
+    return ErrorResponseModel("User session is empty", 400, "mpty session returned")
 
 # Update account
 @router.put("/email/{email}")

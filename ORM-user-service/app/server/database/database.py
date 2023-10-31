@@ -51,6 +51,7 @@ users = sqlalchemy.Table(
     sqlalchemy.Column("email_acceptance", sqlalchemy.String(255)),
     sqlalchemy.Column("message_acceptance", sqlalchemy.String(255)),
     sqlalchemy.Column("user_type", sqlalchemy.String(255)),
+    sqlalchemy.Column("account_type", sqlalchemy.String(255)),
     sqlalchemy.Column("expire_time", sqlalchemy.Integer),
     sqlalchemy.Column("last_check_time", sqlalchemy.Text),
     sqlalchemy.Column("interested_tag", sqlalchemy.Text),
@@ -59,7 +60,7 @@ users = sqlalchemy.Table(
     sqlalchemy.Column("permission", sqlalchemy.Text),
     sqlalchemy.Column("symptom_id", sqlalchemy.String(1024)),
     sqlalchemy.Column("symptom_tag", sqlalchemy.String(1024)),
-    sqlalchemy.Column("name", sqlalchemy.String(16)),
+    sqlalchemy.Column("username", sqlalchemy.String(64)),
     sqlalchemy.Column("nickname", sqlalchemy.String(64)),
     sqlalchemy.Column("age", sqlalchemy.String(8)),
     sqlalchemy.Column("gender", sqlalchemy.String(16))
@@ -79,6 +80,7 @@ class User(BaseModel):
     email_acceptance: str
     message_acceptance: str
     user_type: str
+    account_type: str
     expire_time: int
     last_check_time: str
     interested_tag: str
@@ -87,7 +89,7 @@ class User(BaseModel):
     permission: str
     symptom_id: str
     symptom_tag: str
-    name: str
+    username: str
     nickname: str
     age: str
     gender: str
@@ -173,8 +175,12 @@ async def add_users(user_data: List[User]) -> dict:
                 query = users.insert().values(email=f"{user['email']}",password=f"{user['password']}",
                     create_date=user['create_date'],community=user['community'],phone=user['phone'],
                     email_acceptance=user['email_acceptance'], message_acceptance=user['message_acceptance'], 
-                    user_type=user['user_type'],expire_time=user['expire_time'],last_check_time=user['last_check_time'],
-                    interested_tag=user['interested_tag'],message=user['message'],friend=user['friend'],permission=user['permission'])
+                    user_type=user['user_type'],account_type=user['account_type'],expire_time=user['expire_time'],
+                    last_check_time=user['last_check_time'],interested_tag=user['interested_tag'],
+                    message=user['message'],friend=user['friend'],permission=user['permission'],
+                    symptom_id=user_data['symptom_id'],symptom_tag=user_data['symptom_tag'],
+                    username=user_data['username'],nickname=user_data['nickname'],age=user_data['age'],
+                    gender=user_data['gender'])
                 last_record_id = conn.execute(query)
             conn.commit()
         return {"Total inserted record": count, "Total exist record": count_exist}
@@ -187,18 +193,15 @@ async def add_user(user_data: User) -> dict:
             return {"message": "user already exist"}
         
         query = users.insert().values(email=f"{user_data['email']}",password=f"{user_data['password']}",
-            create_date=user_data['create_date'],community=user_data['community'],phone=user_data['phone'],
-            email_acceptance=user_data['email_acceptance'], message_acceptance=user_data['message_acceptance'], 
-            user_type=user_data['user_type'],expire_time=user_data['expire_time'],last_check_time=user_data['last_check_time'],
-            interested_tag=user_data['interested_tag'],message=user_data['message'],friend=user_data['friend'],
-            permission=user_data['permission'],symptom_id=user_data['symptom_id'],symptom_tag=user_data['symptom_tag'],
-            name=user_data['name'],nickname=user_data['nickname'],age=user_data['age'],
-            gender=user_data['gender'])
+                create_date=user_data['create_date'],community=user_data['community'],phone=user_data['phone'],
+                email_acceptance=user_data['email_acceptance'], message_acceptance=user_data['message_acceptance'], 
+                user_type=user_data['user_type'],account_type=user_data['account_type'],expire_time=user_data['expire_time'],
+                last_check_time=user_data['last_check_time'],interested_tag=user_data['interested_tag'],
+                message=user_data['message'],friend=user_data['friend'],permission=user_data['permission'],
+                symptom_id=user_data['symptom_id'],symptom_tag=user_data['symptom_tag'],username=user_data['username'],
+                nickname=user_data['nickname'],age=user_data['age'],gender=user_data['gender'])
         last_record_id = conn.execute(query)
         conn.commit()
-        print('test',flush=True)
-        print(last_record_id,flush=True)
-        print('test',flush=True)
         return {**user_data, "email": last_record_id}
 
 
@@ -211,10 +214,10 @@ async def update_user(user_email: str, user_data: User) -> dict:
         query = users.update().where(users.c.email==user_email).values(password=f"{user_data['password']}",
             create_date=user_data['create_date'],community=user_data['community'],phone=user_data['phone'],
             email_acceptance=user_data['email_acceptance'], message_acceptance=user_data['message_acceptance'], 
-            user_type=user_data['user_type'],expire_time=user_data['expire_time'],last_check_time=user_data['last_check_time'],
-            interested_tag=user_data['interested_tag'],message=user_data['message'],friend=user_data['friend'],
-            permission=user_data['permission'],symptom_id=user_data['symptom_id'],symptom_tag=user_data['symptom_tag'],
-            name=user_data['name'],nickname=user_data['nickname'],age=user_data['age'],
+            user_type=user_data['user_type'],account_type=user_data['account_type'],expire_time=user_data['expire_time'],
+            last_check_time=user_data['last_check_time'],interested_tag=user_data['interested_tag'],message=user_data['message'],
+            friend=user_data['friend'],permission=user_data['permission'],symptom_id=user_data['symptom_id'],
+            symptom_tag=user_data['symptom_tag'],username=user_data['username'],nickname=user_data['nickname'],age=user_data['age'],
             gender=user_data['gender'])
         last_record_id = conn.execute(query)
 
