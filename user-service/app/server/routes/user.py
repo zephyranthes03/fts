@@ -86,8 +86,7 @@ async def post_user_social_email(socialEmail: SocialEmailSchema = Body(...)):
     user = await read_user_by_social_email(socialEmail)
     if user:
         await session_create(user)
-        if user['data']:
-            print(user['data'], flush=True)
+        if 'email' in user:
             return ResponseModel(user, "User data retrieved successfully")
         else:
             return ErrorResponseModel("Return dict is Empty", 400, 'User data retrieved failure')
