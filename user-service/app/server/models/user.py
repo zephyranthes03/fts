@@ -61,7 +61,7 @@ class SocialEmailSchema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "email": "john_doe@gmail.com",
+                "email": "john_doe1@gmail.com",
                 "social_type": "naver",
                 "extra_data": {
                     "id": "id11111111111111111111",

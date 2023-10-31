@@ -82,14 +82,21 @@ async def get_user_by_email(email:str, dependencies:dict=Depends(verify_token)):
 # Login by Social Email
 @router.post("/social_email", response_description="Users retrieved by social email")
 async def post_user_social_email(socialEmail: SocialEmailSchema = Body(...)):
+
     socialEmail = jsonable_encoder(socialEmail)
     user = await read_user_by_social_email(socialEmail)
+    # print(user,flush=True)
     if user:
-        await session_create(user)
-        if 'email' in user:
-            return ResponseModel(user, "User data retrieved successfully")
+        if socialEmail['social_type'] in user['account_type']:
+            print("social_login debug", flush=True)
+            print(socialEmail,flush=True)
+            # new_user = await add_user(user_data)
         else:
-            return ErrorResponseModel("Return dict is Empty", 400, 'User data retrieved failure')
+            await session_create(user)
+            if 'email' in user:
+                return ResponseModel(user, "User data retrieved successfully")
+            else:
+                return ErrorResponseModel("Return dict is Empty", 400, 'User data retrieved failure')
     return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
 
 # Login by Email

@@ -111,7 +111,7 @@ async def read_user_by_social_email(data: dict) -> dict:
                             json=data)
 
         data = r.json()
-        print(data,flush=True)
+        # print(data,flush=True)
 
         t1_stop = process_time()
         print("Elapsed time:", t1_stop, t1_start) 
