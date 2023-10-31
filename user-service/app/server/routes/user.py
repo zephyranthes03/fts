@@ -87,16 +87,12 @@ async def post_user_social_email(socialEmail: SocialEmailSchema = Body(...)):
     user = await read_user_by_social_email(socialEmail)
     # print(user,flush=True)
     if user:
-        if socialEmail['social_type'] in user['account_type']:
-            print("social_login debug", flush=True)
-            print(socialEmail,flush=True)
-            # new_user = await add_user(user_data)
-        else:
-            await session_create(user)
-            if 'email' in user:
+        if 'email' in user:
+            if socialEmail['social_type'] in user['account_type']:
+                await session_create(user)
                 return ResponseModel(user, "User data retrieved successfully")
-            else:
-                return ErrorResponseModel("Return dict is Empty", 400, 'User data retrieved failure')
+        else:
+            return ErrorResponseModel("Return dict is Empty", 400, 'User data retrieved failure')
     return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
 
 # Login by Email
