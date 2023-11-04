@@ -64,7 +64,6 @@ class SocialEmailSchema(BaseModel):
                 "email": "john_doe1@gmail.com",
                 "social_type": "naver",
                 "extra_data": {
-                    "id": "id11111111111111111111",
                     "username" : "Yongjin Chong",
                     "nickname" : "john_doe111",
                     "gender" : "M",

@@ -12,6 +12,7 @@ from app.server.process.process import (
     read_user_by_email_password,
     delete_user,
     add_user,
+    add_social_user,
     update_user,
     test_func
 )
@@ -45,8 +46,8 @@ async def verify_token(session_key: str = Header(None)):
     return session
 
 
-@router.post("/", response_description="User data folder added into the database")
-async def add_user_data(user: UserSchema = Body(...), dependencies:dict=Depends(verify_token)):
+@router.post("/", response_description="User data added into the database")
+async def signup_user_data(user: UserSchema = Body(...)):
     user = jsonable_encoder(user)
     new_user = await add_user(user)
     if new_user.get('error', None):
@@ -56,6 +57,20 @@ async def add_user_data(user: UserSchema = Body(...), dependencies:dict=Depends(
             new_user.get('message', None)
         )
     return ResponseModel(new_user, "User added successfully.")
+
+
+@router.post("/social_signup", response_description="Social User data added into the database")
+async def signup_social_user_data(user: SocialEmailSchema = Body(...)):
+    user = jsonable_encoder(user)
+    new_user = await add_social_user(user)
+    if new_user.get('error', None):
+        return ErrorResponseModel(
+            new_user.get('error', None),
+            500,
+            new_user.get('message', None)
+        )
+    return ResponseModel(new_user, "Social user added successfully.")
+
 
 @router.get("/", response_description="Users retrieved")
 async def get_users(dependencies:dict=Depends(verify_token)):
@@ -81,9 +96,9 @@ async def get_user_by_email(email:str, dependencies:dict=Depends(verify_token)):
     
 # Login by Social Email
 @router.post("/social_email", response_description="Users retrieved by social email")
-async def post_user_social_email(socialEmail: SocialEmailSchema = Body(...)):
+async def post_user_social_email(user: SocialEmailSchema = Body(...)):
 
-    socialEmail = jsonable_encoder(socialEmail)
+    socialEmail = jsonable_encoder(user)
     user = await read_user_by_social_email(socialEmail)
     # print(user,flush=True)
     if user:

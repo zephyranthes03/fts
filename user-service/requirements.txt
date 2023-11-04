@@ -4,7 +4,7 @@ isodate==0.6.0
 sqlalchemy==2.0.3
 pydantic[email]
 python-decouple==3.7
-httpx==0.23.3
+httpx==0.25.1
 pandas==2.0.1
 redis_session==0.2.1
 itsdangerous
