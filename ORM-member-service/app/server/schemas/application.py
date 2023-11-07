@@ -14,7 +14,7 @@ class Application_schema(BaseModel):
     level: str = Field(...)
     comment: str = Field(...)
     admin_comment: str = Field(...)
-    symptom: str = Field(...)
+    symptom: dict = Field(...)
 
     class Config:
         allow_population_by_field_name = True
@@ -27,7 +27,7 @@ class Application_schema(BaseModel):
                 "level": "Normal",
                 "comment": "Hello",
                 "admin_comment": "Admin Hello",
-                "symptom" : "{}"
+                "symptom" : {}
             }
         }
 
@@ -39,7 +39,7 @@ class Update_application_schema(BaseModel):
     level: str = Field(...)
     comment: str = Field(...)
     admin_comment: str = Field(...)
-    symptom: str = Field(...)
+    symptom: dict = Field(...)
 
     class Config:
         allow_population_by_field_name = True
@@ -52,7 +52,7 @@ class Update_application_schema(BaseModel):
                 "level": "Normal",
                 "comment": "Hello",
                 "admin_comment": "Admin Hello",
-                "symptom" : "{}"
+                "symptom" : {}
             }
         }
 
