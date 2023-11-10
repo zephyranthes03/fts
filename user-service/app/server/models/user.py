@@ -49,7 +49,7 @@ class UserSchema(BaseModel):
                 "username": "John Doe",
                 "nickname": "John11",
                 "age": "40-49",
-                "gender": "M"
+                "gender": "male"
             }
         }
 
@@ -61,12 +61,13 @@ class SocialEmailSchema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "email": "john_doe1@gmail.com",
+                "email": "john_doe@gmail.com",
                 "social_type": "naver",
                 "extra_data": {
+                    "id": "id11111111111111111111",
                     "username" : "Yongjin Chong",
                     "nickname" : "john_doe111",
-                    "gender" : "M",
+                    "gender" : "male",
                     "age" : "30-39"
                 }
             }
@@ -132,7 +133,7 @@ class UpdateUserModel(BaseModel):
                 "username": "John Doe",
                 "nickname": "John11",
                 "age": "40-49",
-                "gender": "M"
+                "gender": "male"
             }
         }
 

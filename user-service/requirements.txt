@@ -10,3 +10,5 @@ redis_session==0.2.1
 itsdangerous
 WebSocket
 bcrypt
+jwt
+jinja2

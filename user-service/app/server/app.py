@@ -2,9 +2,14 @@ from pydantic import BaseModel
 
 from fastapi import FastAPI, Request, WebSocket
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 # from starlette.middleware.sessions import SessionMiddleware
 from app.server.routes.user import router as UserRouter
+from app.server.routes.google import router as GoogleRouter
+from app.server.routes.naver import router as NaverRouter
+from app.server.routes.kakao import router as KakaoRouter
+
 from app.server.util.session import session_load
 
 import redis
@@ -21,8 +26,12 @@ app = FastAPI()
 #     session_backend=RedisSessionBackend(client=redis_client)
 # )
 
+templates = Jinja2Templates(directory="templates")
 
 app.include_router(UserRouter, tags=["User"], prefix="/user")
+app.include_router(GoogleRouter, tags=["Google"], prefix="/google")
+app.include_router(NaverRouter, tags=["Naver"], prefix="/naver")
+app.include_router(KakaoRouter, tags=["Kakao"], prefix="/kakao")
 
 @app.get("/", tags=["health_check"])
 async def read_root():

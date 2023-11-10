@@ -49,7 +49,7 @@ class UserSchema(BaseModel):
                 "username": "John Doe",
                 "nickname": "John11",
                 "age": "40-49",
-                "gender": "M"
+                "gender": "male"
             }
         }
 
@@ -67,7 +67,7 @@ class SocialEmailSchema(BaseModel):
                     "id": "id11111111111111111111",
                     "username" : "Yongjin Chong",
                     "nickname" : "john_doe111",
-                    "gender" : "M",
+                    "gender" : "male",
                     "age" : "30-39"
                 }
             }
@@ -133,7 +133,7 @@ class UpdateUserModel(BaseModel):
                 "username": "John Doe",
                 "nickname": "John11",
                 "age": "40-49",
-                "gender": "M"
+                "gender": "male"
             }
         }
 

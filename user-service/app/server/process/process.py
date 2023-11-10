@@ -134,6 +134,7 @@ async def read_users(): # -> dict:
     data = None
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_USER_SERVICE")}/user/', timeout=300)
+        # print(r,flush=True)
         # print(r.json(),flush=True)
         if len(r.json()) > 0:
             data = r.json()
