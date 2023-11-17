@@ -1,0 +1,25 @@
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.4.0/kakao.min.js"
+  integrity="sha384-mXVrIX2T/Kszp6Z0aEWaA8Nm7J6/ZeWXbL8UpGRjKwWe56Srd/iyNmWMBhcItAjH" crossorigin="anonymous"></script>
+<script>
+  Kakao.init('{{KAKAO_CLIENT_ID}}'); // Enter your app's JavaScript key
+</script>
+
+<button class="api-btn" onclick="kakaoLogout()">Logout</button>
+
+<script>
+  function kakaoLogout() {
+    Kakao.Auth.logout()
+      .then(function() {
+        alert('logout ok\naccess token -> ' + Kakao.Auth.getAccessToken());
+        deleteCookie();
+      })
+      .catch(function() {
+        alert('Not logged in');
+      });
+  }
+
+  // Sample UI code for the demo from here
+  function deleteCookie() {
+    document.cookie = 'authorize-access-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+</script>

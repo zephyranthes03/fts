@@ -73,7 +73,8 @@ async def callback(code:str):
                     'nickname' : user_param['kakao_account']['profile']['nickname'],
                     'age' : user_param['kakao_account']['age_range'],
                     'gender' : user_param['kakao_account']['gender']
-                }
+                },
+                'access_token': access_token
             }
             print(json_payload,flush=True)
             res = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email/', json=json_payload) 
@@ -82,3 +83,10 @@ async def callback(code:str):
 
         else:
             print("ERROR", flush=True)
+
+
+@router.get("/logout")
+async def callback(request: Request):
+    return templates.TemplateResponse("/kakao/logout.html", {
+                                                        "KAKAO_CLIENT_ID": KAKAO_CLIENT_ID,
+                                                        "request": request})    

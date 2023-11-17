@@ -12,7 +12,8 @@
                                             "{{ CALLBACK_URL }}");
 
   // 접근 토큰 값 출력
-  alert(naver_id_login.oauthParams.access_token);
+  // alert(naver_id_login.oauthParams.access_token);
+  // console.log(naver_id_login.oauthParams.access_token);
   // 네이버 사용자 프로필 조회
   naver_id_login.get_naver_userprofile("naverSignInCallback()");
   // 네이버 사용자 프로필 조회 이후 프로필 정보를 처리할 callback function
@@ -47,7 +48,9 @@
                         nickname : nickname,
                         age : age,
                         gender : gender
-        }
+        },
+        access_token: naver_id_login.oauthParams.access_token
+
     }
     $.post(url, data, function(data,status) {
         console.log(`${data} and status is ${status}`)

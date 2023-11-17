@@ -57,6 +57,7 @@ class SocialEmailSchema(BaseModel):
     email: str = Field(...)
     social_type: str = Field(...)
     extra_data: dict = Field(...)
+    access_token: str = Field(...)
 
     class Config:
         schema_extra = {
@@ -69,7 +70,8 @@ class SocialEmailSchema(BaseModel):
                     "nickname" : "john_doe111",
                     "gender" : "male",
                     "age" : "30-39"
-                }
+                },
+                "access_token": "token_value"
             }
         }   
 

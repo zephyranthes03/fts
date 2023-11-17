@@ -99,6 +99,7 @@ class SocialEmail(BaseModel):
     email: str
     social_type: str
     extra_data: str
+    access_token: str
 
 class Email(BaseModel):
     email: str

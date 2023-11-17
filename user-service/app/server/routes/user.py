@@ -96,30 +96,34 @@ async def get_user_by_email(email:str, dependencies:dict=Depends(verify_token)):
     
 # Login by Social Email
 @router.post("/social_email", response_description="Users retrieved by social email")
-async def post_user_social_email(user: SocialEmailSchema = Body(...)):
+async def post_user_social_email(email: SocialEmailSchema = Body(...)):
 
-    socialEmail = jsonable_encoder(user)
+    socialEmail = jsonable_encoder(email)
     user = await read_user_by_social_email(socialEmail)
     # print(user,flush=True)
     if user:
         if 'email' in user:
-            if socialEmail['social_type'] in user['account_type']:
-                await session_create(user)
-                return ResponseModel(user, "User data retrieved successfully")
-        else:
-            return ErrorResponseModel("Return dict is Empty", 400, 'User data retrieved failure')
+            if socialEmail['social_type'] not in user['account_type']:
+                signup_social_user_data(user)
+
+            await session_create(user)
+            return ResponseModel(user, "User data retrieved successfully")
     return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
 
 # Login by Email
 @router.post("/email", response_description="User data retrieved by email and password")
 async def get_user_data(email: EmailSchema = Body(...)):
     email = jsonable_encoder(email)
-    user = await read_user_by_email_password(email)
-    if user['data']:
-        print("print_from email",flush=True)
+    if email:
+        user = await read_user_by_email_password(email)
         print(user,flush=True)
-        await session_create(user)
-        return ResponseModel(user, "User data retrieved successfully")
+        if 'email' in user:
+            if 'email' in user['account_type']:
+                if user['data']:
+                    print("print_from email",flush=True)
+                    print(user,flush=True)
+                    await session_create(user)
+                    return ResponseModel(user, "User data retrieved successfully")
     return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
 
 # Session close

@@ -4,6 +4,11 @@ from datetime import datetime, timedelta
 from app.server.util.util import cast_to_number
 from starlette.responses import JSONResponse
 
+from app.server.models.user import (
+    ErrorResponseModel,
+    ResponseModel  
+)
+
 # from jose import jwt
 import jwt
 import httpx
@@ -44,7 +49,7 @@ async def login_google():
         "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_URI}&scope=openid%20profile%20email&access_type=offline"
     }
 
-@router.post("/auth", response_description="Google login URL link")
+@router.get("/auth", response_description="Google login URL link")
 async def auth_google(code: str):
     token_url = "https://accounts.google.com/o/oauth2/token"
     data = {
@@ -58,15 +63,35 @@ async def auth_google(code: str):
         response = await client.post(token_url, data=data)
         #response = requests.post(token_url, data=data)
         access_token = response.json().get("access_token")
+        print(access_token, flush=True)
         user_info = await client.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
-    return user_info.json()
+        user_param = user_info.json()
+        print(user_param, flush=True)
+        json_payload = {
+            'email' : user_param['email'],
+            'social_type' : 'kakao',
+            'extra_data' :  {
+                'id' : user_param['id'],
+                'username' : user_param['name'],
+                'nickname' : user_param['email'],
+                'age' : user_param['age_range'] if 'age_range' in user_param else "empty",
+                'gender' : user_param['gender'] if 'gender' in user_param else "empty",
+            },
+            'access_token': access_token
+        }
+        print(json_payload,flush=True)
+        res = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email/', json=json_payload) 
+        result = res.json()
+        return ResponseModel("Social User", "Generate Social User successfully")
 
-@router.post("/google/token", response_description="Google login URL token")
+    return "Sucess"
+
+@router.post("/token", response_description="Google login URL token")
 async def get_token(token: str = Depends(oauth2_scheme)):
     return jwt.decode(token, GOOGLE_CLIENT_SECRET, algorithms=["HS256"])
 
 
-@router.post("/google/refresh", response_description="Google login URL token")
+@router.post("/refresh", response_description="Google login URL token")
 async def refresh(request: Request):
     try:
         # Only accept post requests
@@ -86,6 +111,17 @@ async def refresh(request: Request):
     except Exception:
         raise CREDENTIALS_EXCEPTION
     raise CREDENTIALS_EXCEPTION
+
+
+
+@router.get("/logout", response_description="Google logout URL link")
+async def auth_google(code: str):
+    async with httpx.AsyncClient() as client:
+        headers = {'content-type': 'application/x-www-form-urlencoded'}
+        user_info = await client.post("https://accounts.google.com/o/oauth2/revoke", 
+                                      params={'token': code},
+                                      headers=headers)
+    return user_info.json()
 
 
 # Create token internal function
