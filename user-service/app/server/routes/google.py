@@ -21,7 +21,9 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 GOOGLE_CLIENT_ID_PREFIX = "855018704830-hrvjk7hj51ennokqrfi1t0ug1i6aj0k9"
 GOOGLE_CLIENT_ID = "855018704830-hrvjk7hj51ennokqrfi1t0ug1i6aj0k9.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET = "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"
-GOOGLE_REDIRECT_URI = "https://imgroo.kr/google/auth"
+GOOGLE_REDIRECT_AUTH_URI = "https://imgroo.kr/google/auth"
+GOOGLE_REDIRECT_TOKEN_URI = "https://imgroo.kr/google/token"
+GOOGLE_REDIRECT_URL = "https://imgroo.kr/google/callback"
 
 # Configuration
 API_SECRET_KEY = os.environ.get('API_SECRET_KEY') or None
@@ -44,9 +46,9 @@ CREDENTIALS_EXCEPTION = HTTPException(
 
 @router.get("/login", response_description="Google login URL link")
 async def login_google():
-    print(f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_URI}&scope=openid%20profile%20email&access_type=offline",flush=True)
+    print(f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_URL}&scope=openid%20profile%20email&access_type=offline",flush=True)
     return {
-        "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_URI}&scope=openid%20profile%20email&access_type=offline"
+        "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_URL}&scope=openid%20profile%20email&access_type=offline"
     }
 
 @router.get("/auth", response_description="Google login URL link")
@@ -56,20 +58,23 @@ async def auth_google(code: str):
         "code": code,
         "client_id": GOOGLE_CLIENT_ID,
         "client_secret": GOOGLE_CLIENT_SECRET,
-        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "redirect_uri": GOOGLE_REDIRECT_URL,
         "grant_type": "authorization_code",
     }
     async with httpx.AsyncClient() as client:
         response = await client.post(token_url, data=data)
         #response = requests.post(token_url, data=data)
+        print(response,flush=True)
         access_token = response.json().get("access_token")
+        refresh_token = response.json().get("refresh_token")
         print(access_token, flush=True)
-        user_info = await client.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
+
+        user_info = await client.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {code}"})
         user_param = user_info.json()
         print(user_param, flush=True)
         json_payload = {
             'email' : user_param['email'],
-            'social_type' : 'kakao',
+            'login_type' : 'google',
             'extra_data' :  {
                 'id' : user_param['id'],
                 'username' : user_param['name'],
@@ -77,16 +82,58 @@ async def auth_google(code: str):
                 'age' : user_param['age_range'] if 'age_range' in user_param else "empty",
                 'gender' : user_param['gender'] if 'gender' in user_param else "empty",
             },
-            'access_token': access_token
+            'access_token': access_token,
+            'refresh_token': refresh_token
         }
         print(json_payload,flush=True)
-        res = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email/', json=json_payload) 
-        result = res.json()
+        # res = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email/', json=json_payload) 
+        # result = res.json()
         return ResponseModel("Social User", "Generate Social User successfully")
 
     return "Sucess"
 
-@router.post("/token", response_description="Google login URL token")
+
+@router.get("/callback", response_description="Google login URL link")
+async def callback(code:str, scope:str, authuser:int, prompt:str):
+    token_url = "https://accounts.google.com/o/oauth2/token"
+    data = {
+        "code": code,
+        "client_id": GOOGLE_CLIENT_ID,
+        "client_secret": GOOGLE_CLIENT_SECRET,
+        "redirect_uri": GOOGLE_REDIRECT_URL,
+        "grant_type": "authorization_code",
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.post(token_url, data=data)
+        #response = requests.post(token_url, data=data)
+        print(response.json(),flush=True)
+        access_token = response.json().get("access_token")
+        refresh_token = "" if "refresh_token" not in response.json() else response.json().get("refresh_token") 
+        print(access_token, flush=True)
+        print("refresh_token", flush=True)
+        user_info = await client.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
+        user_param = user_info.json()
+        print(user_param, flush=True)
+        json_payload = {
+            'email' : user_param['email'],
+            'login_type' : 'google',
+            'extra_data' :  {
+                'id' : user_param['id'],
+                'username' : user_param['name'],
+                'nickname' : user_param['email'],
+                'age' : user_param['age_range'] if 'age_range' in user_param else "empty",
+                'gender' : user_param['gender'] if 'gender' in user_param else "empty",
+            },
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }
+        print(json_payload,flush=True)
+        # res = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email/', json=json_payload) 
+        # result = res.json()
+        return ResponseModel("Social User", "Generate Social User successfully")
+
+
+@router.get("/token", response_description="Google login URL token")
 async def get_token(token: str = Depends(oauth2_scheme)):
     return jwt.decode(token, GOOGLE_CLIENT_SECRET, algorithms=["HS256"])
 
@@ -115,11 +162,11 @@ async def refresh(request: Request):
 
 
 @router.get("/logout", response_description="Google logout URL link")
-async def auth_google(code: str):
+async def auth_google(access_token: str):
     async with httpx.AsyncClient() as client:
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         user_info = await client.post("https://accounts.google.com/o/oauth2/revoke", 
-                                      params={'token': code},
+                                      params={'token': access_token},
                                       headers=headers)
     return user_info.json()
 

@@ -83,7 +83,7 @@ async def add_social_user(user:dict) -> dict:
         }
 
         user_temp['email'] = user['email']
-        user_temp['account_type'].append(user['social_type']) if user['social_type'] not in user_temp['account_type'] else None
+        user_temp['account_type'].append(user['login_type']) if user['login_type'] not in user_temp['account_type'] else None
         user_temp['username'] = user['extra_data']['username']
         user_temp['nickname'] = user['extra_data']['nickname']
         user_temp['gender'] = user['extra_data']['gender']
@@ -150,7 +150,7 @@ async def read_user_by_email(email: str) -> dict:
     t1_start = process_time()
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_USER_SERVICE")}/user/email/{email}', timeout=300) 
-        # print(r.json(),flush=True)
+        print(r.json(),flush=True)
         data = r.json()
 
         t1_stop = process_time()

@@ -75,9 +75,8 @@ async def signup_social_user_data(user: SocialEmailSchema = Body(...)):
 @router.get("/", response_description="Users retrieved")
 async def get_users(dependencies:dict=Depends(verify_token)):
     users = await read_users()
-    if users:
-        return ResponseModel(users, "Users data statistic retrieved successfully")
-    return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
+    return ResponseModel(users, "Users data statistic retrieved successfully")
+    # return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
 
 # @router.get("/id/{id}", response_description="Users retrieved by id")
 # async def get_user_by_id(id:str, dependencies:dict=Depends(verify_token)):
@@ -89,25 +88,28 @@ async def get_users(dependencies:dict=Depends(verify_token)):
 @router.get("/email/{email}", response_description="Users retrieved by email")
 async def get_user_by_email(email:str, dependencies:dict=Depends(verify_token)):
     users = await read_user_by_email(email)
-    if users:
-        return ResponseModel(users, "Users data statistic retrieved successfully")
-    return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
+    return ResponseModel(users, "Users data statistic retrieved successfully")
 
     
 # Login by Social Email
 @router.post("/social_email", response_description="Users retrieved by social email")
-async def post_user_social_email(email: SocialEmailSchema = Body(...)):
+async def post_user_social_email(user_form: SocialEmailSchema = Body(...)):
+    socialUser = jsonable_encoder(user_form)
+    social_email_extract = socialUser['email']
+    email_exist = await read_user_by_email(social_email_extract)
+    print(email_exist, flush=True)
+    user = dict()
+    if not email_exist:
+        signin = await signup_social_user_data(socialUser)
 
-    socialEmail = jsonable_encoder(email)
-    user = await read_user_by_social_email(socialEmail)
-    # print(user,flush=True)
-    if user:
-        if 'email' in user:
-            if socialEmail['social_type'] not in user['account_type']:
-                signup_social_user_data(user)
-
-            await session_create(user)
-            return ResponseModel(user, "User data retrieved successfully")
+    if 'email' in socialUser:
+        user = await read_user_by_social_email(social_email_extract)
+        user['access_token'] = socialUser['access_token']
+        user['refresh_token'] = socialUser['refresh_token']
+        user['login_type'] = socialUser['login_type']
+        await session_create(user)
+        return ResponseModel(user, "User data retrieved successfully")
+    
     return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
 
 # Login by Email
@@ -116,6 +118,9 @@ async def get_user_data(email: EmailSchema = Body(...)):
     email = jsonable_encoder(email)
     if email:
         user = await read_user_by_email_password(email)
+        user['access_token'] = ""
+        user['refresh_token'] = ""
+        user['login_type'] = "email"
         print(user,flush=True)
         if 'email' in user:
             if 'email' in user['account_type']:

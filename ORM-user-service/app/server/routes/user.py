@@ -50,7 +50,7 @@ async def get_users():
             users_list.append(user_dict)
 
         return users_list
-    return ResponseModel(users, "Empty list returned")
+    return users_list
 
 @router.get("/id/{id}", response_description="User data retrieved by user_id")
 async def get_user_data_by_id(id: str):
@@ -59,7 +59,7 @@ async def get_user_data_by_id(id: str):
     if user:
         user_dict = await user_from_str(user)
         return user_dict
-    return ResponseModel(user, "Empty list returned")
+    return user_dict
 
 @router.get("/email/{email}", response_description="User data retrieved by email")
 async def get_user_data_by_email(email: str):
@@ -68,7 +68,7 @@ async def get_user_data_by_email(email: str):
     if user:
         user_dict = await user_from_str(user)
         return user_dict
-    return ResponseModel(user, "Empty list returned")
+    return user_dict
 
 @router.post("/social_email/", response_description="User data retrieved by social email")
 async def get_user_data_social_email(socialEmail: SocialEmailSchema = Body(...)):
@@ -78,7 +78,7 @@ async def get_user_data_social_email(socialEmail: SocialEmailSchema = Body(...))
     if user:
         user_dict = await user_from_str(user)
         return user_dict
-    return ResponseModel({}, "Empty list returned")
+    return user_dict
 
 @router.post("/email/", response_description="User data retrieved by email and password")
 async def get_user_data_email_password(email: EmailSchema = Body(...)):
@@ -89,7 +89,7 @@ async def get_user_data_email_password(email: EmailSchema = Body(...)):
     if user:
         user_dict = await user_from_str(user)
         return user_dict
-    return ResponseModel({}, "Empty list returned")
+    return user_dict
 
 @router.put("/email/{email}")
 async def update_user_data(email: str, req: UpdateUserModel = Body(...)):

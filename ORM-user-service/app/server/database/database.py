@@ -97,9 +97,10 @@ class User(BaseModel):
 
 class SocialEmail(BaseModel):
     email: str
-    social_type: str
+    login_type: str
     extra_data: str
     access_token: str
+    refresh_token: str
 
 class Email(BaseModel):
     email: str

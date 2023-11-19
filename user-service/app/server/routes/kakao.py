@@ -32,18 +32,19 @@ KAKAO_CALLBACK_URL = "https://imgroo.kr/kakao/callback"
 GOOGLE_CALLBACK_URL = "https://imgroo.kr/google/callback"
 SERVICE_URL = "https://imgroo.kr"
 
-@router.get("/login")
-async def login(request: Request):
-    return templates.TemplateResponse("login.html", {
-                                                        "NAVER_CLIENT_ID": NAVER_CLIENT_ID, 
-                                                        "KAKAO_CLIENT_ID": KAKAO_CLIENT_ID, 
-                                                        "GOOGLE_CLIENT_ID_PREFIX": GOOGLE_CLIENT_ID_PREFIX,
-                                                        "GOOGLE_CLIENT_ID": GOOGLE_CLIENT_ID, 
-                                                        "NAVER_CALLBACK_URL": NAVER_CALLBACK_URL,
-                                                        "KAKAO_CALLBACK_URL": KAKAO_CALLBACK_URL,
-                                                        "GOOGLE_CALLBACK_URL": GOOGLE_CALLBACK_URL,
-                                                        "request": request,
-                                                        "SERVICE_URL": SERVICE_URL})
+# @router.get("/login")
+# async def login(request: Request):
+
+    # return templates.TemplateResponse("login.html", {
+    #                                                     "NAVER_CLIENT_ID": NAVER_CLIENT_ID, 
+    #                                                     "KAKAO_CLIENT_ID": KAKAO_CLIENT_ID, 
+    #                                                     "GOOGLE_CLIENT_ID_PREFIX": GOOGLE_CLIENT_ID_PREFIX,
+    #                                                     "GOOGLE_CLIENT_ID": GOOGLE_CLIENT_ID, 
+    #                                                     "NAVER_CALLBACK_URL": NAVER_CALLBACK_URL,
+    #                                                     "KAKAO_CALLBACK_URL": KAKAO_CALLBACK_URL,
+    #                                                     "GOOGLE_CALLBACK_URL": GOOGLE_CALLBACK_URL,
+    #                                                     "request": request,
+    #                                                     "SERVICE_URL": SERVICE_URL})
 
 @router.get("/callback")
 async def callback(code:str):
@@ -60,13 +61,15 @@ async def callback(code:str):
         print(data,flush=True)
         if 'access_token' in data:
             access_token = data['access_token']
+            refresh_token = data['refresh_token']
             header = {'Authorization': f'Bearer {access_token}'}
+            print(access_token,flush=True)
             r = await client.get(f'https://kapi.kakao.com/v2/user/me', headers=header) 
             print(r.json(),flush=True)
             user_param = r.json()
             json_payload = {
                 'email' : user_param['kakao_account']['email'],
-                'social_type' : 'kakao',
+                'login_type' : 'kakao',
                 'extra_data' :  {
                     'id' : user_param['id'],
                     'username' : user_param['kakao_account']['profile']['nickname'],
@@ -74,11 +77,13 @@ async def callback(code:str):
                     'age' : user_param['kakao_account']['age_range'],
                     'gender' : user_param['kakao_account']['gender']
                 },
-                'access_token': access_token
+                'access_token': access_token,
+                'refresh_token': refresh_token
             }
             print(json_payload,flush=True)
-            res = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email/', json=json_payload) 
-            result = res.json()
+            res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_email', headers=header, json=json_payload) 
+            result = res.text
+            print(result,flush=True)
             return ResponseModel("Social User", "Generate Social User successfully")
 
         else:
@@ -86,7 +91,10 @@ async def callback(code:str):
 
 
 @router.get("/logout")
-async def callback(request: Request):
-    return templates.TemplateResponse("/kakao/logout.html", {
-                                                        "KAKAO_CLIENT_ID": KAKAO_CLIENT_ID,
-                                                        "request": request})    
+async def callback(access_token: str):
+    async with httpx.AsyncClient() as client:
+        header = {"Content-Type": "application/x-www-form-urlencoded",
+                  "Authorization": f"Bearer {access_token}" }
+        res = await client.get(f'https://kauth.kakao.com/oauth/logout?client_id={KAKAO_REST_CLIENT_ID}&logout_redirect_uri={SERVICE_URL}', headers=header) 
+        print(res.text,flush=True)
+        return ResponseModel("Social User", "Logout Social User successfully")

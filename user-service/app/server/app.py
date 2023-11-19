@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI, Request, WebSocket
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 
 # from starlette.middleware.sessions import SessionMiddleware
 from app.server.routes.user import router as UserRouter
@@ -15,6 +16,21 @@ from app.server.util.session import session_load
 import redis
 
 app = FastAPI()
+
+
+origins = [
+    "https://imgroo.kr",
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # # Create a Redis client
 # redis_client = redis.Redis(host="redis", port=6379, db=0)

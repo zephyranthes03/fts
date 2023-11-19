@@ -38,10 +38,10 @@
     age = naver_id_login.getProfileData('age')
     gender = naver_id_login.getProfileData('gender') === "M" ? "male" : "feMale"
 
-    const url = "http://imgroo.kr:8001/user/social_email";
-    const data = {
+    const url = "https://imgroo.kr/user/social_email";
+    const data = JSON.stringify( {
         email : email,
-        social_type : 'naver',
+        login_type : 'naver',
         extra_data : {
                         id : id,
                         username : username,
@@ -49,12 +49,33 @@
                         age : age,
                         gender : gender
         },
-        access_token: naver_id_login.oauthParams.access_token
+        access_token: naver_id_login.oauthParams.access_token,
+        refresh_token: ''
 
-    }
-    $.post(url, data, function(data,status) {
-        console.log(`${data} and status is ${status}`)
-    });
+      });
+      console.log(data);
+      console.log(naver_id_login.oauthParams.refresh_token);
+      $.ajax({
+      url: url,
+      crossDomain: true,
+      method: 'post',
+      headers: {
+        'accept': 'application/json'
+      },
+      contentType: 'application/json',
+      // data: '{\n  "email": "realizer25@naver.com",\n  "login_type": "naver",\n  "extra_data": {\n    "id": "id11111111111111111111",\n    "username": "Yongjin Chong",\n    "nickname": "john_doe111",\n    "gender": "male",\n    "age": "30-39"\n  },\n  "access_token": "token_value",\n  "refresh_token": "refresh_token_value"\n}',
+      data: data
+    }).done(function(response) {
+      console.log(response);
+    });    
+    // console.log(data);
+    // $.post(url, 
+    //     crossDomain: true,
+    //     headers: { 'accept': 'application/json'},
+
+    //     data, function(data,status) {
+    //     console.log(`${data} and status is ${status}`)
+    // });
 
     // get_url = "http://localhost:8001/user/email/john_doe1@gmail.com"
     // $.get(get_url, data, function(status) {

@@ -55,15 +55,16 @@ class UserSchema(BaseModel):
 
 class SocialEmailSchema(BaseModel):
     email: str = Field(...)
-    social_type: str = Field(...)
+    login_type: str = Field(...)
     extra_data: dict = Field(...)
     access_token: str = Field(...)
+    refresh_token: str = Field(...)
 
     class Config:
         schema_extra = {
             "example": {
                 "email": "john_doe@gmail.com",
-                "social_type": "naver",
+                "login_type": "naver",
                 "extra_data": {
                     "id": "id11111111111111111111",
                     "username" : "Yongjin Chong",
@@ -71,7 +72,8 @@ class SocialEmailSchema(BaseModel):
                     "gender" : "male",
                     "age" : "30-39"
                 },
-                "access_token": "token_value"
+                "access_token": "access_token_value",
+                "refresh_token": "refresh_token_value"
             }
         }   
 

@@ -26,15 +26,21 @@ async def session_create(session_dict:dict) -> str:
 	if os.getenv("SESSION_SALT") is not None:
 		if 'email' in session_dict:
 			print("session_dict",flush=True)
-	# 		print(session_dict,flush=True)
-	# 		print(session_dict['email'],flush=True)
-	# 		email = str(await generate_password_hash(session_dict['email']))
-	# 		session_dict["id"] = email
-	# 		session_str = json.dumps(session_dict)
-	# 		rd.set(email, session_str)
-	# 		rd.expire(email, session_dict["expire_time"] * 60)
-	# 		return session_dict
-	# 	else:
-	# 		return {'error': "email couldn't found"}
-	# else:
-	# 	return {'error': 'Session salt not defined'}
+			print(session_dict,flush=True)
+			print(session_dict['email'],flush=True)
+			email = session_dict['email'] # str(await generate_password_hash(session_dict['email']))
+			session_dict_out = dict()
+			session_dict_out["id"] = email
+			session_dict_out["login_type"] = session_dict["login_type"]
+			session_dict_out["access_token"] = session_dict["access_token"]
+			session_dict_out["refresh_token"] = session_dict["refresh_token"]
+			session_dict_out["expire_time"] = session_dict["expire_time"]
+
+			session_str = json.dumps(session_dict_out)
+			rd.set(email, session_dict_out)
+			rd.expire(email, session_dict_out["expire_time"] * 60)
+			return session_dict_out
+		else:
+			return {'error': "email couldn't found"}
+	else:
+		return {'error': 'Session salt not defined'}

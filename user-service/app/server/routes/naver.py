@@ -9,6 +9,11 @@ from starlette.responses import JSONResponse
 
 import httpx
 
+from app.server.models.user import (
+    ErrorResponseModel,
+    ResponseModel  
+)
+
 router = APIRouter()
 
 #router.mount("/static", StaticFiles(directory="static"), name="static")
@@ -18,6 +23,7 @@ templates = Jinja2Templates(directory="app/templates")
 NAVER_CLIENT_ID = "8TU3gk6Sfxq9i2gxLX7Z"
 NAVER_CLIENT_SECRET = "zoUqpjzdv5"
 KAKAO_CLIENT_ID = "f6124cdaf153e3f7bd71349e832279f9"
+KAKAO_REST_CLIENT_ID = "4f5260580754a2f0ac2c4adbe5f177ad"
 GOOGLE_CLIENT_ID_PREFIX = "855018704830-hrvjk7hj51ennokqrfi1t0ug1i6aj0k9"
 GOOGLE_CLIENT_ID = f"{GOOGLE_CLIENT_ID_PREFIX}.apps.googleusercontent.com"
 
@@ -31,6 +37,7 @@ async def login(request: Request):
     return templates.TemplateResponse("login.html", {
                                                         "NAVER_CLIENT_ID": NAVER_CLIENT_ID, 
                                                         "KAKAO_CLIENT_ID": KAKAO_CLIENT_ID, 
+                                                        "KAKAO_REST_CLIENT_ID": KAKAO_REST_CLIENT_ID,
                                                         "GOOGLE_CLIENT_ID_PREFIX": GOOGLE_CLIENT_ID_PREFIX,
                                                         "GOOGLE_CLIENT_ID": GOOGLE_CLIENT_ID, 
                                                         "NAVER_CALLBACK_URL": NAVER_CALLBACK_URL,
@@ -61,4 +68,5 @@ async def logout(access_token: str):
         r = await client.get(f'https://nid.naver.com/oauth2.0/token', params=params) 
         data = r.json() #['data']
         print(data,flush=True) 
+        return ResponseModel("Social User", "Logout Social User successfully")
             
