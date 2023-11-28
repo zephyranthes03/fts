@@ -25,31 +25,55 @@ NAVER_CLIENT_SECRET = "zoUqpjzdv5"
 KAKAO_CLIENT_ID = "f6124cdaf153e3f7bd71349e832279f9"
 KAKAO_REST_CLIENT_ID = "4f5260580754a2f0ac2c4adbe5f177ad"
 GOOGLE_CLIENT_ID_PREFIX = "855018704830-hrvjk7hj51ennokqrfi1t0ug1i6aj0k9"
-GOOGLE_CLIENT_ID = f"{GOOGLE_CLIENT_ID_PREFIX}.apps.googleusercontent.com"
+GOOGLE_CLIENT_ID = "855018704830-hrvjk7hj51ennokqrfi1t0ug1i6aj0k9.apps.googleusercontent.com"
 
-NAVER_CALLBACK_URL = "https://imgroo.kr/naver/callback"
-KAKAO_CALLBACK_URL = "https://imgroo.kr/kakao/callback"
-GOOGLE_CALLBACK_URL = "https://imgroo.kr/google/callback"
+NAVER_CALLBACK_LOGIN_URL = "https://imgroo.kr/naver/callback_login"
+KAKAO_CALLBACK_LOGIN_URL = "https://imgroo.kr/kakao/callback_login"
+GOOGLE_CALLBACK_LOGIN_URL = "https://imgroo.kr/google/callback_login"
+NAVER_CALLBACK_SIGNUP_URL = "https://imgroo.kr/naver/callback_signup"
+KAKAO_CALLBACK_SIGNUP_URL = "https://imgroo.kr/kakao/callback_signup"
+GOOGLE_CALLBACK_SIGNUP_URL = "https://imgroo.kr/google/callback_signup"
 SERVICE_URL = "https://imgroo.kr"
 
-@router.get("/login")
-async def login(request: Request):
-    return templates.TemplateResponse("login.html", {
+    
+@router.get("/social_login")
+async def social_login(request: Request):
+    return templates.TemplateResponse("social_login.html", {
                                                         "NAVER_CLIENT_ID": NAVER_CLIENT_ID, 
                                                         "KAKAO_CLIENT_ID": KAKAO_CLIENT_ID, 
                                                         "KAKAO_REST_CLIENT_ID": KAKAO_REST_CLIENT_ID,
                                                         "GOOGLE_CLIENT_ID_PREFIX": GOOGLE_CLIENT_ID_PREFIX,
                                                         "GOOGLE_CLIENT_ID": GOOGLE_CLIENT_ID, 
-                                                        "NAVER_CALLBACK_URL": NAVER_CALLBACK_URL,
-                                                        "KAKAO_CALLBACK_URL": KAKAO_CALLBACK_URL,
-                                                        "GOOGLE_CALLBACK_URL": GOOGLE_CALLBACK_URL,
+                                                        "NAVER_CALLBACK_URL": NAVER_CALLBACK_LOGIN_URL,
+                                                        "KAKAO_CALLBACK_URL": KAKAO_CALLBACK_LOGIN_URL,
+                                                        "GOOGLE_CALLBACK_URL": GOOGLE_CALLBACK_LOGIN_URL,
                                                         "request": request,
                                                         "SERVICE_URL": SERVICE_URL})
 
-@router.get("/callback")
-async def callback(request: Request):
-    return templates.TemplateResponse("naver/callback.html", {"CLIENT_ID": NAVER_CLIENT_ID, 
-                                                        "CALLBACK_URL": NAVER_CALLBACK_URL,
+@router.get("/social_signup")
+async def social_signup(request: Request):
+    return templates.TemplateResponse("social_signup.html", {
+                                                        "NAVER_CLIENT_ID": NAVER_CLIENT_ID, 
+                                                        "KAKAO_CLIENT_ID": KAKAO_CLIENT_ID, 
+                                                        "KAKAO_REST_CLIENT_ID": KAKAO_REST_CLIENT_ID,
+                                                        "GOOGLE_CLIENT_ID_PREFIX": GOOGLE_CLIENT_ID_PREFIX,
+                                                        "GOOGLE_CLIENT_ID": GOOGLE_CLIENT_ID, 
+                                                        "NAVER_CALLBACK_URL": NAVER_CALLBACK_SIGNUP_URL,
+                                                        "KAKAO_CALLBACK_URL": KAKAO_CALLBACK_SIGNUP_URL,
+                                                        "GOOGLE_CALLBACK_URL": GOOGLE_CALLBACK_SIGNUP_URL,
+                                                        "request": request,
+                                                        "SERVICE_URL": SERVICE_URL})
+
+@router.get("/callback_login")
+async def callback_login(request: Request):
+    return templates.TemplateResponse("naver/callback_login.html", {"CLIENT_ID": NAVER_CLIENT_ID, 
+                                                        "CALLBACK_URL": NAVER_CALLBACK_LOGIN_URL,
+                                                        "request": request})
+
+@router.get("/callback_signup")
+async def callback_signup(request: Request):
+    return templates.TemplateResponse("naver/callback_signup.html", {"CLIENT_ID": NAVER_CLIENT_ID, 
+                                                        "CALLBACK_URL": NAVER_CALLBACK_SIGNUP_URL,
                                                         "request": request})
 
 # https://nid.naver.com/oauth2.0/token?grant_type=refresh_token&client_id=jyvqXeaVOVmV&client_secret=527300A0_COq1_XV33cf&refresh_token=c8ceMEJisO4Se7uGCEYKK1p52L93bHXLn

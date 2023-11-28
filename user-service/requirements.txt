@@ -13,3 +13,4 @@ bcrypt
 jwt
 jinja2
 google-api-python-client
+python-multipart

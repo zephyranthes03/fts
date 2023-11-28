@@ -27,9 +27,9 @@ KAKAO_REST_CLIENT_ID = "4f5260580754a2f0ac2c4adbe5f177ad"
 GOOGLE_CLIENT_ID_PREFIX = "855018704830-hrvjk7hj51ennokqrfi1t0ug1i6aj0k9"
 GOOGLE_CLIENT_ID = f"{GOOGLE_CLIENT_ID_PREFIX}.apps.googleusercontent.com"
 
-NAVER_CALLBACK_URL = "https://imgroo.kr/naver/callback"
-KAKAO_CALLBACK_URL = "https://imgroo.kr/kakao/callback"
-GOOGLE_CALLBACK_URL = "https://imgroo.kr/google/callback"
+KAKAO_CALLBACK_LOGIN_URL = "https://imgroo.kr/kakao/callback_login"
+KAKAO_CALLBACK_SIGNUP_URL = "https://imgroo.kr/kakao/callback_signup"
+
 SERVICE_URL = "https://imgroo.kr"
 
 # @router.get("/login")
@@ -46,14 +46,51 @@ SERVICE_URL = "https://imgroo.kr"
     #                                                     "request": request,
     #                                                     "SERVICE_URL": SERVICE_URL})
 
-@router.get("/callback")
-async def callback(code:str):
+
+@router.get("/callback_login")
+async def callback_login(code:str):
     async with httpx.AsyncClient() as client:
         header = {'Content-Type':'application/x-www-form-urlencoded'}
         data = {
             'grant_type': 'authorization_code',
             'client_id': KAKAO_REST_CLIENT_ID,
-            'redirect_uri': KAKAO_CALLBACK_URL,
+            'redirect_uri': KAKAO_CALLBACK_LOGIN_URL,
+            'code': code,
+        }
+        r = await client.post(f'https://kauth.kakao.com/oauth/token', data=data, headers=header) 
+        data = r.json() #['data']
+        print(data,flush=True)
+        if 'access_token' in data:
+            access_token = data['access_token']
+            refresh_token = data['refresh_token']
+            header = {'Authorization': f'Bearer {access_token}'}
+            print(access_token,flush=True)
+            r = await client.get(f'https://kapi.kakao.com/v2/user/me', headers=header) 
+            print(r.json(),flush=True)
+            user_param = r.json()
+            json_payload = {
+                'email' : user_param['kakao_account']['email'],
+                'login_type' : 'kakao',
+                'access_token': access_token,
+                'refresh_token': refresh_token
+            }
+            print(json_payload,flush=True)
+            res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_email_login', headers=header, json=json_payload) 
+            result = res.text
+            print(result,flush=True)
+            return ResponseModel("Social User", "Generate Social User successfully")
+
+        else:
+            print("ERROR", flush=True)
+
+@router.get("/callback_signup")
+async def callback_signup(code:str):
+    async with httpx.AsyncClient() as client:
+        header = {'Content-Type':'application/x-www-form-urlencoded'}
+        data = {
+            'grant_type': 'authorization_code',
+            'client_id': KAKAO_REST_CLIENT_ID,
+            'redirect_uri': KAKAO_CALLBACK_SIGNUP_URL,
             'code': code,
         }
         r = await client.post(f'https://kauth.kakao.com/oauth/token', data=data, headers=header) 
@@ -81,7 +118,7 @@ async def callback(code:str):
                 'refresh_token': refresh_token
             }
             print(json_payload,flush=True)
-            res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_email', headers=header, json=json_payload) 
+            res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_email_signup', headers=header, json=json_payload) 
             result = res.text
             print(result,flush=True)
             return ResponseModel("Social User", "Generate Social User successfully")
@@ -91,7 +128,7 @@ async def callback(code:str):
 
 
 @router.get("/logout")
-async def callback(access_token: str):
+async def logout(access_token: str):
     async with httpx.AsyncClient() as client:
         header = {"Content-Type": "application/x-www-form-urlencoded",
                   "Authorization": f"Bearer {access_token}" }

@@ -23,7 +23,8 @@ from app.server.models.user import (
     ResponseModel,
     UserSchema,
     UpdateUserModel,    
-    SocialEmailSchema,
+    SocialEmailLoginSchema,
+    SocialEmailSignupSchema,
     EmailSchema,    
 )
 
@@ -60,7 +61,7 @@ async def signup_user_data(user: UserSchema = Body(...)):
 
 
 @router.post("/social_signup", response_description="Social User data added into the database")
-async def signup_social_user_data(user: SocialEmailSchema = Body(...)):
+async def signup_social_user_data(user: SocialEmailSignupSchema = Body(...)):
     user = jsonable_encoder(user)
     new_user = await add_social_user(user)
     if new_user.get('error', None):
@@ -90,10 +91,30 @@ async def get_user_by_email(email:str, dependencies:dict=Depends(verify_token)):
     users = await read_user_by_email(email)
     return ResponseModel(users, "Users data statistic retrieved successfully")
 
-    
 # Login by Social Email
-@router.post("/social_email", response_description="Users retrieved by social email")
-async def post_user_social_email(user_form: SocialEmailSchema = Body(...)):
+@router.post("/social_email_login", response_description="Users retrieved by social email")
+async def post_user_social_email(user_form: SocialEmailLoginSchema = Body(...)):
+    socialUser = jsonable_encoder(user_form)
+    social_email_extract = socialUser['email']
+    email_exist = await read_user_by_email(social_email_extract)
+    print(email_exist, flush=True)
+    user = dict()
+    if not email_exist:
+        return ErrorResponseModel("Return data requests failure", 500, "Email not exist!")
+
+    if 'email' in socialUser:
+        user = await read_user_by_social_email(social_email_extract)
+        user['access_token'] = socialUser['access_token']
+        user['refresh_token'] = socialUser['refresh_token']
+        user['login_type'] = socialUser['login_type']
+        await session_create(user)
+        return ResponseModel(user, "User data retrieved successfully")
+    
+    return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
+   
+# Login by Social Email
+@router.post("/social_email_signup", response_description="Users retrieved by social email")
+async def post_user_social_email(user_form: SocialEmailSignupSchema = Body(...)):
     socialUser = jsonable_encoder(user_form)
     social_email_extract = socialUser['email']
     email_exist = await read_user_by_email(social_email_extract)

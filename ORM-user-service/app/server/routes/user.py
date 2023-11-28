@@ -17,7 +17,7 @@ from app.server.models.user import (
     ResponseModel,
     UserSchema,
     UpdateUserModel,
-    SocialEmailSchema,
+    SocialEmailSignupSchema,
     EmailSchema,
 )
 
@@ -71,7 +71,7 @@ async def get_user_data_by_email(email: str):
     return user_dict
 
 @router.post("/social_email/", response_description="User data retrieved by social email")
-async def get_user_data_social_email(socialEmail: SocialEmailSchema = Body(...)):
+async def get_user_data_social_email(socialEmail: SocialEmailSignupSchema = Body(...)):
     socialEmail = jsonable_encoder(socialEmail)
     user = await retrieve_user_by_social_email(socialEmail)
     user_dict = dict()
