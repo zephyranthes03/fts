@@ -1,5 +1,7 @@
 import os
+import base64
 
+# OpenAI API Key
 from typing import Annotated
 from datetime import datetime
 from fastapi import APIRouter, Body, File, UploadFile, Request, Depends
@@ -16,6 +18,8 @@ from app.server.util.preload import verify_token
 
 UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER", "./symptom/upload/")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER", "./sample/")
+
+
 
 # templates = Jinja2Templates(directory="templates")
 
@@ -46,6 +50,7 @@ from app.server.schemas.symptom_index import (
     ResponseModel,
     Symptom_index_schema,
     Update_symptom_index_schema,
+    llm_diagnosis
 )
 
 router = APIRouter()
@@ -63,6 +68,30 @@ async def load_symptom_indexes():
 
     # Get metadata
     metadata = st.get_diagnosis_metadata_file()
+
+
+
+def encode_image(image_path):
+  with open(image_path, "rb") as image_file:
+    return base64.b64encode(image_file.read()).decode('utf-8')
+  
+@router.post("llm", response_class=HTMLResponse, response_description="Upload symptomnostic diagnosis")
+async def upload_to_llm(request: Request, email: str, symptom_file: bytes = File(...)): #, dependencies:dict=Depends(verify_token)):
+
+    # Path to your image
+    # image_path = "~/Downloads/naver/skin/train/내성 발톱/스크린샷 2023-07-19 오전 6.38.34.png"
+    image_path = "/Users/yongjinchong/Downloads/naver/skin/train/건선/스크린샷 2023-07-23 오후 12.03.15.png"
+    # image_path = "~/Downloads/naver/skin/train/건선/스크린샷 2023-07-23 오후 4.50.23.png"
+
+    # Getting the base64 string
+    base64_image = encode_image(image_path)
+    query_json = request.json()
+
+    query_text = "첨부된 이미지에서 보여지는 가능한 증상을 알려줘."
+
+    diseases = await llm_diagnosis(symptom_file, query_text, email)
+
+    return diseases
 
 
 # Request : 서버로 사용자가 증상 발현부를 촬영한 이미지를 서버로 업로드 

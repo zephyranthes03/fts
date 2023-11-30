@@ -1,10 +1,48 @@
 import httpx
 import os
+import base64
 from time import process_time
 from typing import List
 
 # crud operations
 
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "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")
+
+
+async def llm_diagnosis(image_base64: base64, query_text: str, email: str):
+
+    headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {OPENAI_API_KEY}"
+    }
+
+    payload = {
+    "model": "gpt-4-vision-preview",
+    "messages": [
+        {
+        "role": "user",
+        "content": [
+            {
+            "type": "text",
+            "text": "{query_text}"
+            },
+            {
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:image/jpeg;base64,{image_base64}"
+            }
+            }
+        ]
+        }
+    ],
+    "max_tokens": 300
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+        data = response.json()
+        print(data,flush=True)
+        data["email"] = email
+    return data
 
 # Add a new symptom into to the database
 async def add_symptom_index(symptom_index:dict) -> dict:
