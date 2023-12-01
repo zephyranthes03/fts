@@ -5,7 +5,7 @@ pydantic[email]
 python-decouple==3.7
 httpx==0.23.3
 pandas==1.5.3
-DeepImageSearch
+#DeepImageSearch
 python-multipart
 bcrypt
 redis

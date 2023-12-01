@@ -17,7 +17,7 @@ async def llm_diagnosis(image_base64: base64, query_text: str, email: str):
     }
 
     payload = {
-    "model": "gpt-4-vision-preview",
+    "model": "gpt-4",
     "messages": [
         {
         "role": "user",
@@ -35,10 +35,11 @@ async def llm_diagnosis(image_base64: base64, query_text: str, email: str):
         ]
         }
     ],
-    "max_tokens": 300
+    "max_tokens": 1024
     }
     async with httpx.AsyncClient() as client:
-        response = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+        timeout = httpx.TimeoutConfig(connect_timeout=5, read_timeout=60*2 write_timeout=5)
+        response = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, timeout=timeout)
         data = response.json()
         print(data,flush=True)
         data["email"] = email
