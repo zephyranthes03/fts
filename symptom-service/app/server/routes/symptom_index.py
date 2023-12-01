@@ -40,7 +40,8 @@ from app.server.process.symptom_index import (
     update_symptom_index,
     read_symptom_index_by_id,
     read_symptom_index_by_name,
-    read_symptom_indexes
+    read_symptom_indexes,
+    llm_diagnosis
 )
 
 
@@ -50,7 +51,7 @@ from app.server.schemas.symptom_index import (
     ResponseModel,
     Symptom_index_schema,
     Update_symptom_index_schema,
-    llm_diagnosis
+    
 )
 
 router = APIRouter()
@@ -76,7 +77,23 @@ def encode_image(image_path):
     return base64.b64encode(image_file.read()).decode('utf-8')
   
 @router.post("llm", response_class=HTMLResponse, response_description="Upload symptomnostic diagnosis")
-async def upload_to_llm(request: Request, email: str, symptom_file: bytes = File(...)): #, dependencies:dict=Depends(verify_token)):
+async def upload_to_llm(request: Request, email: str, symptom_file: UploadFile = File(...)): #, dependencies:dict=Depends(verify_token)):
+
+    # ext_center = symptom_file.filename[symptom_file.filename.rfind(".")+1:]
+    # now = datetime.now()
+    # year = now.strftime("%Y")
+    # month = now.strftime("%m")
+    # date = now.strftime("%d")
+    # target_filefolder = os.path.join(UPLOAD_IMAGE_FOLDER, year, month, date)
+
+    # if not os.path.exists(target_filefolder):
+    #     os.makedirs(target_filefolder)
+    # new_center_image = os.path.join(UPLOAD_IMAGE_FOLDER, year, month, date, f"{email}_{symptom_file.filename}")
+
+    # write_centor_file = open(new_center_image,'wb')
+    # write_centor_file.write(symptom_file.file.read())
+    # write_centor_file.close()
+
 
     # Path to your image
     # image_path = "~/Downloads/naver/skin/train/내성 발톱/스크린샷 2023-07-19 오전 6.38.34.png"
@@ -84,7 +101,8 @@ async def upload_to_llm(request: Request, email: str, symptom_file: bytes = File
     # image_path = "~/Downloads/naver/skin/train/건선/스크린샷 2023-07-23 오후 4.50.23.png"
 
     # Getting the base64 string
-    base64_image = encode_image(image_path)
+    # base64_image = encode_image(symptom_file.file.read())
+    base64_image = base64.b64encode( symptom_file.file.read()).decode('utf-8')
     query_json = request.json()
 
     query_text = "첨부된 이미지에서 보여지는 가능한 증상을 알려줘."
