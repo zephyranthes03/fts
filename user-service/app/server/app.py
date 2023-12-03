@@ -5,6 +5,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 
+
 # from starlette.middleware.sessions import SessionMiddleware
 from app.server.routes.user import router as UserRouter
 from app.server.routes.google import router as GoogleRouter
@@ -21,7 +22,7 @@ app = FastAPI()
 origins = [
     "https://imgroo.kr",
     "http://localhost",
-    "http://localhost:8080",
+    "http://localhost:8003",
 ]
 
 app.add_middleware(
@@ -42,16 +43,59 @@ app.add_middleware(
 #     session_backend=RedisSessionBackend(client=redis_client)
 # )
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="app/templates")
 
 app.include_router(UserRouter, tags=["User"], prefix="/user")
 app.include_router(GoogleRouter, tags=["Google"], prefix="/google")
 app.include_router(NaverRouter, tags=["Naver"], prefix="/naver")
 app.include_router(KakaoRouter, tags=["Kakao"], prefix="/kakao")
 
+NAVER_CLIENT_ID = "8TU3gk6Sfxq9i2gxLX7Z"
+NAVER_CLIENT_SECRET = "zoUqpjzdv5"
+KAKAO_CLIENT_ID = "f6124cdaf153e3f7bd71349e832279f9"
+KAKAO_REST_CLIENT_ID = "4f5260580754a2f0ac2c4adbe5f177ad"
+GOOGLE_CLIENT_ID_PREFIX = "855018704830-hrvjk7hj51ennokqrfi1t0ug1i6aj0k9"
+GOOGLE_CLIENT_ID = "855018704830-hrvjk7hj51ennokqrfi1t0ug1i6aj0k9.apps.googleusercontent.com"
+
+NAVER_CALLBACK_LOGIN_URL = "https://imgroo.kr/naver/callback_login"
+KAKAO_CALLBACK_LOGIN_URL = "https://imgroo.kr/kakao/callback_login"
+GOOGLE_CALLBACK_LOGIN_URL = "https://imgroo.kr/google/callback_login"
+NAVER_CALLBACK_SIGNUP_URL = "https://imgroo.kr/naver/callback_signup"
+KAKAO_CALLBACK_SIGNUP_URL = "https://imgroo.kr/kakao/callback_signup"
+GOOGLE_CALLBACK_SIGNUP_URL = "https://imgroo.kr/google/callback_signup"
+SERVICE_URL = "https://imgroo.kr"
+
 @app.get("/", tags=["health_check"])
 async def read_root():
     return {"message": "Welcome to health check link"}
+
+# @app.get("/social_login")
+# async def social_login(request: Request):
+#     return templates.TemplateResponse("social_login.html", {
+#                                                         "NAVER_CLIENT_ID": NAVER_CLIENT_ID, 
+#                                                         "KAKAO_CLIENT_ID": KAKAO_CLIENT_ID, 
+#                                                         "KAKAO_REST_CLIENT_ID": KAKAO_REST_CLIENT_ID,
+#                                                         "GOOGLE_CLIENT_ID_PREFIX": GOOGLE_CLIENT_ID_PREFIX,
+#                                                         "GOOGLE_CLIENT_ID": GOOGLE_CLIENT_ID, 
+#                                                         "NAVER_CALLBACK_URL": NAVER_CALLBACK_LOGIN_URL,
+#                                                         "KAKAO_CALLBACK_URL": KAKAO_CALLBACK_LOGIN_URL,
+#                                                         "GOOGLE_CALLBACK_URL": GOOGLE_CALLBACK_LOGIN_URL,
+#                                                         "request": request,
+#                                                         "SERVICE_URL": SERVICE_URL})
+
+@app.get("/social_login", tags=["social login"])
+async def social_signup(request: Request):
+    return templates.TemplateResponse("social_signup.html", {
+                                                        "NAVER_CLIENT_ID": NAVER_CLIENT_ID, 
+                                                        "KAKAO_CLIENT_ID": KAKAO_CLIENT_ID, 
+                                                        "KAKAO_REST_CLIENT_ID": KAKAO_REST_CLIENT_ID,
+                                                        "GOOGLE_CLIENT_ID_PREFIX": GOOGLE_CLIENT_ID_PREFIX,
+                                                        "GOOGLE_CLIENT_ID": GOOGLE_CLIENT_ID, 
+                                                        "NAVER_CALLBACK_URL": NAVER_CALLBACK_SIGNUP_URL,
+                                                        "KAKAO_CALLBACK_URL": KAKAO_CALLBACK_SIGNUP_URL,
+                                                        "GOOGLE_CALLBACK_URL": GOOGLE_CALLBACK_SIGNUP_URL,
+                                                        "request": request,
+                                                        "SERVICE_URL": SERVICE_URL})
 
 html = """
 <!DOCTYPE html>

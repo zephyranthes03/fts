@@ -119,7 +119,7 @@ async def google_callback_signup(request: Request):
             'email' : user_info['email'],
             'login_type' : 'google',
             'extra_data' :  {
-                'id' : user_info['id'],
+                'id' : user_info['email'],
                 'username' : user_info['name'],
                 'nickname' : user_info['email'],
                 'age' : user_info['age_range'] if 'age_range' in user_info else "empty",

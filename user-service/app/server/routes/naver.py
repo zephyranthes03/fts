@@ -35,22 +35,7 @@ KAKAO_CALLBACK_SIGNUP_URL = "https://imgroo.kr/kakao/callback_signup"
 GOOGLE_CALLBACK_SIGNUP_URL = "https://imgroo.kr/google/callback_signup"
 SERVICE_URL = "https://imgroo.kr"
 
-    
-@router.get("/social_login")
-async def social_login(request: Request):
-    return templates.TemplateResponse("social_login.html", {
-                                                        "NAVER_CLIENT_ID": NAVER_CLIENT_ID, 
-                                                        "KAKAO_CLIENT_ID": KAKAO_CLIENT_ID, 
-                                                        "KAKAO_REST_CLIENT_ID": KAKAO_REST_CLIENT_ID,
-                                                        "GOOGLE_CLIENT_ID_PREFIX": GOOGLE_CLIENT_ID_PREFIX,
-                                                        "GOOGLE_CLIENT_ID": GOOGLE_CLIENT_ID, 
-                                                        "NAVER_CALLBACK_URL": NAVER_CALLBACK_LOGIN_URL,
-                                                        "KAKAO_CALLBACK_URL": KAKAO_CALLBACK_LOGIN_URL,
-                                                        "GOOGLE_CALLBACK_URL": GOOGLE_CALLBACK_LOGIN_URL,
-                                                        "request": request,
-                                                        "SERVICE_URL": SERVICE_URL})
-
-@router.get("/social_signup")
+@router.get("/social_login", tags=["social login"])
 async def social_signup(request: Request):
     return templates.TemplateResponse("social_signup.html", {
                                                         "NAVER_CLIENT_ID": NAVER_CLIENT_ID, 
