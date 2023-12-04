@@ -3,6 +3,7 @@ import os
 import base64
 from time import process_time
 from typing import List
+from app.server.util.symptom import extract_symptom
 
 # crud operations
 
@@ -17,14 +18,14 @@ async def llm_diagnosis(image_base64: base64, query_text: str, email: str):
     }
 
     payload = {
-    "model": "gpt-4",
+    "model": "gpt-4-vision-preview",
     "messages": [
         {
         "role": "user",
         "content": [
             {
             "type": "text",
-            "text": "{query_text}"
+            "text": query_text
             },
             {
             "type": "image_url",
@@ -35,15 +36,21 @@ async def llm_diagnosis(image_base64: base64, query_text: str, email: str):
         ]
         }
     ],
-    "max_tokens": 1024
+    "max_tokens": 300
     }
     async with httpx.AsyncClient() as client:
-        timeout = httpx.TimeoutConfig(connect_timeout=5, read_timeout=60*2 write_timeout=5)
+        timeout = httpx.Timeout(timeout=120.0)
         response = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, timeout=timeout)
         data = response.json()
         print(data,flush=True)
         data["email"] = email
-    return data
+        result = dict()
+        result["email"] = email
+        if "choices" in data:
+            llm_content = data['choices'][0]['message']['content']
+            result['llm_content'] = llm_content
+            result['symptom'] = extract_symptom(llm_content)
+    return result
 
 # Add a new symptom into to the database
 async def add_symptom_index(symptom_index:dict) -> dict:

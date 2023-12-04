@@ -12,7 +12,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 
 from io import BytesIO
 from PIL import Image
-from DeepImageSearch import Load_Data, Search_Setup
+# from DeepImageSearch import Load_Data, Search_Setup
 
 from app.server.util.preload import verify_token
 
@@ -102,14 +102,16 @@ async def upload_to_llm(request: Request, email: str, symptom_file: UploadFile =
 
     # Getting the base64 string
     # base64_image = encode_image(symptom_file.file.read())
+    # print("symptom_file.file.read()", flush=True)
+    # print(symptom_file.file.read())
     base64_image = base64.b64encode( symptom_file.file.read()).decode('utf-8')
     query_json = request.json()
 
-    query_text = "첨부된 이미지에서 보여지는 가능한 증상을 알려줘."
+    query_text = "첨부된 사진에서 예상할수 있는 환자가 격을것으로 예상되는 증상은 무엇일까?"
 
-    diseases = await llm_diagnosis(symptom_file, query_text, email)
+    diseases = await llm_diagnosis(base64_image, query_text, email)
 
-    return diseases
+    return JSONResponse(status_code=200, content=diseases)
 
 
 # Request : 서버로 사용자가 증상 발현부를 촬영한 이미지를 서버로 업로드 

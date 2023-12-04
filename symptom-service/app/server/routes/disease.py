@@ -15,7 +15,7 @@ from app.server.util.preload import verify_token
 UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER")
 
-templates = Jinja2Templates(directory="templates")
+# templates = Jinja2Templates(directory="app/templates")
 
 metadata = None 
 st = None
