@@ -3,7 +3,7 @@ import os
 import base64
 from time import process_time
 from typing import List
-from app.server.util.symptom import extract_symptom
+from app.server.util.symptom import extract_symptom, extract_disease
 
 # crud operations
 
@@ -50,6 +50,7 @@ async def llm_diagnosis(image_base64: base64, query_text: str, email: str):
             llm_content = data['choices'][0]['message']['content']
             result['llm_content'] = llm_content
             result['symptom'] = extract_symptom(llm_content)
+            result['disease'] = extract_disease(llm_content)
     return result
 
 # Add a new symptom into to the database
