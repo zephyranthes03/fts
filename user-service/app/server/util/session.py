@@ -23,6 +23,7 @@ async def session_delete(session_key:str):
 
 async def session_create(session_dict:dict) -> str:
 	rd = redis_config()
+
 	if os.getenv("SESSION_SALT") is not None:
 		if 'email' in session_dict:
 			print("session_dict",flush=True)
@@ -37,7 +38,7 @@ async def session_create(session_dict:dict) -> str:
 			session_dict_out["expire_time"] = session_dict["expire_time"]
 
 			session_str = json.dumps(session_dict_out)
-			rd.set(email, session_dict_out)
+			rd.set(email, str(session_dict_out))
 			rd.expire(email, session_dict_out["expire_time"] * 60)
 			return session_dict_out
 		else:

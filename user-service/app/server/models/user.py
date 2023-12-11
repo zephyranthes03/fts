@@ -43,7 +43,7 @@ class UserSchema(BaseModel):
                 "interested_tag": ['tag1', 'tag2'],
                 "message": False,
                 "friend": [],
-                "permission": {'survey':'open'},
+                "permission": {'survey':True},
                 "symptom_id": [],
                 "symptom_tag": [],
                 "username": "John Doe",
@@ -52,6 +52,7 @@ class UserSchema(BaseModel):
                 "gender": "male"
             }
         }
+
 
 class SocialEmailSignupSchema(BaseModel):
     email: str = Field(...)
@@ -92,7 +93,7 @@ class SocialEmailLoginSchema(BaseModel):
                 "refresh_token": "refresh_token_value"
             }
         }
-
+        
 class EmailSchema(BaseModel):
     email: str = Field(...)
     password: str = Field(...)
@@ -147,7 +148,7 @@ class UpdateUserModel(BaseModel):
                 "interested_tag": ['tag1', 'tag2'],
                 "message": False,
                 "friend": [],
-                "permission": {'survey':'open'},
+                "permission": {'survey':False},
                 "symptom_id": [],
                 "symptom_tag": [],
                 "username": "John Doe",

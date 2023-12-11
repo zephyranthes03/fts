@@ -1,4 +1,8 @@
 import ast
+
+from datetime import datetime
+from app.server.models.user import UserSchema, SocialEmailSignupSchema
+
 async def user_from_str(user_list:list) -> dict:
     user_list.pop(1) # remove password field
 
@@ -35,3 +39,35 @@ async def user_to_str(user_dict:dict) -> dict:
 
     # print(user_dict,flush=True)
     return user_dict
+
+ 
+async def social_user_to_user(user:SocialEmailSignupSchema) -> UserSchema:
+    now = datetime.utcnow()
+    formatted_now = now.strftime("%Y-%m-%d %H:%M:%S")
+
+    userSchema = UserSchema(
+        email = user['email'],
+        password = "empty_password_for_the_social_user",
+        create_date = formatted_now,
+        community = {},
+        phone = "",
+        email_acceptance = "",
+        message_acceptance = [],
+        user_type = "user",
+        account_type = [user['login_type']],
+        expire_time = 30,
+        last_check_time = {},
+        interested_tag = [],
+        message = False,
+        friend = [],
+        permission = {
+            "survey": False
+        },
+        symptom_id = [],
+        symptom_tag = [],
+        username = user['extra_data']['username'],
+        nickname = user['extra_data']['nickname'],
+        age = user['extra_data']['age'],
+        gender = user['extra_data']['gender']
+    )
+    return userSchema

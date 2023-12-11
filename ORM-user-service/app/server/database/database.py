@@ -95,10 +95,16 @@ class User(BaseModel):
     gender: str
     
 
-class SocialEmail(BaseModel):
+class socialEmailSignup(BaseModel):
     email: str
     login_type: str
     extra_data: str
+    access_token: str
+    refresh_token: str
+
+class SocialEmailLogin(BaseModel):
+    email: str
+    login_type: str
     access_token: str
     refresh_token: str
 
@@ -143,15 +149,23 @@ async def retrieve_user_by_email(email: str): # -> dict:
         return result
 
 # Retrieve a user with a matching social_email
-async def retrieve_user_by_social_email(socialEmail: SocialEmail): # -> dict:    
+async def retrieve_user_by_social_email(socialEmail: SocialEmailLogin): # -> dict:    
     with engine.connect() as conn:
-        query = users.select().where(users.c.email==socialEmail['email'])
+        query = users.select().where(users.c.email==socialEmail['email']).filter(users.c.account_type.contains(socialEmail['login_type']))
+        result = list()
+        for row in conn.execute(query):
+            result = list(row)
+        return result
+    
+async def retrieve_user_by_social_email(socialEmail: socialEmailSignup): # -> dict:    
+    with engine.connect() as conn:
+        query = users.select().where(users.c.email==socialEmail['email']).filter(users.c.account_type.contains(socialEmail['login_type']))
         result = list()
         for row in conn.execute(query):
             result = list(row)
         return result
 
-# Retrieve a user with a matching social_email
+# Retrieve a user with a matching email password
 async def retrieve_user_by_email_password(email: Email): # -> dict:
     with engine.connect() as conn:
         ## TODO: password comparing debugging!!
@@ -187,6 +201,27 @@ async def add_users(user_data: List[User]) -> dict:
             conn.commit()
         return {"Total inserted record": count, "Total exist record": count_exist}
 
+
+
+# Add a new user into to the database
+async def add_social_user(user_data: User) -> dict:
+    with engine.connect() as conn:
+        exist_field = await retrieve_user_by_social_email(user_data)
+        if exist_field:
+            return {"message": "user already exist"}
+        
+        query = users.insert().values(email=f"{user_data['email']}",password=f"{user_data['password']}",
+                create_date=user_data['create_date'],community=user_data['community'],phone=user_data['phone'],
+                email_acceptance=user_data['email_acceptance'], message_acceptance=user_data['message_acceptance'], 
+                user_type=user_data['user_type'],account_type=user_data['account_type'],expire_time=user_data['expire_time'],
+                last_check_time=user_data['last_check_time'],interested_tag=user_data['interested_tag'],
+                message=user_data['message'],friend=user_data['friend'],permission=user_data['permission'],
+                symptom_id=user_data['symptom_id'],symptom_tag=user_data['symptom_tag'],username=user_data['username'],
+                nickname=user_data['nickname'],age=user_data['age'],gender=user_data['gender'])
+        last_record_id = conn.execute(query)
+        conn.commit()
+        return {**user_data, "email": last_record_id}
+    
 # Add a new user into to the database
 async def add_user(user_data: User) -> dict:
     with engine.connect() as conn:

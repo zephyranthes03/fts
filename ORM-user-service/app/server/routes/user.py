@@ -2,6 +2,7 @@ from fastapi import APIRouter, Body, Request
 from fastapi.encoders import jsonable_encoder
 from typing import List
 
+
 from app.server.database.database import (
     add_user,
     retrieve_user_by_id,
@@ -18,6 +19,7 @@ from app.server.models.user import (
     UserSchema,
     UpdateUserModel,
     SocialEmailSignupSchema,
+    SocialEmailLoginSchema,
     EmailSchema,
 )
 
@@ -26,7 +28,7 @@ from app.server.util.encrypt import (
     check_password_hash
 )
 
-from app.server.util.convert import user_from_str, user_to_str
+from app.server.util.convert import user_from_str, user_to_str, social_user_to_user
 
 router = APIRouter()
 
@@ -70,14 +72,27 @@ async def get_user_data_by_email(email: str):
         return user_dict
     return user_dict
 
-@router.post("/social_email/", response_description="User data retrieved by social email")
-async def get_user_data_social_email(socialEmail: SocialEmailSignupSchema = Body(...)):
+@router.post("/social_email_login", response_description="User data retrieved by social email")
+async def get_user_data_social_email(socialEmail: SocialEmailLoginSchema = Body(...)):
     socialEmail = jsonable_encoder(socialEmail)
     user = await retrieve_user_by_social_email(socialEmail)
     user_dict = dict()
     if user:
         user_dict = await user_from_str(user)
         return user_dict
+    return user_dict
+
+@router.post("/social_email_signup", response_description="User data signup by social email")
+async def get_user_data_social_email(socialEmail: SocialEmailSignupSchema = Body(...)):
+    socialEmail = jsonable_encoder(socialEmail)
+    user_dict = dict()
+    user = await retrieve_user_by_social_email(socialEmail)
+    if len(user) == 0:
+        userSchema = await social_user_to_user(socialEmail)
+        added_user = await add_user_data(userSchema)
+        user = await retrieve_user_by_social_email(socialEmail)
+    if user:
+        user_dict = await user_from_str(user)
     return user_dict
 
 @router.post("/email/", response_description="User data retrieved by email and password")

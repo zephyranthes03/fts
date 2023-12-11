@@ -13,6 +13,6 @@ def redis_config():
         REDIS_PORT = integer = os.getenv("REDIS_PORT")
         REDIS_DATABASE = integer = os.getenv("REDIS_DATABASE")
         rd = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE) 
-        return rd       		
+        return rd
     except:
         print("Redis connection failure")
