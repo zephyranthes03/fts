@@ -84,7 +84,6 @@ async def post_user_social_login(user_form: SocialEmailLoginSchema = Body(...)):
     socialUser = jsonable_encoder(user_form)
     social_email_extract = socialUser['email']
     user = await read_user_by_social_email(socialUser)
-    print(user, flush=True)
     if not user:
         return ErrorResponseModel("Return data requests failure", 500, "Email not exist!")
 
@@ -103,14 +102,19 @@ async def post_user_social_login(user_form: SocialEmailLoginSchema = Body(...)):
 @router.post("/social_signup", response_description="Social User data added into the database")
 async def post_user_social_signup(user_form: SocialEmailSignupSchema = Body(...)):
     socialUser = jsonable_encoder(user_form)
-    social_email_extract = socialUser['email']
-    user = await read_user_by_email(social_email_extract)
+    email_extract = socialUser['email']
+    user_check_by_social_email = await read_user_by_social_email(socialUser)
+    if not user_check_by_social_email:
+        user_check_by_email = await read_user_by_email(email_extract)
+        if user_check_by_email:
+            user_check_by_email['account_type'] = user_check_by_email['account_type'].append(socialUser['login_type'])
+            user_check_by_email = await update_user(email_extract, user_check_by_email)
+        else:
+            signup_social_user(socialUser)
     
     user = dict()
 
-    if user:
-        signup_social_user(socialUser)
-    user = await read_user_by_email(social_email_extract)
+    user = await read_user_by_email(email_extract)
     if 'email' in socialUser:
         user['access_token'] = socialUser['access_token']
         user['refresh_token'] = socialUser['refresh_token']

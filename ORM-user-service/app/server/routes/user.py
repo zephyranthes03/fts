@@ -112,6 +112,11 @@ async def update_user_data(email: str, req: UpdateUserModel = Body(...)):
     req = await user_to_str(req)
     if 'password' in req:
         req['password'] = str(await set_password(req['password']))
+    else:
+        user_data = await retrieve_user_by_email(email)
+        # user_data_dict = jsonable_encoder(user_data)
+        # print(user_data_dict,flush=True)
+        req['password'] = user_data[1]
     user = jsonable_encoder(req)
     updated_user = await update_user(email, user)
     if updated_user:

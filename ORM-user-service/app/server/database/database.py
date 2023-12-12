@@ -145,7 +145,7 @@ async def retrieve_user_by_email(email: str): # -> dict:
         result = list()
         for row in conn.execute(query):
             result = list(row)
-        print(result,flush=True)
+        # print(result,flush=True)
         return result
 
 # Retrieve a user with a matching social_email

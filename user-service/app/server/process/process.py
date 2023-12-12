@@ -36,29 +36,6 @@ async def add_user(user:dict) -> dict:
             return {"error": "Email couldn't be Empty."}
 
 
-async def signup_social_user(user:dict) -> dict:
-
-    t1_start = process_time()
-    # print(data,flush=True)
-    # print(type(data),flush=True)
-    return_data = dict()
-
-    async with httpx.AsyncClient() as client:
-        r = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email_signup',
-                            json=user)
-
-        return_data = r.json()
-        # print(data,flush=True)
-
-        t1_stop = process_time()
-        print("Elapsed time:", t1_stop, t1_start) 
-        print("Elapsed time during the whole program in seconds:",
-                                            t1_stop-t1_start) 
-    
-    return return_data
-
-
-
 async def update_user(email:str, user:dict) -> dict:
     t1_start = process_time()
     data = None
@@ -143,6 +120,31 @@ async def read_user_by_social_email(data: dict) -> dict:
                                             t1_stop-t1_start) 
     
     return return_data
+
+
+
+async def signup_social_user(user:dict) -> dict:
+
+    t1_start = process_time()
+    # print(data,flush=True)
+    # print(type(data),flush=True)
+    return_data = dict()
+
+    async with httpx.AsyncClient() as client:
+        r = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email_signup',
+                            json=user)
+
+        return_data = r.json()
+        # print(data,flush=True)
+
+        t1_stop = process_time()
+        print("Elapsed time:", t1_stop, t1_start) 
+        print("Elapsed time during the whole program in seconds:",
+                                            t1_stop-t1_start) 
+    
+    return return_data
+
+
 
 # Retrieve all user by matched station ID
 async def read_user_by_email_password(email: dict)-> dict:
