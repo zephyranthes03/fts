@@ -87,12 +87,15 @@ async def get_user_data_social_email(socialEmail: SocialEmailSignupSchema = Body
     socialEmail = jsonable_encoder(socialEmail)
     user_dict = dict()
     user = await retrieve_user_by_social_email(socialEmail)
+    action_type = "Login"
     if len(user) == 0:
         userSchema = await social_user_to_user(socialEmail)
         added_user = await add_user_data(userSchema)
         user = await retrieve_user_by_social_email(socialEmail)
+        signup_flag = "Signup"
     if user:
         user_dict = await user_from_str(user)
+        user_dict["action"] = action_type
     return user_dict
 
 @router.post("/email/", response_description="User data retrieved by email and password")

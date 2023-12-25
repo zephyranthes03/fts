@@ -18,7 +18,6 @@ async def user_from_str(user_list:list) -> dict:
 
     for i in range(len(user_menu_item)):
         if user_menu_item[i] in eval_user_menu_item:
-            print
             user_dict[user_menu_item[i]] = ast.literal_eval(user_list[i])
         else:
             user_dict[user_menu_item[i]] = user_list[i]
