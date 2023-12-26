@@ -123,6 +123,7 @@ async def post_user_social_signup(user_form: SocialEmailSignupSchema = Body(...)
 
         # Override action_type value to check action type
         session['action_type'] = socialUser['action_type']
+        session['email'] = socialUser['email']
         return ResponseModel(session, "User data retrieved successfully")
     
     return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
