@@ -40,7 +40,7 @@ async def user_to_str(user_dict:dict) -> dict:
     return user_dict
 
  
-async def social_user_to_user(user:SocialEmailSignupSchema) -> UserSchema:
+async def social_user_to_userSchema(user:SocialEmailSignupSchema) -> UserSchema:
     now = datetime.utcnow()
     formatted_now = now.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -69,8 +69,6 @@ async def social_user_to_user(user:SocialEmailSignupSchema) -> UserSchema:
         age = user['extra_data']['age'],
         gender = user['extra_data']['gender']
     )
-
-    userSchema['account_type'].append(user['login_type']) if user['login_type'] not in userSchema['account_type'] else None
     return userSchema
 
 

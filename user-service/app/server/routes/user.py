@@ -103,6 +103,7 @@ async def post_user_social_login(user_form: SocialEmailLoginSchema = Body(...)):
 async def post_user_social_signup(user_form: SocialEmailSignupSchema = Body(...)):
     socialUser = jsonable_encoder(user_form)
     email_extract = socialUser['email']
+    response_social_user_dict = dict()
     user_check_by_social_email = await read_user_by_social_email(socialUser)
     if not user_check_by_social_email:
         user_check_by_email = await read_user_by_email(email_extract)
@@ -110,7 +111,9 @@ async def post_user_social_signup(user_form: SocialEmailSignupSchema = Body(...)
             user_check_by_email['account_type'] = user_check_by_email['account_type'].append(socialUser['login_type'])
             user_check_by_email = await update_user(email_extract, user_check_by_email)
         else:
-            signup_social_user(socialUser)
+            response_social_user_dict = await signup_social_user(socialUser)
+            print("response_social_user_dict",flush=True)
+            print(response_social_user_dict,flush=True)
     
     user = dict()
 
@@ -122,7 +125,7 @@ async def post_user_social_signup(user_form: SocialEmailSignupSchema = Body(...)
         session = await session_create(user)
 
         # Override action_type value to check action type
-        session['action_type'] = socialUser['action_type']
+        session['action_type'] = response_social_user_dict['action_type'] if response_social_user_dict else 'login' 
         session['email'] = socialUser['email']
         return ResponseModel(session, "User data retrieved successfully")
     

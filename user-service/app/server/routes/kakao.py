@@ -121,7 +121,7 @@ async def callback_signup(code:str):
             res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_email_signup', headers=header, json=json_payload) 
             result = res.text
             print(result,flush=True)
-            return ResponseModel("Social User", "Generate Social User successfully")
+            return ResponseModel("Social User", result)
 
         else:
             print("ERROR", flush=True)

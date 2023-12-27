@@ -28,7 +28,7 @@ from app.server.util.encrypt import (
     check_password_hash
 )
 
-from app.server.util.convert import user_from_str, user_to_str, social_user_to_user
+from app.server.util.convert import user_from_str, user_to_str, social_user_to_userSchema
 
 router = APIRouter()
 
@@ -89,7 +89,7 @@ async def get_user_data_social_email(socialEmail: SocialEmailSignupSchema = Body
     user = await retrieve_user_by_social_email(socialEmail)
     action_type = "Login"
     if len(user) == 0:
-        userSchema = await social_user_to_user(socialEmail)
+        userSchema = await social_user_to_userSchema(socialEmail)
         added_user = await add_user_data(userSchema)
         user = await retrieve_user_by_social_email(socialEmail)
         signup_flag = "Signup"
