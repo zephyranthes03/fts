@@ -7,6 +7,7 @@
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
 </head>
 <body>
+<div id="output"></div>
 <script type="text/javascript">
   var naver_id_login = new naver_id_login("{{ CLIENT_ID }}", 
                                             "{{ CALLBACK_URL }}");
@@ -38,7 +39,7 @@
     age = naver_id_login.getProfileData('age')
     gender = naver_id_login.getProfileData('gender') === "M" ? "male" : "feMale"
 
-    const url = "https://imgroo.kr/user/social_email_signup";
+    const url = "https://imgroo.kr/user/social_signup";
     const json_data = JSON.stringify( {
         email : email,
         login_type : 'naver',
@@ -63,6 +64,8 @@
       contentType: 'application/json',
       data: json_data
     }).done(function(response) {
+      var output = document.getElementById("output");
+      output.innerHTML = JSON.stringify(response);      
       console.log(response);
       console.log("success");
     });    

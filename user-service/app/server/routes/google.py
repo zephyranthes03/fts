@@ -95,7 +95,8 @@ async def google_callback_login(request: Request):
         print(json_payload,flush=True)
         res = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email_login', json=json_payload) 
         result = res.json()
-        return ResponseModel("Social User", "Login Social User successfully")
+        return ResponseModel("Social User", result)
+        # return ResponseModel("Social User", "Login Social User successfully")
 
 
 @router.post("/callback_signup")
@@ -129,9 +130,12 @@ async def google_callback_signup(request: Request):
             'refresh_token': ""
         }
         print(json_payload,flush=True)
-        res = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email_signup', json=json_payload) 
+        res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_signup', json=json_payload) 
         result = res.json()
-        return ResponseModel("Social User", "Signup Social User successfully")
+        result = result['data'] if 'data' in result else result
+
+        return result
+        # return ResponseModel("Social User", result)
     
 @router.get("/auth_login", response_description="Google login URL link", response_model=None)
 async def auth_login(code: str)-> ResponseModel: # (code:str, scope:str, authuser:int, prompt:str):
@@ -163,7 +167,7 @@ async def auth_login(code: str)-> ResponseModel: # (code:str, scope:str, authuse
             'refresh_token': refresh_token
         }
         print(json_payload,flush=True)
-        res = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email_login', json=json_payload) 
+        res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_login', json=json_payload) 
         result = res.json()
         return ResponseModel("Social User", "Login Social User successfully")
 

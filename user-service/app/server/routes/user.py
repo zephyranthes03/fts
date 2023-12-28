@@ -125,7 +125,7 @@ async def post_user_social_signup(user_form: SocialEmailSignupSchema = Body(...)
         session = await session_create(user)
 
         # Override action_type value to check action type
-        session['action_type'] = response_social_user_dict['action_type'] if response_social_user_dict else 'login' 
+        session['action_type'] = response_social_user_dict['action_type'] if 'action_type' in response_social_user_dict else 'login' 
         session['email'] = socialUser['email']
         return ResponseModel(session, "User data retrieved successfully")
     

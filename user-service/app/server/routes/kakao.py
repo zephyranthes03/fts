@@ -75,10 +75,12 @@ async def callback_login(code:str):
                 'refresh_token': refresh_token
             }
             print(json_payload,flush=True)
-            res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_email_login', headers=header, json=json_payload) 
-            result = res.text
-            print(result,flush=True)
-            return ResponseModel("Social User", "Generate Social User successfully")
+            res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_login', headers=header, json=json_payload) 
+            result = res.json()
+            result = result['data'] if 'data' in result else result
+            return result
+            # return ResponseModel("Social User", result)
+            # return ResponseModel("Social User", "Generate Social User successfully")
 
         else:
             print("ERROR", flush=True)
@@ -118,10 +120,12 @@ async def callback_signup(code:str):
                 'refresh_token': refresh_token
             }
             print(json_payload,flush=True)
-            res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_email_signup', headers=header, json=json_payload) 
-            result = res.text
-            print(result,flush=True)
-            return ResponseModel("Social User", result)
+            res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_signup', headers=header, json=json_payload) 
+            result = res.json()
+            result = result['data'] if 'data' in result else result
+            return result
+            # return ResponseModel("Social User", result)
+            # return ResponseModel("Social User", "Generate Social User successfully")
 
         else:
             print("ERROR", flush=True)
