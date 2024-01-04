@@ -39,7 +39,7 @@ async def llm_diagnosis(image_base64: base64, query_text: str, email: str):
     "max_tokens": 300
     }
     async with httpx.AsyncClient() as client:
-        timeout = httpx.Timeout(timeout=120.0)
+        timeout = httpx.Timeout(timeout=300.0)
         response = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, timeout=timeout)
         data = response.json()
         print(data,flush=True)

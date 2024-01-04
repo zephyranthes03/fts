@@ -107,7 +107,7 @@ async def upload_to_llm(request: Request, email: str, symptom_file: UploadFile =
     base64_image = base64.b64encode( symptom_file.file.read()).decode('utf-8')
     query_json = request.json()
 
-    query_text = "첨부된 사진에서 예상할수 있는 환자가 격을것으로 예상되는 증상은 무엇일까?"
+    query_text = "일상 생활에서 관리하기 위한 목적으로 알고 싶으니 위 사진에서 예상할수 있는 환자가 격을것으로 예상되는 증상은 무엇인지 피부병 분류내에서 알려줘."
 
     diseases = await llm_diagnosis(base64_image, query_text, email)
 
