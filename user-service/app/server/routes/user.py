@@ -99,7 +99,7 @@ async def post_user_social_login(user_form: SocialEmailLoginSchema = Body(...)):
     return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
 
 
-@router.post("/social_signup", response_description="Social User data added into the database")
+@router.post("/social_signup", response_description="Social User login if not exist added into the database")
 async def post_user_social_signup(user_form: SocialEmailSignupSchema = Body(...)):
     socialUser = jsonable_encoder(user_form)
     email_extract = socialUser['email']
