@@ -30,7 +30,7 @@ extract_symptom_dict = {
     "수포":"수포성-질환",
 }
 
-extract_disease_dict = {
+extract_msd_dict = {
     "아토피":"피부-질환/가려움증-및-피부염/아토피-피부염-습진",
     "습진":"피부-질환/가려움증-및-피부염/아토피-피부염-습진",
     "발진":"피부-질환/과민성-및-반응성-피부-질환/약물-발진", 
@@ -64,9 +64,9 @@ def extract_symptom(llm_content:str):
             return_item_list.append(extract_item)
     return return_item_list
 
-def extract_disease(llm_content:str):
+def extract_msd_link(llm_content:str):
     return_item_list = list()
-    for extract_str,extract_item in extract_disease_dict.items():    
+    for extract_str,extract_item in extract_msd_dict.items():    
         if extract_str in llm_content:
             return_item_list.append(extract_item)
     return return_item_list
