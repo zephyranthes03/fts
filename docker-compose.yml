@@ -265,6 +265,7 @@ services:
       - "mode=standalone"
     ports:
       - 6379:6379
+    restart: unless-stopped
 
   mysql:
     container_name: mysql
@@ -274,6 +275,7 @@ services:
     environment: 
       MYSQL_ROOT_PASSWORD: default
       MYSQL_DATABASE: user
+    restart: unless-stopped
 
   mongodb:
     restart: always
@@ -289,3 +291,4 @@ services:
     image: mongo  
     volumes:
       - ./mongodb:/data/db
+    restart: unless-stopped
