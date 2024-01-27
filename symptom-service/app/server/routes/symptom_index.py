@@ -77,7 +77,7 @@ def encode_image(image_path):
     return base64.b64encode(image_file.read()).decode('utf-8')
   
 @router.post("llm", response_class=HTMLResponse, response_description="Upload symptomnostic diagnosis")
-async def upload_to_llm(request: Request, email: str, symptom_file: UploadFile = File(...)): #, dependencies:dict=Depends(verify_token)):
+async def upload_to_llm(request: Request, email: str, symptom_text:str, symptom_file: UploadFile = File(...)): #, dependencies:dict=Depends(verify_token)):
 
     # ext_center = symptom_file.filename[symptom_file.filename.rfind(".")+1:]
     # now = datetime.now()
@@ -107,9 +107,7 @@ async def upload_to_llm(request: Request, email: str, symptom_file: UploadFile =
     base64_image = base64.b64encode( symptom_file.file.read()).decode('utf-8')
     query_json = request.json()
 
-    query_text = "일상 생활에서 관리하기 위한 목적으로 알고 싶으니 위 사진에서 예상할수 있는 환자가 격을것으로 예상되는 증상은 무엇인지 피부병 분류내에서 알려줘."
-
-    diseases = await llm_diagnosis(base64_image, query_text, email)
+    diseases = await llm_diagnosis(base64_image, symptom_text, email)
 
     return JSONResponse(status_code=200, content=diseases)
 

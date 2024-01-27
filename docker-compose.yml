@@ -278,7 +278,7 @@ services:
     restart: unless-stopped
 
   mongodb:
-    restart: always
+    restart: unless-stopped
     ports:
       - '27017:27017'
     container_name: mongodb
@@ -291,4 +291,3 @@ services:
     image: mongo  
     volumes:
       - ./mongodb:/data/db
-    restart: unless-stopped
