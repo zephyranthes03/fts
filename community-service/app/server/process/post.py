@@ -1,6 +1,6 @@
 import httpx
 import os
-from timelogger import time_logger
+from app.server.util.timelogger import time_logger
 from typing import List
 
 # crud operations

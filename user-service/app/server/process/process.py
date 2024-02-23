@@ -2,7 +2,7 @@ import httpx
 import os
 from typing import List
 from fastapi.responses import JSONResponse
-from timelogger import time_logger
+from app.server.util.timelogger import time_logger
 
 # crud operations
 

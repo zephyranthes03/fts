@@ -4,7 +4,7 @@ import base64
 
 from app.config.config import settings
 from typing import List
-from timelogger import time_logger
+from app.server.util.timelogger import time_logger
 from app.server.util.symptom import extract_symptom, extract_msd_link
 
 # crud operations
