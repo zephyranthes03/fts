@@ -75,8 +75,20 @@ async def load_symptom_indexes():
 def encode_image(image_path):
   with open(image_path, "rb") as image_file:
     return base64.b64encode(image_file.read()).decode('utf-8')
-  
-@router.post("llm", response_class=HTMLResponse, response_description="Upload symptomnostic diagnosis")
+
+
+@router.post("/llm_base64", response_class=HTMLResponse, response_description="Upload symptomnostic diagnosis")
+async def upload_to_llm_base64(request: Request, symptom_text:str, base64_image:str): #, dependencies:dict=Depends(verify_token)):
+
+    # base64_image = base64.b64encode( symptom_file.file.read()).decode('utf-8')
+    query_json = request.json()
+
+    diseases = await llm_diagnosis(base64_image, symptom_text, 'dummy@email.com')
+
+    return JSONResponse(status_code=200, content=diseases)
+
+
+@router.post("/llm", response_class=HTMLResponse, response_description="Upload symptomnostic diagnosis")
 async def upload_to_llm(request: Request, email: str, symptom_text:str, symptom_file: UploadFile = File(...)): #, dependencies:dict=Depends(verify_token)):
 
     # ext_center = symptom_file.filename[symptom_file.filename.rfind(".")+1:]
@@ -96,9 +108,7 @@ async def upload_to_llm(request: Request, email: str, symptom_text:str, symptom_
 
 
     # Path to your image
-    # image_path = "~/Downloads/naver/skin/train/내성 발톱/스크린샷 2023-07-19 오전 6.38.34.png"
-    image_path = "/Users/yongjinchong/Downloads/naver/skin/train/건선/스크린샷 2023-07-23 오후 12.03.15.png"
-    # image_path = "~/Downloads/naver/skin/train/건선/스크린샷 2023-07-23 오후 4.50.23.png"
+    # image_path = "/Users/yongjinchong/Downloads/naver/skin/train/건선/스크린샷 2023-07-23 오후 12.03.15.png"
 
     # Getting the base64 string
     # base64_image = encode_image(symptom_file.file.read())
