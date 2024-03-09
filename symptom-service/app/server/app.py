@@ -7,6 +7,7 @@ from redis import Redis
 from pydantic import BaseModel
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.server.routes.disease import router as DiseaseRouter
 from app.server.routes.diagnosis import router as DiagnosisRouter
@@ -15,6 +16,15 @@ from app.server.routes.symptom_index import router as Symptom_indexRouter
 from app.server.routes.symptom_index import load_symptom_indexes
 
 app = FastAPI()
+
+# 모든 출처를 허용하는 CORS 미들웨어 설정
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 모든 출처 허용
+    allow_credentials=True,
+    allow_methods=["*"],  # 모든 메서드 허용 (GET, POST 등)
+    allow_headers=["*"],  # 모든 헤더 허용
+)
 
 app.include_router(DiseaseRouter, tags=["Disease"], prefix="/disease")
 app.include_router(DiagnosisRouter, tags=["Diagnosis"], prefix="/diagnosis")
