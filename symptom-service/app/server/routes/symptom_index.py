@@ -4,6 +4,8 @@ import base64
 # OpenAI API Key
 from typing import Annotated
 from datetime import datetime
+from pydantic import BaseModel
+
 from fastapi import APIRouter, Body, File, UploadFile, Request, Depends
 
 from fastapi.encoders import jsonable_encoder
@@ -19,8 +21,14 @@ from app.server.util.preload import verify_token
 UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER", "./symptom/upload/")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER", "./sample/")
 
+class PostData(BaseModel):
+    symptom_text: str
+    base64_image: str
 
-
+class ApiResponse(BaseModel):
+    success: bool
+    message: str
+    
 # templates = Jinja2Templates(directory="templates")
 
 metadata = None 
@@ -77,15 +85,19 @@ def encode_image(image_path):
     return base64.b64encode(image_file.read()).decode('utf-8')
 
 
-@router.post("/llm_base64", response_class=HTMLResponse, response_description="Upload symptomnostic diagnosis")
-async def upload_to_llm_base64(request: Request, symptom_text:str, base64_image:str): #, dependencies:dict=Depends(verify_token)):
+@router.post("/llm_base64", response_model=ApiResponse, response_description="Upload symptomnostic diagnosis")
+async def upload_to_llm_base64(request: Request, data: PostData): #, dependencies:dict=Depends(verify_token)):
 
     # base64_image = base64.b64encode( symptom_file.file.read()).decode('utf-8')
     query_json = request.json()
 
-    diseases = await llm_diagnosis(base64_image, symptom_text, 'dummy@email.com')
+    diseases = await llm_diagnosis(data.base64_image, data.symptom_text, 'dummy@email.com')
 
-    return JSONResponse(status_code=200, content=diseases)
+    # diseases['llm_content'] = llm_content
+    # diseases['symptom'] = extract_symptom(llm_content)
+    # diseases['msd'] = extract_msd_link(diseases['symptom'])
+    # diseases['query_text'] = query_text
+    return ApiResponse(success=True, message=diseases.llm_content)
 
 
 @router.post("/llm", response_class=HTMLResponse, response_description="Upload symptomnostic diagnosis")
