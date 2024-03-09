@@ -12,6 +12,57 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", settings.OPENAPI_KEY)
 #query_text = "일상 생활에서 관리하기 위한 목적으로 알고 싶으니 위 사진에서 예상할수 있는 환자가 격을것으로 예상되는 증상은 무엇인지 피부병 분류내에서 알려줘."
 query_text = settings.QUERY_TEXT
 
+
+@time_logger
+async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str):
+
+    headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {OPENAI_API_KEY}"
+    }
+
+    payload = {
+    "model": "gpt-4-vision-preview",
+    "messages": [
+        {
+        "role": "user",
+        "content": [
+            {
+            "type": "text",
+            "text": query_text + "\n" + symptom_text
+            },
+            {
+            "type": "image_url",
+            "image_url": {
+                "url": image_base64
+            }
+            }
+        ]
+        }
+    ],
+    "max_tokens": 600
+    }
+    async with httpx.AsyncClient() as client:
+        timeout = httpx.Timeout(timeout=300.0)
+        response = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, timeout=timeout)
+        data = response.json()
+        print(data,flush=True)
+        data["email"] = email
+        result = dict()
+        result["email"] = email
+        if "choices" in data:
+            llm_content = data['choices'][0]['message']['content']
+            print(llm_content,flush=True)
+            result['llm_content'] = llm_content
+            result['symptom'] = extract_symptom(llm_content)
+            print(result['symptom'] ,flush=True)
+            result['msd'] = extract_msd_link(result['symptom'])
+            print(result['msd'] ,flush=True)
+            result['query_text'] = query_text
+            print(result['query_text'] ,flush=True)
+    return result
+
+
 @time_logger
 async def llm_diagnosis(image_base64: base64, symptom_text: str, email: str):
 

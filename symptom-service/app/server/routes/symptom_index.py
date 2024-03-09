@@ -4,7 +4,6 @@ import base64
 # OpenAI API Key
 from typing import Annotated
 from datetime import datetime
-from pydantic import BaseModel
 
 from fastapi import APIRouter, Body, File, UploadFile, Request, Depends
 
@@ -17,17 +16,10 @@ from PIL import Image
 # from DeepImageSearch import Load_Data, Search_Setup
 
 from app.server.util.preload import verify_token
+from app.server.models.frontend import ApiResponse, PostData
 
 UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER", "./symptom/upload/")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER", "./sample/")
-
-class PostData(BaseModel):
-    symptom_text: str
-    base64_image: str
-
-class ApiResponse(BaseModel):
-    success: bool
-    message: str
     
 # templates = Jinja2Templates(directory="templates")
 
@@ -49,7 +41,8 @@ from app.server.process.symptom_index import (
     read_symptom_index_by_id,
     read_symptom_index_by_name,
     read_symptom_indexes,
-    llm_diagnosis
+    llm_diagnosis,
+    llm_diagnosis_base64    
 )
 
 
@@ -91,13 +84,21 @@ async def upload_to_llm_base64(request: Request, data: PostData): #, dependencie
     # base64_image = base64.b64encode( symptom_file.file.read()).decode('utf-8')
     query_json = request.json()
 
-    diseases = await llm_diagnosis(data.base64_image, data.symptom_text, 'dummy@email.com')
+    string_bytes = data.base64_image.encode('utf-8')
+    base64_bytes = base64.b64encode(string_bytes)
+    diseases = await llm_diagnosis_base64(data.base64_image, data.symptom_text, 'dummy@email.com')
 
     # diseases['llm_content'] = llm_content
     # diseases['symptom'] = extract_symptom(llm_content)
     # diseases['msd'] = extract_msd_link(diseases['symptom'])
     # diseases['query_text'] = query_text
-    return ApiResponse(success=True, message=diseases.llm_content)
+    print("=======", flush=True)
+    print(diseases, flush=True)
+    llm_result = diseases.get('llm_content', 'error')
+    print(diseases.get('llm_content', 'error'), flush=True)
+
+    return ApiResponse(success=True, message=llm_result)
+    # return ApiResponse(success=True, message="Test@?")
 
 
 @router.post("/llm", response_class=HTMLResponse, response_description="Upload symptomnostic diagnosis")
