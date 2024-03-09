@@ -17,9 +17,10 @@ from app.server.routes.symptom_index import load_symptom_indexes
 
 app = FastAPI()
 origins = [
-    "http://buidl2.vercel.com",
+    "https://buidl2.vercel.app",
+    "https://imgroo.kr",
     "http://localhost:3000",
-    # 필요한 경우 추가 출처
+    "http://localhost:8003",
 ]
 
 # 모든 출처를 허용하는 CORS 미들웨어 설정

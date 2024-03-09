@@ -40,7 +40,7 @@ async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str)
         ]
         }
     ],
-    "max_tokens": 600
+    "max_tokens": 1500
     }
     async with httpx.AsyncClient() as client:
         timeout = httpx.Timeout(timeout=300.0)
@@ -90,7 +90,7 @@ async def llm_diagnosis(image_base64: base64, symptom_text: str, email: str):
         ]
         }
     ],
-    "max_tokens": 300
+    "max_tokens": 1500
     }
     async with httpx.AsyncClient() as client:
         timeout = httpx.Timeout(timeout=300.0)

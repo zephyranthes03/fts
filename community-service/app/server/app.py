@@ -7,6 +7,7 @@ from redis import Redis
 from pydantic import BaseModel
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.server.routes.community import router as CommunityRouter
 from app.server.routes.post import router as PostRouter
@@ -40,6 +41,21 @@ def start_application():
 
 app = start_application()
 
+origins = [
+    "http://buidl2.vercel.com",
+    "http://localhost:3000",
+    # 필요한 경우 추가 출처
+]
+
+# 모든 출처를 허용하는 CORS 미들웨어 설정
+app.add_middleware(
+    CORSMiddleware,
+    # allow_origins=["*"],  # 모든 출처 허용
+    allow_origins=origins,  # 모든 출처 허용
+    allow_credentials=True,
+    allow_methods=["*"],  # 모든 메서드 허용 (GET, POST 등)
+    allow_headers=["*"],  # 모든 헤더 허용
+)
 
 @app.get("/", tags=["health_check"])
 async def read_root():
