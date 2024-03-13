@@ -20,8 +20,9 @@ app = FastAPI()
 
 
 origins = [
+    "https://buidl2.vercel.app",
     "https://imgroo.kr",
-    "http://localhost",
+    "http://localhost:3000",
     "http://localhost:8003",
 ]
 
