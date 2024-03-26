@@ -1,6 +1,8 @@
 import httpx
 import os
 import base64
+from functools import lru_cache
+
 
 from app.config.config import settings
 from typing import List
@@ -13,6 +15,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", settings.OPENAPI_KEY)
 query_text = settings.QUERY_TEXT
 
 
+@lru_cache(maxsize=256)
 @time_logger
 async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str):
 
@@ -40,7 +43,7 @@ async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str)
         ]
         }
     ],
-    "max_tokens": 1500
+    "max_tokens": 1200
     }
     async with httpx.AsyncClient() as client:
         timeout = httpx.Timeout(timeout=300.0)
@@ -63,6 +66,7 @@ async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str)
     return result
 
 
+@lru_cache(maxsize=256)
 @time_logger
 async def llm_diagnosis(image_base64: base64, symptom_text: str, email: str):
 
@@ -90,7 +94,7 @@ async def llm_diagnosis(image_base64: base64, symptom_text: str, email: str):
         ]
         }
     ],
-    "max_tokens": 1500
+    "max_tokens": 1200
     }
     async with httpx.AsyncClient() as client:
         timeout = httpx.Timeout(timeout=300.0)
