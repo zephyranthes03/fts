@@ -23,28 +23,45 @@ async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str)
     "Content-Type": "application/json",
     "Authorization": f"Bearer {OPENAI_API_KEY}"
     }
-
-    payload = {
-    "model": "gpt-4-vision-preview",
-    "messages": [
-        {
-        "role": "user",
-        "content": [
+    payload = dict()
+    if image_base64 == "": 
+        payload = {
+        "model": "gpt-4-turbo-preview",
+        "messages": [
             {
-            "type": "text",
-            "text": query_text + "\n" + symptom_text
-            },
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": query_text + "\n" + symptom_text
+                }
+            ]
+            }
+        ],
+        "max_tokens": 1200
+        }    
+    else:
+        payload = {
+        "model": "gpt-4-vision-preview",
+        "messages": [
             {
-            "type": "image_url",
-            "image_url": {
-                "url": image_base64
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": query_text + "\n" + symptom_text
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": image_base64
+                    }
+                }
+            ]
             }
-            }
-        ]
+        ],
+        "max_tokens": 1200
         }
-    ],
-    "max_tokens": 1200
-    }
     async with httpx.AsyncClient() as client:
         timeout = httpx.Timeout(timeout=300.0)
         response = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, timeout=timeout)

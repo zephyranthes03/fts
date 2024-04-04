@@ -10,11 +10,13 @@ from app.config.config import settings
 from app.server.routes.symptom_index import router as Symptom_indexRouter
 from app.server.routes.disease import router as DiseaseRouter
 from app.server.routes.diagnosis import router as DiagnosisRouter
+from app.server.routes.llm_result import router as Llm_resultRouter
 
 def include_router(app):
     app.include_router(Symptom_indexRouter, tags=["Symptom_index"], prefix="/symptom_index")
     app.include_router(DiagnosisRouter, tags=["Diagnosis"], prefix="/diagnosis")
     app.include_router(DiseaseRouter, tags=["Disease"], prefix="/disease")
+    app.include_router(Llm_resultRouter, tags=["Llm_result"], prefix="/llm_result")
 
 # def configure_static(app):
 #     app.mount("/static", StaticFiles(directory="static"), name="static")
