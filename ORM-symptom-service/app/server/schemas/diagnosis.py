@@ -31,6 +31,7 @@ class Diagnosis_schema(BaseModel):
 
 class Update_diagnosis_schema(BaseModel):
     # diagnosis: str = Field(...)
+    # id: str = Field(default_factory=uuid.uuid4, alias="_id")
     symptom: str = Field(...)
     area: str = Field(...)
     occur_pattern: str = Field(...)
@@ -42,6 +43,7 @@ class Update_diagnosis_schema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
+                # "id": "test_id",
                 "symptom": "itch,lichenification",
                 "area": "elbow",
                 "occur_pattern": "on-again",

@@ -16,6 +16,10 @@ async def retrieve_llm_results(database: Optional[any]) -> list:
     llm_results = list(database.find())
     return llm_results
 
+# Retrieve all llm_results present in the database
+async def retrieve_llm_results_to_peft(database: Optional[any]) -> list:
+    llm_results = list(database.find({'feedback': {'$lte':1}}, {'_id':0, 'feedback': 0, 'feedback_content': 0}))
+    return llm_results
 
 # Retrieve a llm_result with a matching station id
 async def retrieve_llm_result_by_id(database: Optional[any], id: str): # -> dict:

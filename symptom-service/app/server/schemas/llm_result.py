@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from app.server.schemas.common import ErrorResponseModel, ResponseModel
 
 class Llm_result_schema(BaseModel):
-    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    # id: str = Field(default_factory=uuid.uuid4, alias="_id")
     instruction: str = Field(...)
     input: str = Field(...)
     image_base64: str = Field(...)
@@ -26,6 +26,7 @@ class Llm_result_schema(BaseModel):
         }
 
 class Update_llm_result_schema(BaseModel):
+    # id: str = Field(default_factory=uuid.uuid4, alias="_id")
     instruction: str = Field(...)
     input: str = Field(...)
     image_base64: str = Field(...)
@@ -35,6 +36,7 @@ class Update_llm_result_schema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
+                # "id": "test_id",
                 "instruction": "instruction text",
                 "input": "input text",
                 "image_base64": "image base64 text",

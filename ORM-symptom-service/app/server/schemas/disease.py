@@ -32,6 +32,7 @@ class Disease_schema(BaseModel):
         }
 
 class Update_disease_schema(BaseModel):
+    # id: str = Field(default_factory=uuid.uuid4, alias="_id")
     disease: str = Field(...)
     diagnosis: str = Field(...)
     symptom: str = Field(...)
@@ -44,6 +45,7 @@ class Update_disease_schema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
+                # "id": "test_id",
                 "disease": "ringworm",
                 "diagnosis": "ringworm",
                 "symptom": "itch,lichenification",

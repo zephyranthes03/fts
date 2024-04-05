@@ -35,6 +35,7 @@ class Symptom_index_schema(BaseModel):
         }
 
 class Update_symptom_index_schema(BaseModel):
+    # id: str = Field(default_factory=uuid.uuid4, alias="_id")
     symptom: str = Field(...)
     area: str = Field(...)
     occur_pattern: str = Field(...)
@@ -49,6 +50,7 @@ class Update_symptom_index_schema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
+                # "id": "test_id",
                 "symptom": "itch,lichenification",
                 "area": "elbow",
                 "occur_pattern": "on-again",

@@ -9,6 +9,8 @@ from typing import List
 from app.server.util.timelogger import time_logger
 from app.server.util.symptom import extract_symptom, extract_msd_link
 
+from app.server.models.llm_result import Feedback, Llm_result
+
 # crud operations
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", settings.OPENAPI_KEY)
 #query_text = "일상 생활에서 관리하기 위한 목적으로 알고 싶으니 위 사진에서 예상할수 있는 환자가 격을것으로 예상되는 증상은 무엇인지 피부병 분류내에서 알려줘."
@@ -80,8 +82,36 @@ async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str)
             print(result['msd'] ,flush=True)
             result['query_text'] = query_text
             print(result['query_text'] ,flush=True)
+
+
+        # Save LLM_RESUlT 
+        feedback_payload = {"instruction":query_text, 
+                            "input": query_text, 
+                            "image_base64": image_base64, 
+                            "output":llm_content,
+                            "feedback": Feedback(0),
+                            "feedback_content": ""
+                            }
+
+        feedback_response = await client.post("http://orm-symptom-service:8004", json=feedback_payload )
+        feedback_data = feedback_response.json()
+        print(feedback_data,flush=True)
     return result
 
+
+@time_logger
+async def feedback_update(feedback_id: str, feedback: int, feedback_content: str):
+    async with httpx.AsyncClient() as client:
+        # Save LLM_RESUlT 
+        feedback_response = await client.get(f"http://orm-symtom-service:8004/symptom/feedback/{feedback_id}")
+        feedback_json = feedback_response.json()
+        feedback_json["feedback"] = Feedback(feedback)
+        feedback_json["feedback_content"] = feedback_content
+        print(feedback_json, flush=True)
+        del feedback_json["_id"]
+        feedback_response = await client.put("http://orm-symptom-service:8004/symptom/", json=feedback_json )
+        feedback_data = feedback_response.json()
+        print(feedback_data,flush=True)    
 
 @lru_cache(maxsize=256)
 @time_logger

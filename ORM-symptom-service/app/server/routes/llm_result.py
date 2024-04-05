@@ -7,6 +7,7 @@ from app.server.databases.llm_result import (
     delete_llm_result,
     update_llm_result,
     retrieve_llm_results,
+    retrieve_llm_results_to_peft,
     retrieve_llm_result_by_id,
     retrieve_llm_result_by_name
 )
@@ -26,7 +27,7 @@ async def add_llm_result_data(request: Request, llm_result: Llm_result_schema = 
     new_llm_result = await add_llm_result(request.app.database['llm_results'], llm_result)
     return ResponseModel(new_llm_result, "Llm_result added successfully.")
 
-@router.get("/", response_description="Communities retrieved")
+@router.get("/", response_description="llm_result retrieved")
 async def get_llm_results_data(request: Request):
     llm_results = await retrieve_llm_results(request.app.database['llm_results'])
     llm_results_list = list()
@@ -37,6 +38,19 @@ async def get_llm_results_data(request: Request):
         return llm_results_list
 
     return llm_results
+
+@router.get("/peft", response_description="llm_result retrieved for PEFT")
+async def get_llm_results_data(request: Request):
+    llm_results = await retrieve_llm_results_to_peft(request.app.database['llm_results'])
+    llm_results_list = list()
+    if llm_results:
+        for llm_result in llm_results:
+            # llm_result_dict = await llm_result_list_to_dict(llm_result)
+            llm_results_list.append(llm_result)
+        return llm_results_list
+
+    return llm_results
+
 
 @router.get("/id/{id}", response_description="Llm_result data retrieved by llm_result_id")
 async def get_llm_result_data_by_id(request: Request, id: str):
