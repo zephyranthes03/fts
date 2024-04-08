@@ -9,8 +9,6 @@ from typing import List
 from app.server.util.timelogger import time_logger
 from app.server.util.symptom import extract_symptom, extract_msd_link
 
-from app.server.models.llm_result import Feedback, Llm_result
-
 # crud operations
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", settings.OPENAPI_KEY)
 #query_text = "일상 생활에서 관리하기 위한 목적으로 알고 싶으니 위 사진에서 예상할수 있는 환자가 격을것으로 예상되는 증상은 무엇인지 피부병 분류내에서 알려줘."
