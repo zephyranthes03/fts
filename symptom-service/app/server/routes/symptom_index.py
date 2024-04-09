@@ -42,7 +42,8 @@ from app.server.process.symptom_index import (
     read_symptom_index_by_name,
     read_symptom_indexes,
     llm_diagnosis,
-    llm_diagnosis_base64    
+    llm_diagnosis_base64,
+    read_llm_feedbacks
 )
 
 
@@ -81,11 +82,7 @@ def encode_image(image_path):
 @router.post("/llm_base64", response_model=ApiResponse, response_description="Upload symptomnostic diagnosis")
 async def upload_to_llm_base64(request: Request, data: PostData): #, dependencies:dict=Depends(verify_token)):
 
-    # base64_image = base64.b64encode( symptom_file.file.read()).decode('utf-8')
-    query_json = request.json()
-
-    string_bytes = data.base64_image.encode('utf-8')
-    base64_bytes = base64.b64encode(string_bytes)
+    query_json = await request.json()
     diseases = await llm_diagnosis_base64(data.base64_image, data.symptom_text, 'dummy@email.com')
 
     # diseases['llm_content'] = llm_content
@@ -238,6 +235,14 @@ async def get_symptom_indexes(): #dependencies:dict=Depends(verify_token)):
     if symptom_indexes:
         return ResponseModel(symptom_indexes, "Symptoms data statistic retrieved successfully")
     return ResponseModel(symptom_indexes, "Empty list returned")
+
+@router.get("/feedback/{type}", response_description="llm feedback retrieved")
+async def get_llm_feedback(type:str): #dependencies:dict=Depends(verify_token)):
+    llm_feedbacks = await read_llm_feedbacks(type)
+    if llm_feedbacks:
+        return ResponseModel(llm_feedbacks, "Feedback data statistic retrieved successfully")
+    return ResponseModel(llm_feedbacks, "Empty list returned")
+
 
 @router.get("/id/{id}", response_description="Symptoms retrieved")
 async def get_symptom_by_id(id:str): #, dependencies:dict=Depends(verify_token)):

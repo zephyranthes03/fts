@@ -20,7 +20,7 @@ class Llm_result_schema(BaseModel):
                 "input": "input text",
                 "image_base64": "image base64 text",
                 "output": "output text",
-                "feedback": 0,
+                "feedback": 2,
                 "feedback_content": ""
             }
         }
@@ -39,7 +39,7 @@ class Update_llm_result_schema(BaseModel):
                 "input": "input text",
                 "image_base64": "image base64 text",
                 "output": "output text",
-                "feedback": 0,
+                "feedback": 1,
                 "feedback_content": ""
             }
         }

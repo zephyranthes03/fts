@@ -7,7 +7,7 @@ from app.server.databases.llm_result import (
     delete_llm_result,
     update_llm_result,
     retrieve_llm_results,
-    retrieve_llm_results_to_peft,
+    retrieve_llm_results_to_feedback,
     retrieve_llm_result_by_id,
     retrieve_llm_result_by_name
 )
@@ -39,9 +39,9 @@ async def get_llm_results_data(request: Request):
 
     return llm_results
 
-@router.get("/peft", response_description="llm_result retrieved for PEFT")
-async def get_llm_results_data(request: Request):
-    llm_results = await retrieve_llm_results_to_peft(request.app.database['llm_results'])
+@router.get("/feedback/{type}", response_description="llm_result retrieved for PEFT")
+async def get_llm_results_data(request: Request, type:str):
+    llm_results = await retrieve_llm_results_to_feedback(request.app.database['llm_results'], type)
     llm_results_list = list()
     if llm_results:
         for llm_result in llm_results:

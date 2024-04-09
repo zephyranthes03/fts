@@ -70,6 +70,7 @@ async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str)
         data["email"] = email
         result = dict()
         result["email"] = email
+        llm_content = ""
         if "choices" in data:
             llm_content = data['choices'][0]['message']['content']
             print(llm_content,flush=True)
@@ -87,13 +88,13 @@ async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str)
                             "input": query_text, 
                             "image_base64": image_base64, 
                             "output":llm_content,
-                            "feedback": Feedback(0),
+                            "feedback": 2,
                             "feedback_content": ""
                             }
 
-        feedback_response = await client.post("http://orm-symptom-service:8004", json=feedback_payload )
-        feedback_data = feedback_response.json()
-        print(feedback_data,flush=True)
+        feedback_response = await client.post(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/llm_result", json=feedback_payload )
+        feedback_json = feedback_response
+        print(feedback_json,flush=True)
     return result
 
 
@@ -101,19 +102,19 @@ async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str)
 async def feedback_update(feedback_id: str, feedback: int, feedback_content: str):
     async with httpx.AsyncClient() as client:
         # Save LLM_RESUlT 
-        feedback_response = await client.get(f"http://orm-symtom-service:8004/symptom/feedback/{feedback_id}")
+        feedback_response = await client.get(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/symptom/feedback/{feedback_id}")
         feedback_json = feedback_response.json()
-        feedback_json["feedback"] = Feedback(feedback)
+        feedback_json["feedback"] = feedback
         feedback_json["feedback_content"] = feedback_content
         print(feedback_json, flush=True)
         del feedback_json["_id"]
-        feedback_response = await client.put("http://orm-symptom-service:8004/symptom/", json=feedback_json )
+        feedback_response = await client.put(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/symptom/", json=feedback_json )
         feedback_data = feedback_response.json()
         print(feedback_data,flush=True)    
 
 @lru_cache(maxsize=256)
 @time_logger
-async def llm_diagnosis(image_base64: base64, symptom_text: str, email: str):
+async def llm_diagnosis(image_base64: str, symptom_text: str, email: str):
 
     headers = {
     "Content-Type": "application/json",
@@ -191,6 +192,16 @@ async def update_symptom_index(id:str, symptom_index:dict) -> dict:
         print(data,flush=True)
     return data
 
+@time_logger
+async def read_llm_feedbacks(type:str):
+    data = None
+    async with httpx.AsyncClient() as client:
+        r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/llm_result/feedback/{type}', timeout=300)
+        if len(r.json()) > 0:
+            data = r.json()
+            # for llm in data:
+            #     llm['image_base64'] = base64.b64decode(llm['image_base64'])                
+    return data
 
 # Retrieve all symptom
 @time_logger
