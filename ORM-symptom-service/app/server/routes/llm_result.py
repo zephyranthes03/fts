@@ -25,7 +25,8 @@ router = APIRouter()
 async def add_llm_result_data(request: Request, llm_result: Llm_result_schema = Body(...)):
     llm_result = jsonable_encoder(llm_result)
     new_llm_result = await add_llm_result(request.app.database['llm_results'], llm_result)
-    return ResponseModel(new_llm_result, "Llm_result added successfully.")
+    # return ResponseModel(new_llm_result, "Llm_result added successfully.")
+    return new_llm_result
 
 @router.get("/", response_description="llm_result retrieved")
 async def get_llm_results_data(request: Request):

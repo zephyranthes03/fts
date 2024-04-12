@@ -15,7 +15,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", settings.OPENAPI_KEY)
 query_text = settings.QUERY_TEXT
 
 
-@lru_cache(maxsize=256)
+# @lru_cache(maxsize=256)
 @time_logger
 async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str):
 
@@ -66,7 +66,6 @@ async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str)
         timeout = httpx.Timeout(timeout=300.0)
         response = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, timeout=timeout)
         data = response.json()
-        print(data,flush=True)
         data["email"] = email
         result = dict()
         result["email"] = email
@@ -92,9 +91,9 @@ async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str)
                             "feedback_content": ""
                             }
 
-        feedback_response = await client.post(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/llm_result", json=feedback_payload )
-        feedback_json = feedback_response
-        print(feedback_json,flush=True)
+        feedback_response = await client.post(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/llm_result/", json=feedback_payload )
+        feedback_json = feedback_response.json()
+        result["id"] = feedback_json["_id"]
     return result
 
 
@@ -110,9 +109,10 @@ async def feedback_update(feedback_id: str, feedback: int, feedback_content: str
         del feedback_json["_id"]
         feedback_response = await client.put(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/symptom/", json=feedback_json )
         feedback_data = feedback_response.json()
-        print(feedback_data,flush=True)    
+        print(feedback_data,flush=True)
+        return feedback_response
 
-@lru_cache(maxsize=256)
+# @lru_cache(maxsize=256)
 @time_logger
 async def llm_diagnosis(image_base64: str, symptom_text: str, email: str):
 

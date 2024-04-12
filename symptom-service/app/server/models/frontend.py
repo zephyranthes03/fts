@@ -7,3 +7,4 @@ class PostData(BaseModel):
 class ApiResponse(BaseModel):
     success: bool
     message: str
+    id: str

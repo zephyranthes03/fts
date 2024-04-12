@@ -92,13 +92,15 @@ async def upload_to_llm_base64(request: Request, data: PostData): #, dependencie
     print("=======", flush=True)
     print(diseases, flush=True)
     llm_result = diseases.get('llm_content', 'error')
-    print(diseases.get('llm_content', 'error'), flush=True)
+    status = True if llm_result != 'error' else False
 
-    return ApiResponse(success=True, message=llm_result)
+    # return JSONResponse(status_code=200, content=diseases)
+
+    return ApiResponse(success=True, message=llm_result, id=diseases["id"])
     # return ApiResponse(success=True, message="Test@?")
 
 
-@router.post("/llm", response_class=HTMLResponse, response_description="Upload symptomnostic diagnosis")
+@router.post("/llm", response_class=JSONResponse, response_description="Upload symptomnostic diagnosis")
 async def upload_to_llm(request: Request, email: str, symptom_text:str, symptom_file: UploadFile = File(...)): #, dependencies:dict=Depends(verify_token)):
 
     # ext_center = symptom_file.filename[symptom_file.filename.rfind(".")+1:]
