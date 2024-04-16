@@ -15,7 +15,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", settings.OPENAPI_KEY)
 query_text = settings.QUERY_TEXT
 
 
-# @lru_cache(maxsize=256)
+@lru_cache(maxsize=256)
 @time_logger
 async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str):
 
@@ -112,7 +112,7 @@ async def feedback_update(feedback_id: str, feedback: int, feedback_content: str
         print(feedback_data,flush=True)
         return feedback_response
 
-# @lru_cache(maxsize=256)
+@lru_cache(maxsize=256)
 @time_logger
 async def llm_diagnosis(image_base64: str, symptom_text: str, email: str):
 
