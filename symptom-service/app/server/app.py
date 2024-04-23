@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.server.routes.disease import router as DiseaseRouter
 from app.server.routes.diagnosis import router as DiagnosisRouter
 from app.server.routes.symptom_index import router as Symptom_indexRouter
+from app.server.routes.llm_result import router as Llm_resultRouter
 
 from app.server.routes.symptom_index import load_symptom_indexes
 
@@ -36,6 +37,7 @@ app.add_middleware(
 app.include_router(DiseaseRouter, tags=["Disease"], prefix="/disease")
 app.include_router(DiagnosisRouter, tags=["Diagnosis"], prefix="/diagnosis")
 app.include_router(Symptom_indexRouter, tags=["Symptom_index"], prefix="/symptom_index")
+app.include_router(Llm_resultRouter, tags=["Llm_result"], prefix="/llm_result")
 
 @app.get("/", tags=["health_check"])
 async def read_root():
