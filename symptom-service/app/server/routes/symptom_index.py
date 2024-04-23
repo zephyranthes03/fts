@@ -43,7 +43,8 @@ from app.server.process.symptom_index import (
     read_symptom_indexes,
     llm_diagnosis,
     llm_diagnosis_base64,
-    read_llm_feedbacks
+    read_llm_feedbacks,
+    update_llm_feedbacks
 )
 
 
@@ -96,9 +97,28 @@ async def upload_to_llm_base64(request: Request, data: PostData): #, dependencie
 
     # return JSONResponse(status_code=200, content=diseases)
 
-    return ApiResponse(success=True, message=llm_result, id=diseases["id"])
+    return ApiResponse(success=True, message=llm_result, message_array=[] ,id=diseases["id"])
     # return ApiResponse(success=True, message="Test@?")
 
+@router.put("/llm_base64", response_model=ApiResponse, response_description="Upload symptomnostic diagnosis")
+async def upload_feedback_to_llm_base64(request: Request, data: PostData): #, dependencies:dict=Depends(verify_token)):
+
+    query_json = await request.json()
+    diseases = await update_llm_feedbacks(data.base64_image, data.symptom_text, 'dummy@email.com')
+
+    # diseases['llm_content'] = llm_content
+    # diseases['symptom'] = extract_symptom(llm_content)
+    # diseases['msd'] = extract_msd_link(diseases['symptom'])
+    # diseases['query_text'] = query_text
+    print("=======", flush=True)
+    print(diseases, flush=True)
+    llm_result = diseases.get('llm_content', 'error')
+    status = True if llm_result != 'error' else False
+
+    # return JSONResponse(status_code=200, content=diseases)
+
+    return ApiResponse(success=True, message=llm_result, message_array=[] ,id=diseases["id"])
+    # return ApiResponse(success=True, message="Test@?")
 
 @router.post("/llm", response_class=JSONResponse, response_description="Upload symptomnostic diagnosis")
 async def upload_to_llm(request: Request, email: str, symptom_text:str, symptom_file: UploadFile = File(...)): #, dependencies:dict=Depends(verify_token)):

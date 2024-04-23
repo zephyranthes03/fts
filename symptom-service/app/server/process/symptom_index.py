@@ -193,6 +193,17 @@ async def update_symptom_index(id:str, symptom_index:dict) -> dict:
     return data
 
 @time_logger
+async def update_llm_feedbacks(id:str, llm_update:dict) -> dict:
+    
+    async with httpx.AsyncClient() as client:
+        r = await client.put(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/llm_result/feedback/{id}',
+                            json=llm_update)
+        data = r.json()
+        print(data,flush=True)
+    return data
+
+
+@time_logger
 async def read_llm_feedbacks(type:str):
     data = None
     async with httpx.AsyncClient() as client:
