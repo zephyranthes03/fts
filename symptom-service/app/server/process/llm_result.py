@@ -82,21 +82,29 @@ async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str)
             print(result['msd'] ,flush=True)
             result['query_text'] = query_text
             print(result['query_text'] ,flush=True)
+        llm_result = "error"
+        status = True if llm_result != 'error' else False
+        result["id"] = -1
 
+        if status:
+            # Save LLM_RESUlT 
+            feedback_payload = {"instruction":query_text, 
+                                "input": query_text, 
+                                "image_base64": image_base64, 
+                                "output":llm_content,
+                                "feedback": 2,
+                                "feedback_content": ""
+                                }
 
-        # Save LLM_RESUlT 
-        feedback_payload = {"instruction":query_text, 
-                            "input": query_text, 
-                            "image_base64": image_base64, 
-                            "output":llm_content,
-                            "feedback": 2,
-                            "feedback_content": ""
-                            }
+            feedback_response = await client.post(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/llm_result/", json=feedback_payload )
+            feedback_json = feedback_response.json()
+            print(feedback_json,flush=True)
+            result["id"] = feedback_json["_id"]
 
-        feedback_response = await client.post(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/llm_result", json=feedback_payload )
-        feedback_json = feedback_response.json()
-        result["id"] = feedback_json["_id"]
-    return result
+        respone: ApiResponse = ApiResponse(success=status, message=2, message_content=llm_content, id=result["id"])
+
+        return respone
+    return ApiResponse(success=False, message=2, message_content='error', id=-1)
 
 
 @lru_cache(maxsize=256)
@@ -147,20 +155,32 @@ async def llm_diagnosis(image_base64: str, symptom_text: str, email: str):
 
 
 @time_logger
-async def update_llm_feedbacks(id:str, llm_update: PutData) -> dict:
+async def update_llm_feedbacks(id:str, llm_update:dict) -> dict:
     
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient() as client:        
+        feedback_response = await client.get(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/llm_result/{id}")
+        feedback_json = feedback_response.json()
+        feedback_json["feedback"] = llm_update["feedback"]
+        feedback_json["feedback_content"] = llm_update["feedback_content"]
+        print(feedback_json, flush=True)
+        del feedback_json["_id"]
+
         r = await client.put(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/llm_result/{id}',
-                            json=llm_update)
+                            json=feedback_json)
         data = r.json()
         print(data,flush=True)
-    return data
+
+        respone: ApiResponse = ApiResponse(success=True, message=llm_update["feedback"], message_content=llm_update['feedback_content'], id=id)
+
+        return respone
+    return ApiResponse(success=False, message=llm_update["feedback"], message_content='error', id=-1)
 
 
 @time_logger
 async def read_llm_feedbacks(type:str):
     data = None
     async with httpx.AsyncClient() as client:
+
         r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/llm_result/feedback/{type}', timeout=300)
         if len(r.json()) > 0:
             data = r.json()

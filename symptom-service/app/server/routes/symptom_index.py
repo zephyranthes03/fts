@@ -57,17 +57,17 @@ router = APIRouter()
 
 
 
-# async def load_symptom_indexes():
-#     symptom_index_list = Load_Data().from_folder([SAMPLE_IMAGE_FOLDER])
+async def load_symptom_indexes():
+    symptom_index_list = Load_Data().from_folder([SAMPLE_IMAGE_FOLDER])
 
-#     # Set up the search engine, You can load 'vit_base_patch16_224_in21k', 'resnet50' etc more then 500+ models 
-#     st = Search_Setup(diagnosis_list=symptom_index_list, model_name='vgg19', pretrained=True, diagnosis_count=20)
+    # Set up the search engine, You can load 'vit_base_patch16_224_in21k', 'resnet50' etc more then 500+ models 
+    st = Search_Setup(diagnosis_list=symptom_index_list, model_name='vgg19', pretrained=True, diagnosis_count=20)
 
-#     # Index the diagnosises
-#     st.run_index()
+    # Index the diagnosises
+    st.run_index()
 
-#     # Get metadata
-#     metadata = st.get_diagnosis_metadata_file()
+    # Get metadata
+    metadata = st.get_diagnosis_metadata_file()
 
 
 

@@ -11,5 +11,6 @@ class PutData(BaseModel):
 
 class ApiResponse(BaseModel):
     success: bool
-    message: str
+    message: int
+    message_content:str
     id: str

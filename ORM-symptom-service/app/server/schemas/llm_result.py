@@ -26,15 +26,18 @@ class Llm_result_schema(BaseModel):
         }
 
 class Update_llm_result_schema(BaseModel):
+    id: str = Field(default_factory=uuid.uuid4, alias="_id")
     instruction: str = Field(...)
     input: str = Field(...)
     image_base64: str = Field(...)
     output: str = Field(...)
     feedback: int = Field(...)
+    feedback_content: str = Field(...)
 
     class Config:
         schema_extra = {
             "example": {
+                "id": "id",
                 "instruction": "instruction text",
                 "input": "input text",
                 "image_base64": "image base64 text",

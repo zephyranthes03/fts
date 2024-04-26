@@ -65,25 +65,13 @@ async def upload_to_llm_base64(request: Request, data: PostData): #, dependencie
     query_json = await request.json()
     diseases = await llm_diagnosis_base64(data.base64_image, data.symptom_text, 'dummy@email.com')
 
-    # diseases['llm_content'] = llm_content
-    # diseases['symptom'] = extract_symptom(llm_content)
-    # diseases['msd'] = extract_msd_link(diseases['symptom'])
-    # diseases['query_text'] = query_text
-    print("=======", flush=True)
-    print(diseases, flush=True)
-    llm_result = diseases.get('llm_content', 'error')
-    status = True if llm_result != 'error' else False
+    return diseases
 
-    # return JSONResponse(status_code=200, content=diseases)
-
-    return ApiResponse(success=True, message=2, message_content=llm_result ,id=diseases["id"])
-    # return ApiResponse(success=True, message="Test@?")
-
-@router.put("/llm_base64", response_model=ApiResponse, response_description="Upload symptomnostic diagnosis")
-async def upload_feedback_to_llm_base64(request: Request, data: PutData): #, dependencies:dict=Depends(verify_token)):
+@router.put("/llm_base64/{id}", response_model=ApiResponse, response_description="Upload symptomnostic diagnosis")
+async def upload_feedback_to_llm_base64(id:str, request: Request, data: PutData): #, dependencies:dict=Depends(verify_token)):
 
     query_json = await request.json()
-    diseases = await update_llm_feedbacks(data)
+    diseases = await update_llm_feedbacks(id, data)
 
     # diseases['llm_content'] = llm_content
     # diseases['symptom'] = extract_symptom(llm_content)
@@ -91,13 +79,13 @@ async def upload_feedback_to_llm_base64(request: Request, data: PutData): #, dep
     # diseases['query_text'] = query_text
     print("=======", flush=True)
     print(diseases, flush=True)
-    llm_result = diseases.get('llm_content', 'error')
+    message_content = diseases.get('message_content', 'error')
     feedback = diseases.get('feedback', 2)
-    status = True if llm_result != 'error' else False
+    status = True if message_content != 'error' else False
 
     # return JSONResponse(status_code=200, content=diseases)
 
-    return ApiResponse(success=True, message=feedback, message_content=llm_result ,id=diseases["id"])
+    return ApiResponse(success=status, message=feedback, message_content=message_content,id=id)
     # return ApiResponse(success=True, message="Test@?")
 
 @router.post("/llm", response_class=JSONResponse, response_description="Upload symptomnostic diagnosis")
@@ -141,24 +129,6 @@ async def get_llm_feedback(type:str): #dependencies:dict=Depends(verify_token)):
     if llm_feedbacks:
         return ResponseModel(llm_feedbacks, "Feedback data statistic retrieved successfully")
     return ResponseModel(llm_feedbacks, "Empty list returned")
-
-
-@router.put("/{id}")
-async def update_symptom_index_data(id: str, req: Update_symptom_index_schema = Body(...)): #, dependencies:dict=Depends(verify_token)):
-    req = {k: v for k, v in req.dict().items() if v is not None}
-    print(req,flush=True)
-    symptom = jsonable_encoder(req)
-    updated_symptom_index = await update_llm_feedbacks(id, symptom)
-    if 'data' in updated_symptom_index:
-        return ResponseModel(
-            "Symptom_index with ID: {} name update is successful".format(id),
-            "Symptom_index name updated successfully",
-        )
-    return ErrorResponseModel(
-        "An error occurred",
-        404,
-        "There was an error updating the symptom_index data.",
-    )
 
 @router.delete("/{id}", response_description="Symptom_index data deleted from the database")
 async def delete_symptom_index_data(id:str): #, dependencies:dict=Depends(verify_token)):
