@@ -163,9 +163,10 @@ async def update_llm_feedbacks(id:str, llm_update:dict) -> dict:
         feedback_json["feedback"] = llm_update["feedback"]
         feedback_json["feedback_content"] = llm_update["feedback_content"]
         print(feedback_json, flush=True)
+        id = feedback_json["_id"]
         del feedback_json["_id"]
 
-        r = await client.put(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/llm_result/{id}',
+        r = await client.put(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/llm_result/id/{id}',
                             json=feedback_json)
         data = r.json()
         print(data,flush=True)
@@ -191,7 +192,7 @@ async def read_llm_feedbacks(type:str):
 # Delete a symptom from the database
 @time_logger
 async def delete_llm_result(id:str):
-    r = httpx.delete(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/llm_result/{id}') 
+    r = httpx.delete(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/llm_result/id/{id}') 
     if r.status_code == 200:
         return True
     return False

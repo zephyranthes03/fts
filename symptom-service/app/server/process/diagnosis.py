@@ -30,7 +30,7 @@ async def add_diagnosis(diagnosis:dict) -> dict:
 @time_logger
 async def update_diagnosis(id:str, diagnosis:dict) -> dict:
     async with httpx.AsyncClient() as client:
-        r = await client.put(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/{id}',
+        r = await client.put(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/id/{id}',
                             json=diagnosis)
         data = r.json()
         print(data,flush=True)
@@ -54,7 +54,6 @@ async def read_diagnosis_by_id(id: str) -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/id/{id}', timeout=300) 
         print(r.json(),flush=True)
-
         data = r.json()    
     return data
 
@@ -72,7 +71,7 @@ async def read_diagnosis_by_name(name: str) -> dict:
 @time_logger
 # Delete a diagnosis from the database
 async def delete_diagnosis(id:str):
-    r = httpx.delete(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/{id}') 
+    r = httpx.delete(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/id/{id}') 
     if r.status_code == 200:
         return True
     return False

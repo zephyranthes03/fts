@@ -23,8 +23,9 @@ async def feedback_update(feedback_id: str, feedback: int, feedback_content: str
         feedback_json["feedback"] = feedback
         feedback_json["feedback_content"] = feedback_content
         print(feedback_json, flush=True)
+        id = feedback_json["_id"]
         del feedback_json["_id"]
-        feedback_response = await client.put(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/symptom/", json=feedback_json )
+        feedback_response = await client.put(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/symptom/id/{id}", json=feedback_json )
         feedback_data = feedback_response.json()
         print(feedback_data,flush=True)
         return feedback_response
@@ -57,7 +58,7 @@ async def add_symptom_index(symptom_index:dict) -> dict:
 async def update_symptom_index(id:str, symptom_index:dict) -> dict:
     
     async with httpx.AsyncClient() as client:
-        r = await client.put(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/symptom_index/{id}',
+        r = await client.put(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/symptom_index/id/{id}',
                             json=symptom_index)
         data = r.json()
         print(data,flush=True)
@@ -102,7 +103,7 @@ async def read_symptom_index_by_name(name: str) -> dict:
 # Delete a symptom from the database
 @time_logger
 async def delete_symptom_index(id:str):
-    r = httpx.delete(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/symptom_index/{id}') 
+    r = httpx.delete(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/symptom_index/id/{id}') 
     if r.status_code == 200:
         return True
     return False
