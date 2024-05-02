@@ -36,7 +36,7 @@ async def add_disease(disease:dict) -> dict:
 async def update_disease(id:str, disease:dict) -> dict:
     
     async with httpx.AsyncClient() as client:
-        r = await client.put(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/{id}',
+        r = await client.put(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/id/{id}',
                             json=disease)
         data = r.json()
         print(data,flush=True)

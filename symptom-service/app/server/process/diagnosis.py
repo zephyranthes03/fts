@@ -52,7 +52,7 @@ async def read_diagnosises(): # -> dict:
 # Retrieve all diagnosis by matched station ID
 async def read_diagnosis_by_id(id: str) -> dict:
     async with httpx.AsyncClient() as client:
-        r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/{id}', timeout=300) 
+        r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/id/{id}', timeout=300) 
         print(r.json(),flush=True)
 
         data = r.json()    

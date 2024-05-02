@@ -158,7 +158,7 @@ async def llm_diagnosis(image_base64: str, symptom_text: str, email: str):
 async def update_llm_feedbacks(id:str, llm_update:dict) -> dict:
     
     async with httpx.AsyncClient() as client:        
-        feedback_response = await client.get(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/llm_result/{id}")
+        feedback_response = await client.get(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/llm_result/id/{id}")
         feedback_json = feedback_response.json()
         feedback_json["feedback"] = llm_update["feedback"]
         feedback_json["feedback_content"] = llm_update["feedback_content"]
