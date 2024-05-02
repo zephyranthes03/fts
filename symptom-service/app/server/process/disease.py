@@ -79,7 +79,7 @@ async def read_disease_by_name(name: str) -> dict:
 # Delete a disease from the database
 @time_logger
 async def delete_disease(id:str):
-    r = httpx.delete(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/{id}') 
+    r = httpx.delete(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/id/{id}') 
     if r.status_code == 200:
         return True
     return False
