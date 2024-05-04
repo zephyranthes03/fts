@@ -1,7 +1,7 @@
 import httpx
 import os
 import base64
-from functools import lru_cache
+# from functools import lru_cache
 
 
 from app.config.config import settings
@@ -96,8 +96,6 @@ async def read_symptom_index_by_name(name: str) -> dict:
         data = r.json()
 
     return data
-
-
 
 
 # Delete a symptom from the database
