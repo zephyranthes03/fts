@@ -1,9 +1,8 @@
 import os
 import httpx
-from app.server.util.logging import logger2
+
 from time import sleep
 from redis import Redis
-
 
 from pydantic import BaseModel
 
@@ -16,7 +15,6 @@ from app.server.routes.symptom_index import router as Symptom_indexRouter
 from app.server.routes.llm_result import router as Llm_resultRouter
 
 from app.server.routes.symptom_index import load_symptom_indexes
-
 
 app = FastAPI()
 origins = [
@@ -54,7 +52,7 @@ async def startup_client():
         r = Redis(redis_host, socket_connect_timeout=1) # short timeout for the test
         redis_flag = r.ping()
         if redis_flag == False:
-            logger2.info(f"Redis is not Ready yet try again {redis_delay} seconds later", flush=True)
+            print(f"Redis is not Ready yet try again {redis_delay} seconds later", flush=True)
             sleep(redis_delay)
 
     metacommunity_delay = 30
@@ -67,13 +65,13 @@ async def startup_client():
             try:            
                 response = await client.get(f'{metacommunity_host}',timeout=3)
             except httpx.HTTPError as exc:
-                logger2.info(f"HTTP error: {exc}")
+                print(f"HTTP error: {exc}")
 
             if response is not None:
-                logger2.info(response.status_code)
+                print(response.status_code, flush=True)
                 metacommunity_flag = True if response.status_code == 200 else False
             else:
-                logger2.info(f"Service is not Ready yet try again {metacommunity_delay} seconds later")
+                print(f"Service is not Ready yet try again {metacommunity_delay} seconds later", flush=True)
                 sleep(metacommunity_delay)
 
 
