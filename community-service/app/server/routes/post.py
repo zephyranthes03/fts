@@ -12,6 +12,7 @@ from io import BytesIO
 from PIL import Image
 
 from app.server.util.preload import verify_token
+from app.server.util.logging import logger
 
 UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER")
@@ -73,7 +74,7 @@ async def get_post_by_id(community_id:str, board_id:str, id:str, dependencies:di
 
 @router.get("/{community_id}/{board_id}/like/{id}", response_description="Communities retrieved")
 async def get_post_by_id(community_id:str, board_id:str, id:str, dependencies:dict=Depends(verify_token)):
-    print(dependencies,flush=True)
+    logger.info(dependencies)
     posts = await like_post_by_id(community_id, board_id, id, dependencies)
     if posts:
         return ResponseModel(posts, "Communities data statistic retrieved successfully")
@@ -90,7 +91,7 @@ async def get_post_by_name(community_id:str, board_id:str, name:str, dependencie
 @router.put("/{community_id}/{board_id}/id/{id}")
 async def update_post_data(community_id:str, board_id:str, id: str, req: Update_post_schema = Body(...), dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
-    print(req,flush=True)
+    logger.info(req)
     post = jsonable_encoder(req)
     updated_post = await update_post(community_id, board_id, id, post)
     if 'data' in updated_post:
@@ -124,7 +125,7 @@ async def upload_symptom(request: Request, email: str, image: UploadFile = File(
     ## Collecting diagnosis
 
     ## TODO: Should we Collect diagnosis file type with jpg or png?
-    # print(image.filename,flush=True)
+    # logger.info(image.filename)
     ext_center = image.filename[image.filename.rfind(".")+1:]
     now = datetime.now()
     year = now.strftime("%Y")

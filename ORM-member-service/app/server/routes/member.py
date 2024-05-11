@@ -19,6 +19,7 @@ from app.server.schemas.member import (
     Member_schema,
     Update_member_schema,
 )
+from app.server.util.logging import logger
 
 # from app.server.databases.session import get_db
 
@@ -60,7 +61,7 @@ async def update_member_data(request: Request, community_id: str, id: str, req: 
 
     if len(member) >= 1:
         update_result = await update_member(request.app.mongodb_client, community_id, id, member)
-        print(update_result.modified_count,flush=True)
+        logger.info(update_result.modified_count)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
                 "An error occurred",

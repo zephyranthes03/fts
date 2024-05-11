@@ -10,6 +10,7 @@ from app.server.schemas.llm_result import (
     Llm_result_schema,
     Update_llm_result_schema,
 )
+from app.server.util.logging import logger
 
 # Retrieve all llm_results present in the database
 async def retrieve_llm_results(database: Optional[any]) -> list:
@@ -64,6 +65,6 @@ async def update_llm_result(database: Optional[any], id: str, llm_result_data: U
 # Delete a llm_result from the database
 async def delete_llm_result(database: Optional[any], id: str) -> int:
     delete_result = database.delete_one({"_id": id})
-    print(delete_result,flush=True)
+    logger.info(delete_result)
     return delete_result
 

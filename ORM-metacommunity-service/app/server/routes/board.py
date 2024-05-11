@@ -21,15 +21,16 @@ from app.server.schemas.board import (
 )
 
 # from app.server.databases.session import get_db
+from app.server.util.logging import logger
 
 
 router = APIRouter()
 
 @router.post("/{community_id}", response_description="Community Board data added into the database")
 async def add_board_data(request: Request, community_id: str, board: Board_schema = Body(...)):
-    print(community_id,flush=True)
+    logger.info(community_id)
     board = jsonable_encoder(board)
-    print(board,flush=True)
+    logger.info(board)
     new_board = await add_board(request.app.mongodb_client, community_id, board)
     return ResponseModel(new_board, "Community Board added successfully.")
 
@@ -62,7 +63,7 @@ async def update_board_data(request: Request, community_id: str, id: str, req: U
 
     if len(board) >= 1:
         update_result = await update_board(request.app.mongodb_client, community_id, id, board)
-        print(update_result.modified_count,flush=True)
+        logger.info(update_result.modified_count)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
                 "An error occurred",

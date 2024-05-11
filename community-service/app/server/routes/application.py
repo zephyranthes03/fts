@@ -12,6 +12,7 @@ from io import BytesIO
 from PIL import Image
 
 from app.server.util.preload import verify_token
+from app.server.util.logging import logger
 
 UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER")
@@ -81,7 +82,7 @@ async def get_application_by_name(community_id:str, name:str, dependencies:dict=
 @router.put("/{community_id}/id/{id}")
 async def update_application_data(community_id:str, id: str, req: Update_application_schema = Body(...), dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
-    print(req,flush=True)
+    logger.info(req)
     application = jsonable_encoder(req)
     updated_application = await update_application(community_id, id, application)
     if 'data' in updated_application:

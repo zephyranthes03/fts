@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI
 
 from app.server.routes.user import router as UserRouter
+from app.server.util.logging import logger
 
 def include_router(app):
     app.include_router(UserRouter, tags=["User"], prefix="/user")
@@ -37,7 +38,7 @@ def startup_db_client():
                                     database=DATABASE_NAME)        
         mysql_flag = cnx.is_connected()
         if mysql_flag == False:
-            print(f"MongoDB is not Ready yet try again {mysql_delay} seconds later", flush=True)
+            logger.info(f"MongoDB is not Ready yet try again {mysql_delay} seconds later", )
             sleep(mysql_delay)
     cnx.close()
 

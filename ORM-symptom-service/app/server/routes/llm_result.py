@@ -17,6 +17,7 @@ from app.server.schemas.llm_result import (
     Llm_result_schema,
     Update_llm_result_schema,
 )
+from app.server.util.logging import logger
 
 router = APIRouter()
 
@@ -69,7 +70,7 @@ async def update_llm_result_data(request: Request, id: str, req: Update_llm_resu
 
     if len(llm_result) >= 1:
         update_result = await update_llm_result(request.app.database["llm_results"], id, llm_result)
-        print(update_result.modified_count,flush=True)
+        logger.info(update_result.modified_count)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
                 "An error occurred",

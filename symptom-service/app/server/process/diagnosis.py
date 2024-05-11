@@ -3,6 +3,7 @@ import os
 from typing import List
 from app.server.util.timelogger import time_logger
 # crud operations
+from app.server.util.logging import logger
 
 @time_logger
 # Add a new diagnosis into to the database
@@ -14,7 +15,7 @@ async def add_diagnosis(diagnosis:dict) -> dict:
             data = r.json() 
             if data.get('detail', 'Failure') == 'Not Found':
 
-                print(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/',flush=True)
+                logger.info(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/')
                 r = await client.post(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/', json=diagnosis)
                 data = r.json() 
                 return {'diagnosis': diagnosis['diagnosis'] }
@@ -33,7 +34,7 @@ async def update_diagnosis(id:str, diagnosis:dict) -> dict:
         r = await client.put(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/id/{id}',
                             json=diagnosis)
         data = r.json()
-        print(data,flush=True)
+        logger.info(data)
     return data
 
 
@@ -44,7 +45,7 @@ async def read_diagnosises(): # -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/', timeout=300)
         if len(r.json()) > 0:
-            print(r.json(),flush=True)
+            logger.info(r.json())
             data = r.json()[0]    
     return data
 
@@ -53,7 +54,7 @@ async def read_diagnosises(): # -> dict:
 async def read_diagnosis_by_id(id: str) -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/id/{id}', timeout=300) 
-        print(r.json(),flush=True)
+        logger.info(r.json())
         data = r.json()    
     return data
 
@@ -63,7 +64,7 @@ async def read_diagnosis_by_id(id: str) -> dict:
 async def read_diagnosis_by_name(name: str) -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/diagnosis/name/{name}', timeout=300) 
-        print(r.json(),flush=True)
+        logger.info(r.json())
 
         data = r.json()    
     return data

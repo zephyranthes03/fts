@@ -16,6 +16,7 @@ from app.server.schemas.diagnosis import (
     Diagnosis_schema,
     Update_diagnosis_schema,
 )
+from app.server.util.logging import logger
 
 router = APIRouter()
 
@@ -54,7 +55,7 @@ async def update_diagnosis_data(request: Request, id: str, req: Update_diagnosis
 
     if len(diagnosis) >= 1:
         update_result = await update_diagnosis(request.app.database["diagnosises"], id, diagnosis)
-        print(update_result.modified_count,flush=True)
+        logger.info(update_result.modified_count)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
                 "An error occurred",

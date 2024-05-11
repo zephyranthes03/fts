@@ -19,6 +19,7 @@ from app.server.schemas.log_community import (
     log_community_schema,
     Update_log_community_schema,
 )
+from app.server.util.logging import logger
 
 # from app.server.databases.session import get_db
 
@@ -61,7 +62,7 @@ async def update_log_community_data(request: Request, community_id: str, user_id
     if len(log_community) >= 1:
         update_result = await update_log_community(request.app.mongodb_client,
                                            community_id, id, log_community)
-        print(update_result.modified_count,flush=True)
+        logger.info(update_result.modified_count)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
                 "An error occurred",

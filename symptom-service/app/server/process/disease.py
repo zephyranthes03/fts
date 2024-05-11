@@ -2,6 +2,7 @@ import httpx
 import os
 from typing import List
 from app.server.util.timelogger import time_logger
+from app.server.util.logging import logger
 
 # crud operations
 
@@ -14,12 +15,12 @@ async def add_disease(disease:dict) -> dict:
         name = disease.get('disease', None)
         if name:
             r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/name/{name}')
-            print(r,flush=True)
+            logger.info(r)
             data = r.json()
-            print(data,flush=True)
+            logger.info(data)
             if data is None:
 
-                print(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/',flush=True)
+                logger.info(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/')
                 r = await client.post(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/', json=disease)
                 data = r.json() 
                 return {'disease': disease['disease'] }
@@ -39,7 +40,7 @@ async def update_disease(id:str, disease:dict) -> dict:
         r = await client.put(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/id/{id}',
                             json=disease)
         data = r.json()
-        print(data,flush=True)
+        logger.info(data)
     return data
 
 
@@ -48,7 +49,7 @@ async def read_diseases(): # -> dict:
     data = None
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/', timeout=300)
-        print(r.json(),flush=True)
+        logger.info(r.json())
         if len(r.json()) > 0:
             data = r.json()[0]
     
@@ -59,7 +60,7 @@ async def read_diseases(): # -> dict:
 async def read_disease_by_id(id: str) -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/id/{id}', timeout=300) 
-        # print(r.json(),flush=True)
+        # logger.info(r.json())
 
         data = r.json()
     
@@ -70,7 +71,7 @@ async def read_disease_by_id(id: str) -> dict:
 async def read_disease_by_name(name: str) -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/disease/name/{name}', timeout=300) 
-        # print(r.json(),flush=True)
+        # logger.info(r.json())
 
         data = r.json()
     

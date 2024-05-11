@@ -54,7 +54,7 @@ async def startup_client():
         r = Redis(redis_host, socket_connect_timeout=1) # short timeout for the test
         redis_flag = r.ping()
         if redis_flag == False:
-            logger.info(f"Redis is not Ready yet try again {redis_delay} seconds later", flush=True)
+            logger.info(f"Redis is not Ready yet try again {redis_delay} seconds later", )
             sleep(redis_delay)
 
     metacommunity_delay = 30

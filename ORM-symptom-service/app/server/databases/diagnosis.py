@@ -10,6 +10,7 @@ from app.server.schemas.diagnosis import (
     Diagnosis_schema,
     Update_diagnosis_schema,
 )
+from app.server.util.logging import logger
 
 # Retrieve all diagnosises present in the database
 async def retrieve_diagnosises(database: Optional[any]) -> list:
@@ -51,6 +52,6 @@ async def update_diagnosis(database: Optional[any], id: str, diagnosis_data: Upd
 # Delete a diagnosis from the database
 async def delete_diagnosis(database: Optional[any], id: str) -> int:
     delete_result = database.delete_one({"_id": id})
-    print(delete_result,flush=True)
+    logger.info(delete_result)
     return delete_result
 

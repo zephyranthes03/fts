@@ -11,6 +11,7 @@ from app.server.schemas.message import (
     Message_schema,
     Update_message_schema,
 )
+from app.server.util.logging import logger
 
 # Retrieve all messages present in the database
 # pagenation 
@@ -80,6 +81,6 @@ async def delete_message(mongodb_client: Optional[any],
     collection = database[f"message_{str(hash(user_id)%100)}"]
 
     delete_result = collection.delete_one({"_id": id})
-    # print(delete_result,flush=True)
+    # logger.info(delete_result)
     return delete_result
 

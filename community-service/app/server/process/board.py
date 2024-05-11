@@ -2,6 +2,7 @@ import httpx
 import os
 from app.server.util.timelogger import time_logger
 from typing import List
+from app.server.util.logging import logger
 
 # crud operations
 
@@ -27,7 +28,7 @@ async def update_board(community_id:str, board_id:str, id:str, board:dict) -> di
         r = await client.put(f'{os.getenv("ORM_POST_SERVICE")}/post/{community_id}/{board_id}/{id}',
                             json=board)
         data = r.json()
-        print(data,flush=True)
+        logger.info(data)
     return data
 
 
@@ -38,7 +39,7 @@ async def read_boards(community_id:str, board_id:str): # -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_POST_SERVICE")}/post/{community_id}/{board_id}', timeout=300)
         if len(r.json()) > 0:
-            print(r.json(),flush=True)
+            logger.info(r.json())
             data = r.json()[0]    
     return data
 
@@ -47,12 +48,12 @@ async def read_boards(community_id:str, board_id:str): # -> dict:
 async def read_board_by_id(community_id:str, board_id:str, id: str) -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_POST_SERVICE")}/post/{community_id}/{board_id}/{id}', timeout=300) 
-        print(r.json(),flush=True)
+        logger.info(r.json())
 
         data = r.json()
         data["read_count"] += 1
         r = await client.get(f'{os.getenv("ORM_POST_SERVICE")}/post/{community_id}/{board_id}/{id}', timeout=300) 
-        print(r.json(),flush=True)    
+        logger.info(r.json())    
     return data
 
 
@@ -61,7 +62,7 @@ async def read_board_by_id(community_id:str, board_id:str, id: str) -> dict:
 async def read_board_by_name(community_id:str, board_id:str, name: str) -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_POST_SERVICE")}/post/{board_id}/name/{name}', timeout=300) 
-        print(r.json(),flush=True)
+        logger.info(r.json())
 
         data = r.json()
     

@@ -11,6 +11,7 @@ from app.server.routes.symptom_index import router as Symptom_indexRouter
 from app.server.routes.disease import router as DiseaseRouter
 from app.server.routes.diagnosis import router as DiagnosisRouter
 from app.server.routes.llm_result import router as Llm_resultRouter
+from app.server.util.logging import logger
 
 def include_router(app):
     app.include_router(Symptom_indexRouter, tags=["Symptom_index"], prefix="/symptom_index")
@@ -22,7 +23,7 @@ def include_router(app):
 #     app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # def create_tables():
-#     print(Base.metadata.tables,flush=True)
+#     logger.info(Base.metadata.tables)
 #     if len(Base.metadata.tables)==0:
 #         Base.metadata.create_all(bind=engine)
 
@@ -46,11 +47,11 @@ def startup_db_client():
         try:
             mongodb_flag = client.server_info() # Forces a call.
         except ServerSelectionTimeoutError:
-            print(f"MongoDB is not Ready yet try again {mongodb_delay} seconds later", flush=True)
+            logger.info(f"MongoDB is not Ready yet try again {mongodb_delay} seconds later", )
         if mongodb_flag == False:
             sleep(mongodb_delay)
     client.close()
-    print(f"MongoDB is Ready", flush=True)
+    logger.info(f"MongoDB is Ready", )
 
     # If connection create a new one with serverSelectionTimeoutMS=30000
     app.mongodb_client = MongoClient(settings.DATABASE_URI)

@@ -12,6 +12,7 @@ from app.server.schemas.community import (
     Community_schema,
     Update_community_schema,
 )
+from app.server.util.logging import logger
 
 # Retrieve all communities present in the database
 async def retrieve_communities(mongodb_client: Optional[any]) -> list:
@@ -69,6 +70,6 @@ async def delete_community(mongodb_client: Optional[any], id: str) -> int:
     database = mongodb_client[settings.DATABASE_METACOMMUNITY]
     collection = database[settings.DATABASE_METACOMMUNITY]
     delete_result = collection.delete_one({"_id": id})
-    print(delete_result,flush=True)
+    logger.info(delete_result)
     return delete_result
 

@@ -11,6 +11,7 @@ from fastapi.templating import Jinja2Templates
 from io import BytesIO
 # from PIL import Image
 from app.server.util.preload import verify_token
+from app.server.util.logging import logger
 
 UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER")
@@ -76,7 +77,7 @@ async def get_disease_by_name(name:str): #, dependencies:dict=Depends(verify_tok
 @router.put("/id/{id}")
 async def update_disease_data(id: str, req: Update_disease_schema = Body(...)): #, dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
-    print(req,flush=True)
+    logger.info(req)
     disease = jsonable_encoder(req)
     updated_disease = await update_disease(id, disease)
     if 'data' in updated_disease:

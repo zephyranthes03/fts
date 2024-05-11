@@ -10,6 +10,7 @@ from app.server.schemas.post import (
     Post_schema,
     Update_post_schema,
 )
+from app.server.util.logging import logger
 
 # Retrieve all posts present in the database
 # pagenation 
@@ -77,6 +78,6 @@ async def delete_post(mongodb_client: Optional[any],
     collection = database[f"post_{board_id}"]
 
     delete_result = collection.delete_one({"_id": post_id})
-    # print(delete_result,flush=True)
+    # logger.info(delete_result)
     return delete_result
 

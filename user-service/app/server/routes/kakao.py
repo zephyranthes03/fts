@@ -1,3 +1,6 @@
+import httpx
+import os 
+
 from fastapi import FastAPI, Depends, APIRouter, Request, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.templating import Jinja2Templates
@@ -11,9 +14,8 @@ from app.server.models.user import (
     ErrorResponseModel,
     ResponseModel  
 )
+from app.server.util.logging import logger
 
-import httpx
-import os 
 
 router = APIRouter()
 
@@ -59,14 +61,14 @@ async def callback_login(code:str):
         }
         r = await client.post(f'https://kauth.kakao.com/oauth/token', data=data, headers=header) 
         data = r.json() #['data']
-        print(data,flush=True)
+        logger.info(data)
         if 'access_token' in data:
             access_token = data['access_token']
             refresh_token = data['refresh_token']
             header = {'Authorization': f'Bearer {access_token}'}
-            print(access_token,flush=True)
+            logger.info(access_token)
             r = await client.get(f'https://kapi.kakao.com/v2/user/me', headers=header) 
-            print(r.json(),flush=True)
+            logger.info(r.json())
             user_param = r.json()
             json_payload = {
                 'email' : user_param['kakao_account']['email'],
@@ -74,7 +76,7 @@ async def callback_login(code:str):
                 'access_token': access_token,
                 'refresh_token': refresh_token
             }
-            print(json_payload,flush=True)
+            logger.info(json_payload)
             res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_login', headers=header, json=json_payload) 
             result = res.json()
             result = result['data'] if 'data' in result else result
@@ -83,7 +85,7 @@ async def callback_login(code:str):
             # return ResponseModel("Social User", "Generate Social User successfully")
 
         else:
-            print("ERROR", flush=True)
+            logger.info("ERROR", )
 
 @router.get("/callback_signup")
 async def callback_signup(code:str):
@@ -97,14 +99,14 @@ async def callback_signup(code:str):
         }
         r = await client.post(f'https://kauth.kakao.com/oauth/token', data=data, headers=header) 
         data = r.json() #['data']
-        print(data,flush=True)
+        logger.info(data)
         if 'access_token' in data:
             access_token = data['access_token']
             refresh_token = data['refresh_token']
             header = {'Authorization': f'Bearer {access_token}'}
-            print(access_token,flush=True)
+            logger.info(access_token)
             r = await client.get(f'https://kapi.kakao.com/v2/user/me', headers=header) 
-            print(r.json(),flush=True)
+            logger.info(r.json())
             user_param = r.json()
             json_payload = {
                 'email' : user_param['kakao_account']['email'],
@@ -119,7 +121,7 @@ async def callback_signup(code:str):
                 'access_token': access_token,
                 'refresh_token': refresh_token
             }
-            print(json_payload,flush=True)
+            logger.info(json_payload)
             res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_signup', headers=header, json=json_payload) 
             result = res.json()
             result = result['data'] if 'data' in result else result
@@ -128,7 +130,7 @@ async def callback_signup(code:str):
             # return ResponseModel("Social User", "Generate Social User successfully")
 
         else:
-            print("ERROR", flush=True)
+            logger.info("ERROR", )
 
 
 @router.get("/logout")
@@ -137,5 +139,5 @@ async def logout(access_token: str):
         header = {"Content-Type": "application/x-www-form-urlencoded",
                   "Authorization": f"Bearer {access_token}" }
         res = await client.get(f'https://kauth.kakao.com/oauth/logout?client_id={KAKAO_REST_CLIENT_ID}&logout_redirect_uri={SERVICE_URL}', headers=header) 
-        print(res.text,flush=True)
+        logger.info(res.text)
         return ResponseModel("Social User", "Logout Social User successfully")

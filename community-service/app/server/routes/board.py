@@ -12,6 +12,7 @@ from io import BytesIO
 from PIL import Image
 
 from app.server.util.preload import verify_token
+from app.server.util.logging import logger
 
 UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER")
@@ -79,7 +80,7 @@ async def get_board_by_name(community_id:str, board_id:str, name:str, dependenci
 @router.put("/{community_id}/{board_id}/id/{id}")
 async def update_board_data(community_id:str, board_id:str, id: str, req: Update_board_schema = Body(...), dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
-    print(req,flush=True)
+    logger.info(req)
     board = jsonable_encoder(req)
     updated_board = await update_board(community_id, board_id, id, board)
     if 'data' in updated_board:

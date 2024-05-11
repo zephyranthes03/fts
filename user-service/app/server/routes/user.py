@@ -34,6 +34,7 @@ from app.server.util.session import (
     session_create,
     session_delete
 )
+from app.server.util.logging import logger
 
 
 router = APIRouter()
@@ -93,7 +94,7 @@ async def post_user_social_login(user_form: SocialEmailLoginSchema = Body(...)):
         user['refresh_token'] = socialUser['refresh_token']
         user['login_type'] = socialUser['login_type']
         session = await session_create(user)
-        print(session, flush=True)
+        logger.info(session, )
         return ResponseModel(session, "User data retrieved successfully")
     
     return ErrorResponseModel("Return data requests failure", 400, "Login Failure")
@@ -112,8 +113,8 @@ async def post_user_social_signup(user_form: SocialEmailSignupSchema = Body(...)
             user_check_by_email = await update_user(email_extract, user_check_by_email)
         else:
             response_social_user_dict = await signup_social_user(socialUser)
-            print("response_social_user_dict",flush=True)
-            print(response_social_user_dict,flush=True)
+            logger.info("response_social_user_dict")
+            logger.info(response_social_user_dict)
     
     user = dict()
 
@@ -140,7 +141,7 @@ async def get_user_data(email: EmailSchema = Body(...)):
         user['access_token'] = ""
         user['refresh_token'] = ""
         user['login_type'] = "email"
-        print(user,flush=True)
+        logger.info(user)
         if 'email' in user:
             if 'email' in user['account_type']:
                 if user['data']:
@@ -159,7 +160,7 @@ async def redis_delete_session(dependencies:dict=Depends(verify_token)):
 @router.put("/email/{email}")
 async def update_user_data(email: str, req: UpdateUserModel = Body(...), dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
-    print(req,flush=True)
+    logger.info(req)
     user = jsonable_encoder(req)
     updated_user = await update_user(email, user)
     if 'data' in updated_user:

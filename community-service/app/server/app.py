@@ -14,6 +14,7 @@ from app.server.routes.post import router as PostRouter
 from app.server.routes.member import router as MemberRouter
 from app.server.routes.application import router as ApplicationRouter
 from app.server.routes.comment import router as CommentRouter
+from app.server.util.logging import logger
 
 
 def include_router(app):
@@ -27,7 +28,7 @@ def include_router(app):
 #     app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # def create_tables():
-#     print(Base.metadata.tables,flush=True)
+#     logger.info(Base.metadata.tables)
 #     if len(Base.metadata.tables)==0:
 #         Base.metadata.create_all(bind=engine)
 
@@ -73,10 +74,10 @@ async def startup_client():
         try:
             redis_flag = r.ping()
         except Exception as e:
-            print("Redis ping has error", e, flush=True)
+            logger.info("Redis ping has error", e, )
 
         if redis_flag == False:
-            print(f"Redis is not Ready yet try again {redis_delay} seconds later", flush=True)
+            logger.info(f"Redis is not Ready yet try again {redis_delay} seconds later", )
             sleep(redis_delay)
 
     metacommunity_delay = 30
@@ -89,12 +90,12 @@ async def startup_client():
             try:            
                 response = await client.get(f'{metacommunity_host}',timeout=3)
             except httpx.HTTPError as exc:
-                print(f"HTTP error: {exc}")
+                logger.info(f"HTTP error: {exc}")
 
             if response is not None:
-                print(response.status_code, flush=True)
+                logger.info(response.status_code, )
                 metacommunity_flag = True if response.status_code == 200 else False
             else:
-                print(f"Service is not Ready yet try again {metacommunity_delay} seconds later", flush=True)
+                logger.info(f"Service is not Ready yet try again {metacommunity_delay} seconds later", )
                 sleep(metacommunity_delay)
 

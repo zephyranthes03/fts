@@ -1,15 +1,21 @@
 import logging
+from datetime import datetime
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+# Create a logger object
+logger = logging.getLogger('my_logger')
+logger.setLevel(logging.INFO)  # Set the minimum log level
 
-# configure the handler and formatter for logger2
-handler = logging.FileHandler(f"logs/{__name__}.log", mode='w')
-formatter = logging.Formatter("%(name)s %(asctime)s %(levelname)s %(message)s")
+# Create file handler which logs even debug messages
 
-# add formatter to the handler
-handler.setFormatter(formatter)
-# add handler to the logger
-logger.addHandler(handler)
+fh = logging.FileHandler(f"logs/{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}.log", mode='w')
+fh.setLevel(logging.INFO)  # Set the level for the file handler
 
-logger.info(f"Testing the custom logger for module {__name__}...")
+# Create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+
+# Add the handlers to the logger
+logger.addHandler(fh)
+
+# Inital message
+logger.info("Starting the application.")

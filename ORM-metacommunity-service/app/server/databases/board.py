@@ -18,6 +18,8 @@ from app.server.databases.community import (
     update_community,
     retrieve_community_by_id
 )
+from app.server.util.logging import logger
+
 
 # Retrieve all boards present in the database
 async def retrieve_boards(mongodb_client: Optional[any], community_id:str) -> list:
@@ -69,7 +71,7 @@ async def add_board(mongodb_client: Optional[any], community_id:str, board_data:
                                      "name": created_board["name"]})
 
     update_result = await update_community(mongodb_client, community_id, community_data)
-    # print(update_result.modified_count,flush=True)
+    # logger.info(update_result.modified_count)
 
     return created_board
 

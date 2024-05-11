@@ -2,6 +2,7 @@ import httpx
 import os
 from app.server.util.timelogger import time_logger
 from typing import List
+from app.server.util.logging import logger
 
 # crud operations
 
@@ -26,7 +27,7 @@ async def update_comment(community_id:str, board_id:str, post_id:str, id:str, co
         r = await client.put(f'{os.getenv("ORM_COMMENT_SERVICE")}/comment/{community_id}/{board_id}/{post_id}/id/{id}',
                             json=comment)
         data = r.json()
-        print(data,flush=True)
+        logger.info(data)
     return data
 
 
@@ -36,7 +37,7 @@ async def read_comments(community_id:str, board_id:str, post_id:str): # -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_COMMENT_SERVICE")}/comment/{community_id}/{board_id}/{post_id}', timeout=300)
         if len(r.json()) > 0:
-            print(r.json(),flush=True)
+            logger.info(r.json())
             data = r.json()    
             return data
     return {"error": "Comment is Empty."}
@@ -46,7 +47,7 @@ async def read_comments(community_id:str, board_id:str, post_id:str): # -> dict:
 async def read_comment_by_id(community_id:str, board_id:str, post_id:str, id: str) -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_COMMENT_SERVICE")}/comment/{community_id}/{board_id}/{post_id}/id/{id}', timeout=300) 
-        print(r.json(),flush=True)
+        logger.info(r.json())
 
         data = r.json()
     
@@ -58,7 +59,7 @@ async def read_comment_by_id(community_id:str, board_id:str, post_id:str, id: st
 async def read_comment_by_name(community_id:str, board_id:str, post_id:str, name: str) -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_COMMENT_SERVICE")}/comment/{community_id}/{board_id}/{post_id}/name/{name}', timeout=300) 
-        print(r.json(),flush=True)
+        logger.info(r.json())
 
         data = r.json()
     

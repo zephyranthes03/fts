@@ -18,6 +18,7 @@ from app.server.schemas.application import (
     Application_schema,
     Update_application_schema,
 )
+from app.server.util.logging import logger
 
 # from app.server.databases.session import get_db
 
@@ -54,7 +55,7 @@ async def update_application_data(request: Request, community_id: str, id: str, 
 
     if len(application) >= 1:
         update_result = await update_application(request.app.mongodb_client, id, application)
-        print(update_result.modified_count,flush=True)
+        logger.info(update_result.modified_count)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
                 "An error occurred",

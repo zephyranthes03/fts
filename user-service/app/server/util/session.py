@@ -3,6 +3,7 @@ import json
 import os
 from app.config.redis_config import redis_config
 from app.server.util.encrypt import generate_password_hash
+from app.server.util.logging import logger
 
 async def session_load(session_key:str) -> dict:
 	rd = redis_config()
@@ -26,9 +27,9 @@ async def session_create(session_dict:dict) -> str:
 
 	if os.getenv("SESSION_SALT") is not None:
 		if 'email' in session_dict:
-			print("session_dict",flush=True)
-			print(session_dict,flush=True)
-			print(session_dict['email'],flush=True)
+			logger.info("session_dict")
+			logger.info(session_dict)
+			logger.info(session_dict['email'])
 			email = session_dict['email'] # str(await generate_password_hash(session_dict['email']))
 			session_dict_out = dict()
 			session_dict_out["id"] = email

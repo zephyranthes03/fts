@@ -27,6 +27,7 @@ from app.server.util.encrypt import (
     set_password,
     check_password_hash
 )
+from app.server.util.logging import logger
 
 from app.server.util.convert import user_from_str, user_to_str, social_user_to_userSchema
 
@@ -36,7 +37,7 @@ router = APIRouter()
 async def add_user_data(user: UserSchema = Body(...)):
     user = jsonable_encoder(user)
     user = await user_to_str(user)
-    # print(user,flush=True)
+    # logger.info(user)
 
     user['password'] = str(await set_password(user['password']))
     new_user = await add_user(user)
@@ -118,7 +119,7 @@ async def update_user_data(email: str, req: UpdateUserModel = Body(...)):
     else:
         user_data = await retrieve_user_by_email(email)
         # user_data_dict = jsonable_encoder(user_data)
-        # print(user_data_dict,flush=True)
+        # logger.info(user_data_dict)
         req['password'] = user_data[1]
     user = jsonable_encoder(req)
     updated_user = await update_user(email, user)

@@ -17,6 +17,7 @@ from PIL import Image
 
 from app.server.util.preload import verify_token
 from app.server.models.frontend import ApiResponse, PostData
+from app.server.util.logging import logger
 
 UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER", "./symptom/upload/")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER", "./sample/")
@@ -86,7 +87,7 @@ async def upload_symptom(request: Request, email: str, symptom_center_image: Upl
     ## Collecting diagnosis
 
     ## TODO: Should we Collect diagnosis file type with jpg or png?
-    # print(symptom_center_image.filename,flush=True)
+    # logger.info(symptom_center_image.filename)
     ext_center = symptom_center_image.filename[symptom_center_image.filename.rfind(".")+1:]
     ext_wide = symptom_wide_image.filename[symptom_wide_image.filename.rfind(".")+1:]
     now = datetime.now()
@@ -109,7 +110,7 @@ async def upload_symptom(request: Request, email: str, symptom_center_image: Upl
     write_wide_file.close()
         # if st is not None:
         #     symptom_print_list = st.get_similar_diagnosises(diagnosis_path=new_center_image, number_of_diagnosises=9)
-        #     print(symptom_print_list,flush=True)
+        #     logger.info(symptom_print_list)
 
     # return ResponseModel({"status":200, "center_image": new_center_image[new_center_image.rfind('/'):],
     #                       "wide_image": new_wide_image[new_wide_image.rfind('/'):] }, "Uploaded!")
@@ -197,7 +198,7 @@ async def get_symptom_by_name(name:str): #, dependencies:dict=Depends(verify_tok
 @router.put("/id/{id}")
 async def update_symptom_index_data(id: str, req: Update_symptom_index_schema = Body(...)): #, dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
-    print(req,flush=True)
+    logger.info(req)
     symptom = jsonable_encoder(req)
     updated_symptom_index = await update_symptom_index(id, symptom)
     if 'data' in updated_symptom_index:

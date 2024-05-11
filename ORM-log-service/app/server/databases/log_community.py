@@ -10,6 +10,7 @@ from app.server.schemas.log_community import (
     log_community_schema,
     Update_log_community_schema,
 )
+from app.server.util.logging import logger
 
 # Retrieve all Log_communities present in the database
 # pagenation 
@@ -91,6 +92,6 @@ async def delete_log_community(mongodb_client: Optional[any],
     collection = database[collection_name]
 
     delete_result = collection.delete_one({"_id": id})
-    # print(delete_result,flush=True)
+    # logger.info(delete_result)
     return delete_result
 

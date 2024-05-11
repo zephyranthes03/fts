@@ -2,6 +2,7 @@ import ast
 
 from datetime import datetime
 from app.server.models.user import UserSchema, SocialEmailSignupSchema
+from app.server.util.logging import logger
 
 async def user_from_str(user_list:list) -> dict:
     user_list.pop(1) # remove password field
@@ -22,7 +23,7 @@ async def user_from_str(user_list:list) -> dict:
         else:
             user_dict[user_menu_item[i]] = user_list[i]
 
-    # print(user_dict,flush=True)
+    # logger.info(user_dict)
     return user_dict
 
 async def user_to_str(user_dict:dict) -> dict:
@@ -36,7 +37,7 @@ async def user_to_str(user_dict:dict) -> dict:
         else:
             user_dict[key] = value
 
-    # print(user_dict,flush=True)
+    # logger.info(user_dict)
     return user_dict
 
  
@@ -127,20 +128,20 @@ async def social_user_to_userSchema(user:SocialEmailSignupSchema) -> UserSchema:
     #     user_temp['gender'] = user['extra_data']['gender']
     #     user_temp['age'] = user['extra_data']['age']
 
-    #     # print(user_temp,flush=True)
+    #     # logger.info(user_temp)
     #     email = user_temp.get('email', None)
     #     if email:
     #         r = await client.get(f'{os.getenv("ORM_USER_SERVICE")}/user/email/{email}')
     #         data = r.json() 
-    #         # print(data,flush=True)
-    #         # print(data.get("email",None),flush=True)
+    #         # logger.info(data)
+    #         # logger.info(data.get("email",None))
     #         if data.get("email", None) is None:
-    #             print(f'{os.getenv("ORM_USER_SERVICE")}/user/',flush=True)
+    #             logger.info(f'{os.getenv("ORM_USER_SERVICE")}/user/')
     #             r = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/', json=user_temp)
     #             data = r.json() 
     #             t1_stop = process_time()
-    #             print("Elapsed time:", t1_stop, t1_start) 
-    #             print("Elapsed time during the whole program in seconds:",
+    #             logger.info("Elapsed time:", t1_stop, t1_start) 
+    #             logger.info("Elapsed time during the whole program in seconds:",
     #                                                 t1_stop-t1_start)
     #             return {'email':user_temp.get('email')}
 

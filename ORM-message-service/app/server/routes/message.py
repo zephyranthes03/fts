@@ -20,6 +20,7 @@ from app.server.schemas.message import (
 )
 
 # from app.server.databases.session import get_db
+from app.server.util.logging import logger
 
 
 router = APIRouter()
@@ -70,7 +71,7 @@ async def update_message_data(request: Request, user_id: str, id: str, req: Upda
     if len(message) >= 1:
         update_result = await update_message(request.app.mongodb_client,
                                              user_id, id, message)
-        print(update_result.modified_count,flush=True)
+        logger.info(update_result.modified_count)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
                 "An error occurred",

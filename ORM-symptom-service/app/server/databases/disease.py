@@ -10,6 +10,7 @@ from app.server.schemas.disease import (
     Disease_schema,
     Update_disease_schema,
 )
+from app.server.util.logging import logger
 
 # Retrieve all diseases present in the database
 async def retrieve_diseases(database: Optional[any]) -> list:
@@ -52,6 +53,6 @@ async def update_disease(database: Optional[any], id: str, disease_data: Update_
 # Delete a disease from the database
 async def delete_disease(database: Optional[any], id: str) -> int:
     delete_result = database.delete_one({"_id": id})
-    print(delete_result,flush=True)
+    logger.info(delete_result)
     return delete_result
 

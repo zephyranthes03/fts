@@ -9,6 +9,7 @@ from typing import List
 from app.server.util.timelogger import time_logger
 from app.server.util.symptom import extract_symptom, extract_msd_link
 from app.server.models.frontend import ApiResponse, PutData
+from app.server.util.logging import logger
 
 
 # crud operations
@@ -74,14 +75,14 @@ async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str)
         llm_content = ""
         if "choices" in data:
             llm_content = data['choices'][0]['message']['content']
-            print(llm_content,flush=True)
+            logger.info(llm_content)
             result['llm_content'] = llm_content
             result['symptom'] = extract_symptom(llm_content)
-            print(result['symptom'] ,flush=True)
+            logger.info(result['symptom'] )
             result['msd'] = extract_msd_link(result['symptom'])
-            print(result['msd'] ,flush=True)
+            logger.info(result['msd'] )
             result['query_text'] = query_text
-            print(result['query_text'] ,flush=True)
+            logger.info(result['query_text'] )
         llm_result = "error"
         status = True if llm_result != 'error' else False
         result["id"] = -1
@@ -98,7 +99,7 @@ async def llm_diagnosis_base64(image_base64: str, symptom_text: str, email: str)
 
             feedback_response = await client.post(f"{os.getenv('ORM_SYMPTOM_SERVICE')}/llm_result/", json=feedback_payload )
             feedback_json = feedback_response.json()
-            print(feedback_json,flush=True)
+            logger.info(feedback_json)
             result["id"] = feedback_json["_id"]
 
         respone: ApiResponse = ApiResponse(success=status, message=2, message_content=llm_content, id=result["id"])
@@ -141,7 +142,7 @@ async def llm_diagnosis(image_base64: str, symptom_text: str, email: str):
         timeout = httpx.Timeout(timeout=300.0)
         response = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, timeout=timeout)
         data = response.json()
-        print(data,flush=True)
+        logger.info(data)
         data["email"] = email
         result = dict()
         result["email"] = email
@@ -162,14 +163,14 @@ async def update_llm_feedbacks(id:str, llm_update:dict) -> dict:
         feedback_json = feedback_response.json()
         feedback_json["feedback"] = llm_update["feedback"]
         feedback_json["feedback_content"] = llm_update["feedback_content"]
-        print(feedback_json, flush=True)
+        logger.info(feedback_json, )
         id = feedback_json["_id"]
         del feedback_json["_id"]
 
         r = await client.put(f'{os.getenv("ORM_SYMPTOM_SERVICE")}/llm_result/id/{id}',
                             json=feedback_json)
         data = r.json()
-        print(data,flush=True)
+        logger.info(data)
 
         respone: ApiResponse = ApiResponse(success=True, message=llm_update["feedback"], message_content=llm_update['feedback_content'], id=id)
 

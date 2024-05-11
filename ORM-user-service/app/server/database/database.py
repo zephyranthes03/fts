@@ -18,6 +18,7 @@ from app.server.util.encrypt import (
     set_password,
     check_password_hash
 )
+from app.server.util.logging import logger
 
 #DATABASE_URL = 'mysql+mysqldb://root:default@mysql/user'
 DATABASE_HOST = os.getenv("DATABASE_HOST")
@@ -145,7 +146,7 @@ async def retrieve_user_by_email(email: str): # -> dict:
         result = list()
         for row in conn.execute(query):
             result = list(row)
-        # print(result,flush=True)
+        # logger.info(result)
         return result
 
 # Retrieve a user with a matching social_email

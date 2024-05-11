@@ -22,6 +22,7 @@ from app.server.schemas.community import (
     Community_schema,
     Update_community_schema,
 )
+from app.server.util.logging import logger
 
 router = APIRouter()
 
@@ -59,7 +60,7 @@ async def update_community_data(request: Request, id: str, req: Update_community
 
     if len(community) >= 1:
         update_result = await update_community(request.app.mongodb_client, id, community)
-        print(update_result.modified_count,flush=True)
+        logger.info(update_result.modified_count)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
                 "An error occurred",

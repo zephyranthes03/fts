@@ -3,7 +3,9 @@ from datetime import timedelta
 import os
 import redis
 from random import random
+
 from dotenv import load_dotenv
+from app.server.util.logging import logger
 
 load_dotenv()
 
@@ -15,4 +17,4 @@ def redis_config():
         rd = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE) 
         return rd       		
     except:
-        print("Redis connection failure")
+        logger.info("Redis connection failure")

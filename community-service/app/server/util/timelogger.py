@@ -1,4 +1,5 @@
 from time import process_time
+from app.server.util.logging import logger
 
 def time_logger(func):
     """
@@ -8,6 +9,6 @@ def time_logger(func):
         start_time = process_time()
         result = func(*args, **kwargs)
         end_time = process_time()
-        print(f"Processing time of '{func.__name__}': {end_time - start_time:.4f} seconds")
+        logger.info(f"Processing time of '{func.__name__}': {end_time - start_time:.4f} seconds")
         return result
     return wrapper

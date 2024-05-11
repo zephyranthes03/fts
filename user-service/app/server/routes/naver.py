@@ -13,6 +13,7 @@ from app.server.models.user import (
     ErrorResponseModel,
     ResponseModel  
 )
+from app.server.util.logging import logger
 
 router = APIRouter()
 
@@ -76,6 +77,6 @@ async def logout(access_token: str):
         }
         r = await client.get(f'https://nid.naver.com/oauth2.0/token', params=params) 
         data = r.json() #['data']
-        print(data,flush=True) 
+        logger.info(data) 
         return ResponseModel("Social User", "Logout Social User successfully")
             

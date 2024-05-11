@@ -2,6 +2,8 @@ import httpx
 import os
 from typing import List
 from app.server.util.timelogger import time_logger
+from app.server.util.logging import logger
+
 # crud operations
 
 
@@ -26,7 +28,7 @@ async def update_application(community_id:str, id:str, application:dict) -> dict
         r = await client.put(f'{os.getenv("ORM_MEMBER_SERVICE")}/application/{community_id}/{id}',
                             json=application)
         data = r.json()
-        print(data,flush=True)
+        logger.info(data)
     return data
 
 
@@ -37,7 +39,7 @@ async def read_applications(community_id:str): # -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_MEMBER_SERVICE")}/application/{community_id}', timeout=300)
         if len(r.json()) > 0:
-            print(r.json(),flush=True)
+            logger.info(r.json())
             data = r.json()[0]    
     return data
 
@@ -46,7 +48,7 @@ async def read_applications(community_id:str): # -> dict:
 async def read_application_by_id(community_id:str, id: str) -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_MEMBER_SERVICE")}/application/{community_id}/id/{id}', timeout=300) 
-        print(r.json(),flush=True)
+        logger.info(r.json())
 
         data = r.json()    
     return data
@@ -56,7 +58,7 @@ async def read_application_by_id(community_id:str, id: str) -> dict:
 async def read_application_by_name(community_id:str, name: str) -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_MEMBER_SERVICE")}/application/{community_id}/name/{name}', timeout=300) 
-        print(r.json(),flush=True)
+        logger.info(r.json())
 
         data = r.json()    
     return data

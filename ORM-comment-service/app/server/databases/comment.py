@@ -2,6 +2,7 @@
 from datetime import datetime
 
 from typing import List, Optional
+from app.server.util.logging import logger
 
 # import databases
 # from fastapi import FastAPI
@@ -81,6 +82,6 @@ async def delete_comment(mongodb_client: Optional[any], community_id: str, board
     collection = database[f"comment_{board_id}"]
 
     delete_result = collection.delete_one({"_id": id})
-    # print(delete_result,flush=True)
+    # logger.info(delete_result)
     return delete_result
 

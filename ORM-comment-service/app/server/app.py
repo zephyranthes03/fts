@@ -5,6 +5,7 @@ from time import sleep
 from pymongo import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError
 from app.config.config import settings
+from app.server.util.logging import logger
 
 from app.server.routes.comment import router as CommentRouter
 
@@ -15,7 +16,7 @@ def include_router(app):
 #     app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # def create_tables():
-#     print(Base.metadata.tables,flush=True)
+#     logger.info(Base.metadata.tables)
 #     if len(Base.metadata.tables)==0:
 #         Base.metadata.create_all(bind=engine)
 
@@ -39,11 +40,11 @@ def startup_db_client():
         try:
             mongodb_flag = client.server_info() # Forces a call.
         except ServerSelectionTimeoutError:
-            print(f"MongoDB is not Ready yet try again {mongodb_delay} seconds later", flush=True)
+            logger.info(f"MongoDB is not Ready yet try again {mongodb_delay} seconds later", )
         if mongodb_flag == False:
             sleep(mongodb_delay)
     client.close()
-    print(f"MongoDB is Ready", flush=True)
+    logger.info(f"MongoDB is Ready", )
 
     app.mongodb_client = MongoClient(settings.DATABASE_URI)
     # app.database = app.mongodb_client[settings.DATABASE_COMMENT]

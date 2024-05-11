@@ -9,6 +9,7 @@ from google.auth.transport import requests
 from fastapi import Depends
 from fastapi.security import OpenIdConnect
 from starlette.responses import RedirectResponse
+from app.server.util.logging import logger
 
 
 from app.server.models.user import (
@@ -56,14 +57,14 @@ CREDENTIALS_EXCEPTION = HTTPException(
 
 @router.get("/social_login", response_description="Google login URL link")
 async def social_login():
-    #print(f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_LOGIN_URL}&scope=openid%20profile%20email&access_type=offline",flush=True)
+    #logger.info(f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_LOGIN_URL}&scope=openid%20profile%20email&access_type=offline")
     return {
         "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_LOGIN_URL_OLD}&scope=openid%20profile%20email&access_type=offline"
     }
 
 @router.get("/social_signup", response_description="Google signup URL link")
 async def social_signup():
-    #print(f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_SIGNUP_URL}&scope=openid%20profile%20email&access_type=offline",flush=True)
+    #logger.info(f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_SIGNUP_URL}&scope=openid%20profile%20email&access_type=offline")
     return {
         "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_SIGNUP_URL_OLD}&scope=openid%20profile%20email&access_type=offline"
     }
@@ -92,7 +93,7 @@ async def google_callback_login(request: Request):
             'access_token': token,
             'refresh_token': ""
         }
-        print(json_payload,flush=True)
+        logger.info(json_payload)
         res = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email_login', json=json_payload) 
         result = res.json()
         return ResponseModel("Social User", result)
@@ -129,7 +130,7 @@ async def google_callback_signup(request: Request):
             'access_token': token,
             'refresh_token': ""
         }
-        print(json_payload,flush=True)
+        logger.info(json_payload)
         res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_signup', json=json_payload) 
         result = res.json()
         result = result['data'] if 'data' in result else result
@@ -141,7 +142,7 @@ async def google_callback_signup(request: Request):
 async def auth_login(code: str)-> ResponseModel: # (code:str, scope:str, authuser:int, prompt:str):
 
     token_url = "https://accounts.google.com/o/oauth2/token"
-    # print(request,flush=True)
+    # logger.info(request)
     data = {
         "code": code,
         "client_id": GOOGLE_CLIENT_ID,
@@ -152,21 +153,21 @@ async def auth_login(code: str)-> ResponseModel: # (code:str, scope:str, authuse
     async with httpx.AsyncClient() as client:
         response = await client.post(token_url, data=data)
         #response = requests.post(token_url, data=data)
-        print(response.json(),flush=True)
+        logger.info(response.json())
         access_token = response.json().get("access_token")
         refresh_token = "" if "refresh_token" not in response.json() else response.json().get("refresh_token") 
-        print(access_token, flush=True)
-        print("refresh_token", flush=True)
+        logger.info(access_token, )
+        logger.info("refresh_token", )
         user_info = await client.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
         user_param = user_info.json()
-        print(user_param, flush=True)
+        logger.info(user_param, )
         json_payload = {
             'email' : user_param['email'],
             'login_type' : 'google',
             'access_token': access_token,
             'refresh_token': refresh_token
         }
-        print(json_payload,flush=True)
+        logger.info(json_payload)
         res = await client.post(f'{os.getenv("USER_SERVICE_DOMAIN")}/user/social_login', json=json_payload) 
         result = res.json()
         return ResponseModel("Social User", "Login Social User successfully")
@@ -184,14 +185,14 @@ async def auth_signup(code: str): #, scope:str, authuser:int, prompt:str):
     async with httpx.AsyncClient() as client:
         response = await client.post(token_url, data=data)
         #response = requests.post(token_url, data=data)
-        print(response.json(),flush=True)
+        logger.info(response.json())
         access_token = response.json().get("access_token")
         refresh_token = "" if "refresh_token" not in response.json() else response.json().get("refresh_token") 
-        print(access_token, flush=True)
-        print("refresh_token", flush=True)
+        logger.info(access_token, )
+        logger.info("refresh_token", )
         user_info = await client.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
         user_param = user_info.json()
-        print(user_param, flush=True)
+        logger.info(user_param, )
         json_payload = {
             'email' : user_param['email'],
             'login_type' : 'google',
@@ -205,7 +206,7 @@ async def auth_signup(code: str): #, scope:str, authuser:int, prompt:str):
             'access_token': access_token,
             'refresh_token': refresh_token
         }
-        print(json_payload,flush=True)
+        logger.info(json_payload)
         res = await client.post(f'{os.getenv("ORM_USER_SERVICE")}/user/social_email_signup', json=json_payload) 
         result = res.json()
         # return ResponseModel("Social User", "Generate Social User successfully")

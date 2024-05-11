@@ -17,6 +17,7 @@ from PIL import Image
 
 from app.server.util.preload import verify_token
 from app.server.models.frontend import ApiResponse, PostData, PutData
+from app.server.util.logging import logger
 
 UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER", "./symptom/upload/")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER", "./sample/")
@@ -77,8 +78,8 @@ async def upload_feedback_to_llm_base64(id:str, request: Request, data: PutData)
     # diseases['symptom'] = extract_symptom(llm_content)
     # diseases['msd'] = extract_msd_link(diseases['symptom'])
     # diseases['query_text'] = query_text
-    print("=======", flush=True)
-    print(diseases, flush=True)
+    logger.info("=======", )
+    logger.info(diseases, )
     message_content = diseases.get('message_content', 'error')
     feedback = diseases.get('feedback', 2)
     status = True if message_content != 'error' else False
@@ -112,8 +113,8 @@ async def upload_to_llm(request: Request, email: str, symptom_text:str, symptom_
 
     # Getting the base64 string
     # base64_image = encode_image(symptom_file.file.read())
-    # print("symptom_file.file.read()", flush=True)
-    # print(symptom_file.file.read())
+    # logger.info("symptom_file.file.read()", )
+    # logger.info(symptom_file.file.read())
     base64_image = base64.b64encode( symptom_file.file.read()).decode('utf-8')
     query_json = request.json()
 

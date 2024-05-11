@@ -13,6 +13,7 @@ from io import BytesIO
 from PIL import Image
 
 from app.server.util.preload import verify_token
+from app.server.util.logging import logger
 
 UPLOAD_IMAGE_FOLDER = os.getenv("UPLOAD_IMAGE_FOLDER")
 SAMPLE_IMAGE_FOLDER = os.getenv("SAMPLE_IMAGE_FOLDER")
@@ -81,7 +82,7 @@ async def get_community_by_name(name:str, dependencies:dict=Depends(verify_token
 @router.put("/id/{id}")
 async def update_community_data(id: str, req: Update_community_schema = Body(...), dependencies:dict=Depends(verify_token)):
     req = {k: v for k, v in req.dict().items() if v is not None}
-    print(req,flush=True)
+    logger.info(req)
     community = jsonable_encoder(req)
     updated_community = await update_community(id, community)
     if 'data' in updated_community:
@@ -116,7 +117,7 @@ async def upload_symptom(request: Request, email: str, image: UploadFile = File(
     ## Collecting diagnosis
 
     ## TODO: Should we Collect diagnosis file type with jpg or png?
-    # print(image.filename,flush=True)
+    # logger.info(image.filename)
     ext_center = image.filename[image.filename.rfind(".")+1:]
     now = datetime.now()
     year = now.strftime("%Y")

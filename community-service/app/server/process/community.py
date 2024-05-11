@@ -2,6 +2,7 @@ import httpx
 import os
 from app.server.util.timelogger import time_logger
 from typing import List
+from app.server.util.logging import logger
 
 # crud operations
 
@@ -18,7 +19,7 @@ async def add_community(community:dict) -> dict:
 
             if data is None or (data and data.get('detail', 'Failure') == 'Not Found'):
 
-                print(f'{os.getenv("ORM_METACOMMUNITY_SERVICE")}/community/',flush=True)
+                logger.info(f'{os.getenv("ORM_METACOMMUNITY_SERVICE")}/community/')
                 r = await client.post(f'{os.getenv("ORM_METACOMMUNITY_SERVICE")}/community/', json=community)
                 data = r.json() 
                 return {'community': community['name'] }
@@ -37,7 +38,7 @@ async def update_community(id:str, community:dict) -> dict:
         r = await client.put(f'{os.getenv("ORM_METACOMMUNITY_SERVICE")}/community/{id}',
                             json=community)
         data = r.json()
-        print(data,flush=True)
+        logger.info(data)
     return data
 
 
@@ -48,7 +49,7 @@ async def read_communities(): # -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_METACOMMUNITY_SERVICE")}/community/', timeout=300)
         if len(r.json()) > 0:
-            # print(r.json(),flush=True)
+            # logger.info(r.json())
             data = r.json()[0]    
     return data
 
@@ -57,7 +58,7 @@ async def read_communities(): # -> dict:
 async def read_community_by_id(id: str) -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_METACOMMUNITY_SERVICE")}/community/{id}', timeout=300) 
-        print(r.json(),flush=True)
+        logger.info(r.json())
         data = r.json()    
     return data
 
@@ -67,7 +68,7 @@ async def read_community_by_id(id: str) -> dict:
 async def read_community_by_name(name: str) -> dict:
     async with httpx.AsyncClient() as client:
         r = await client.get(f'{os.getenv("ORM_METACOMMUNITY_SERVICE")}/community/name/{name}', timeout=300) 
-        print(r.json(),flush=True)
+        logger.info(r.json())
 
         data = r.json()    
     return data

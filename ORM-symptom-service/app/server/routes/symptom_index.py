@@ -17,6 +17,7 @@ from app.server.schemas.symptom_index import (
     Symptom_index_schema,
     Update_symptom_index_schema,
 )
+from app.server.util.logging import logger
 
 router = APIRouter()
 
@@ -55,7 +56,7 @@ async def update_symptom_index_data(request: Request, id: str, req: Update_sympt
 
     if len(symptom_index) >= 1:
         update_result = await update_symptom_index(request.app.database["symptom_indexes"], id, symptom)
-        print(update_result.modified_count,flush=True)
+        logger.info(update_result.modified_count)
         if update_result.modified_count == 0:
             return ErrorResponseModel(
                 "An error occurred",
