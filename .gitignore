@@ -4,6 +4,7 @@ __pycache__/
 mysql-data/
 postgre-data/
 .DS_Store
+.env
 mongodb/
 orm-services/
 symptom-service/upload/
