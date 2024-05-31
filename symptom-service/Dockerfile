@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.12
 ADD . /app
 
 # ADD ./orm-setting-service/app.py /app
